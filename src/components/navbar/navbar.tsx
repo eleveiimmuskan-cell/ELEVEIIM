@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NAV_LINKS } from "@/lib/constants";
-import { EleveiimLogo } from "@/components/common/eleveiim-logo";
+import { BrandImage } from "@/components/common/brand-image";
 import { ScholarshipButton } from "@/components/common/scholarship-button";
 import { cn } from "@/lib/utils";
 
@@ -56,25 +56,11 @@ export function Navbar() {
         className="mx-auto grid h-14 max-w-7xl grid-cols-[1fr_auto] items-center gap-x-4 px-4 sm:h-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-8"
         aria-label="Main navigation"
       >
-        {/* Logo — vertically centered with nav row */}
         <div className="flex items-center justify-self-start">
-          <EleveiimLogo
-            href="/"
-            variant="icon"
-            size="sm"
-            priority
-            className="sm:hidden"
-          />
-          <EleveiimLogo
-            href="/"
-            variant="full"
-            size="sm"
-            priority
-            className="hidden sm:inline-flex"
-          />
+          <BrandImage href="/" size="sm" variant="elevated" priority className="sm:hidden" />
+          <BrandImage href="/" size="md" variant="elevated" priority className="hidden sm:inline-flex" />
         </div>
 
-        {/* Desktop nav — centered */}
         <ul className="hidden items-center justify-center gap-0.5 lg:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
@@ -85,7 +71,6 @@ export function Navbar() {
           ))}
         </ul>
 
-        {/* Right actions — vertically centered */}
         <div className="flex items-center justify-self-end gap-2 sm:gap-3">
           <div className="hidden lg:block">
             <ScholarshipButton size="sm" />
@@ -109,12 +94,12 @@ export function Navbar() {
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            exit={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden border-b border-border/50 bg-white/95 backdrop-blur-xl lg:hidden"
           >
             <div className="flex items-center border-b border-border/50 px-4 py-3">
-              <EleveiimLogo href="/" variant="full" size="sm" />
+              <BrandImage href="/" size="sm" variant="plain" />
             </div>
             <ul className="flex flex-col gap-0.5 px-4 py-3">
               {NAV_LINKS.map((link) => {

@@ -7,7 +7,7 @@ export function organizationSchema() {
     "@type": "EducationalOrganization",
     name: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/images/eleveiim-logo-white.png`,
+    logo: `${SITE_URL}/images/eleveiim-logo.jpg`,
     description: "Premium training institute — Elevate to Educate",
     slogan: "Elevate to Educate",
   };

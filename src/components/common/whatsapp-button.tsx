@@ -8,7 +8,7 @@ export function WhatsAppButton() {
     <FloatingWhatsApp
       phoneNumber={BRAND.whatsapp.replace("+", "")}
       accountName="ELEVEIIM"
-      avatar="/images/eleveiim-icon-white.png"
+      avatar="/images/favicon.png"
       statusMessage="Typically replies within an hour"
       chatMessage="Hi! 👋 How can we help you with courses or scholarships?"
       placeholder="Type a message..."

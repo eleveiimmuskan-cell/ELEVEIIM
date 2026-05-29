@@ -3,7 +3,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { getAllCourses } from "@/services/courses.service";
 import { NAV_LINKS, SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
 import { siteContact } from "@/data/site";
-import { EleveiimLogo } from "@/components/common/eleveiim-logo";
+import { BrandImage } from "@/components/common/brand-image";
 
 const SOCIAL_ITEMS = [
   { label: "Facebook", href: SOCIAL_LINKS.facebook, abbr: "f" },
@@ -21,7 +21,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
-            <EleveiimLogo href="/" size="md" />
+            <BrandImage href="/" size="md" />
             <p className="text-sm leading-relaxed text-muted-foreground">
               Premium training institute empowering learners with industry-ready
               skills, expert mentorship, and guaranteed career support.
