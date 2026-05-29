@@ -1,0 +1,11 @@
+export { HeroSection } from "./hero-section";
+export { TrustedPartnersSection } from "./trusted-partners";
+export { CountersSection } from "./counters-section";
+export { CoursesSection } from "./courses-section";
+export { ScholarshipSection } from "./scholarship-section";
+export { TrainersSection } from "./trainers-section";
+export { PlacementSection } from "./placement-section";
+export { WorkshopsSection } from "./workshops-section";
+export { TestimonialsSection } from "./testimonials-section";
+export { ReviewsSection } from "./reviews-section";
+export { CtaSection } from "./cta-section";
