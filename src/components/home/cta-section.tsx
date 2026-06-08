@@ -39,7 +39,7 @@ export function CtaSection() {
                 size="lg"
                 variant="outline"
                 className="border-white/40 bg-transparent text-white hover:bg-white/10"
-              >
+           >
                 <a href="tel:+919876543210">
                   <Phone className="size-4" />
                   Call Us

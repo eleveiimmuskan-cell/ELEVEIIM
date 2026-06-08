@@ -1,7 +1,7 @@
 import type { SiteContact } from "@/types";
 
 export const siteContact: SiteContact = {
-  address: "123 Education Hub, Bangalore, India 560001",
+  address: "Plot No - 1230, First Floor, JLPL Industrial Area Sector 82 Mohali, Punjab 140306",
   phone: "+91 98765 43210",
-  email: "hello@eleveiim.com",
+  email: "info@eleveiim.com",
 };

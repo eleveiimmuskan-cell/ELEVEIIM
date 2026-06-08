@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/common/json-ld";
 import { Navbar } from "@/components/navbar/navbar";
 import { Footer } from "@/components/footer/footer";
 import { WhatsAppButton } from "@/components/common/whatsapp-button";
+import { ScholarshipModalProvider } from "@/components/common/scholarship-modal-provider";
 import { SmoothScrollProvider } from "@/components/common/smooth-scroll";
 import "./globals.css";
 
@@ -34,6 +35,7 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
           <WhatsAppButton />
+          <ScholarshipModalProvider />
         </SmoothScrollProvider>
       </body>
     </html>

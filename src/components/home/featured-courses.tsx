@@ -12,7 +12,7 @@ export function FeaturedCoursesSection() {
   const courses = getFeaturedCourses(3);
 
   return (
-    <SectionReveal className="bg-white py-20">
+    <SectionReveal id="courses" className="bg-white py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Our Programs"
@@ -36,3 +36,4 @@ export function FeaturedCoursesSection() {
     </SectionReveal>
   );
 }
+                                          

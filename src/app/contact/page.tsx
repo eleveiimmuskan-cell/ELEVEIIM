@@ -34,7 +34,6 @@ export default function ContactPage() {
         title="Contact ELEVEIIM"
         description="Have questions about courses, scholarships, or placements? We're here to help."
       />
-
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact" }]} />
@@ -88,9 +87,11 @@ export default function ContactPage() {
               <form className="mt-6 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Input placeholder="Your name" required />
+                  <Input type="phone" placeholder="Phone number" required />
                   <Input type="email" placeholder="Email address" required />
+                     <Input placeholder="Subject" required />
                 </div>
-                <Input placeholder="Subject" required />
+            
                 <Textarea placeholder="Your message..." rows={5} required />
                 <Button type="submit" className="w-full bg-brand hover:bg-brand/90">
                   Send Message

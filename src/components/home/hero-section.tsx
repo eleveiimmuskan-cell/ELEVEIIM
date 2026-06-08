@@ -19,17 +19,17 @@ export function HeroSection() {
     >
       <FloatingShapes />
 
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,103,0,0.12),transparent_50%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,103,0,0.12),transparent_50%)]" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative isolate z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Left — brand & CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col gap-5 sm:gap-6"
+            className="relative z-20 flex min-w-0 flex-col gap-5 sm:gap-6"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -54,14 +54,12 @@ export function HeroSection() {
               launch your dream career.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href="#courses">
-                <GlassButton variant="light">
-                  Explore Courses
-                  <ArrowRight className="size-4" />
-                </GlassButton>
-              </Link>
-              <ScholarshipButton />
+            <div className="relative z-20 flex flex-wrap items-center gap-3">
+              <GlassButton href="/courses" variant="light">
+                Explore Courses
+                <ArrowRight className="size-4" />
+              </GlassButton>
+              <ScholarshipButton href="/scholarship" />
             </div>
 
             <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-white/15 pt-5 sm:gap-x-10">
@@ -87,7 +85,7 @@ export function HeroSection() {
             initial={{ opacity: 0, x: 32 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="hidden flex-col items-center justify-center text-center lg:flex lg:items-end lg:text-right"
+            className="relative z-10 hidden min-w-0 flex-col items-center justify-center overflow-hidden text-center lg:flex lg:items-end lg:text-right"
           >
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-white/70">
               Limited Time Offer
@@ -119,8 +117,8 @@ export function HeroSection() {
             </p>
 
             <Link
-              href="#scholarship"
-              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-brand-accent hover:underline"
+              href="/scholarship"
+              className="relative z-20 mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-brand-accent hover:underline"
             >
               Learn more about eligibility
               <ArrowRight className="size-4" />
@@ -132,7 +130,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="rounded-2xl border border-white/20 bg-white/10 p-6 text-center backdrop-blur-md lg:hidden"
+            className="relative z-20 rounded-2xl border border-white/20 bg-white/10 p-6 text-center backdrop-blur-md lg:hidden"
           >
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
               Limited Time Offer
@@ -141,6 +139,13 @@ export function HeroSection() {
               Get{" "}
               <span className="text-brand-accent">75%</span> Scholarship
             </p>
+            <Link
+              href="/scholarship"
+              className="relative z-20 mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-brand-accent hover:underline"
+            >
+              Learn more about eligibility
+              <ArrowRight className="size-4" />
+            </Link>
           </motion.div>
         </div>
       </div>

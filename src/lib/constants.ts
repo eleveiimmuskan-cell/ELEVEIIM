@@ -22,10 +22,11 @@ export const NAV_LINKS: NavLink[] = [
 ];
 
 export const SOCIAL_LINKS = {
-  facebook: "https://facebook.com/eleveiim",
-  instagram: "https://instagram.com/eleveiim",
+  facebook: "https://www.facebook.com/people/Eleveiim/61590698637936/",
+  instagram: "https://www.instagram.com/eleveiim/",
   linkedin: "https://linkedin.com/company/eleveiim",
   youtube: "https://youtube.com/@eleveiim",
+  twitter: "https://twitter.com/eleveiim",
 } as const;
 
 export const COURSE_CATEGORIES = [

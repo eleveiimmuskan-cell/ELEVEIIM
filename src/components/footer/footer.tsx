@@ -4,12 +4,14 @@ import { getAllCourses } from "@/services/courses.service";
 import { NAV_LINKS, SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
 import { siteContact } from "@/data/site";
 import { BrandImage } from "@/components/common/brand-image";
+import Image from "next/image";
 
 const SOCIAL_ITEMS = [
-  { label: "Facebook", href: SOCIAL_LINKS.facebook, abbr: "f" },
-  { label: "Instagram", href: SOCIAL_LINKS.instagram, abbr: "in" },
-  { label: "LinkedIn", href: SOCIAL_LINKS.linkedin, abbr: "li" },
-  { label: "YouTube", href: SOCIAL_LINKS.youtube, abbr: "yt" },
+  { label: "Facebook", href: SOCIAL_LINKS.facebook, icon: "/images/socials/facebook.png" },
+  { label: "Instagram", href: SOCIAL_LINKS.instagram, icon: "/images/socials/instagram.png" },
+  { label: "LinkedIn", href: SOCIAL_LINKS.linkedin, icon: "/images/socials/linkedin.png" },
+  { label: "YouTube", href: SOCIAL_LINKS.youtube, icon: "/images/socials/youtube.png" },
+  { label: "Twitter", href: SOCIAL_LINKS.twitter, icon: "/images/socials/twitter.png" },
 ] as const;
 
 export function Footer() {
@@ -27,7 +29,7 @@ export function Footer() {
               skills, expert mentorship, and guaranteed career support.
             </p>
             <div className="flex gap-3">
-              {SOCIAL_ITEMS.map(({ label, href, abbr }) => (
+              {SOCIAL_ITEMS.map(({ label, href, icon }) => (
                 <a
                   key={label}
                   href={href}
@@ -36,7 +38,13 @@ export function Footer() {
                   aria-label={label}
                   className="flex size-9 items-center justify-center rounded-lg border border-border text-xs font-bold uppercase text-muted-foreground transition-colors hover:border-brand hover:bg-brand/5 hover:text-brand"
                 >
-                  {abbr}
+                  <Image
+                    src={icon}
+                    alt={label}
+                    width={20}
+                    height={20}
+                    className="object-contain"
+                  />
                 </a>
               ))}
             </div>

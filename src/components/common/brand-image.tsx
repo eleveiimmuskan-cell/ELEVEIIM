@@ -62,6 +62,19 @@ export function BrandImage({
       </Link>
     );
   }
+  if("http" in BRAND_IMAGE) {
+    return (
+      <a
+        href={BRAND_IMAGE.src}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center self-center"
+        aria-label="Eleveiim home"
+      >
+        {content}
+      </a>
+    );
+  } 
 
   return content;
 }
