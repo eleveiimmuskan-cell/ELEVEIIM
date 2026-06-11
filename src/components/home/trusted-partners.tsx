@@ -10,7 +10,7 @@ export function TrustedPartnersSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Trusted By"
-          title="Our Industry Partners"
+          title="Trusted by Industry Leaders"
           description="Collaborating with leading companies to deliver career-ready training and placement opportunities."
         />
 

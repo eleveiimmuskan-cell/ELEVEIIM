@@ -46,7 +46,7 @@ export function ScholarshipHighlightSection() {
               <div className="mb-6 flex size-14 items-center justify-center rounded-2xl bg-brand text-white shadow-lg shadow-brand/25">
                 <GraduationCap className="size-7 justify-center rounded-2xl" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground">GET 75% SCHOLARSHIP</h3>
+              <h3 className="text-2xl font-bold text-foreground">GET 75%  SCHOLARSHIP nce</h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 Take the scholarship exam and unlock premium training at a fraction of the cost.
               </p>
