@@ -8,4 +8,6 @@ export { PlacementSection } from "./placement-section";
 export { WorkshopsSection } from "./workshops-section";
 export { TestimonialsSection } from "./testimonials-section";
 export { ReviewsSection } from "./reviews-section";
+export { WhoCanJoinSection } from "./who-can-join-section";
+export { BenefitsSection } from "./benefits-section";
 export { CtaSection } from "./cta-section";

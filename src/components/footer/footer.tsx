@@ -101,7 +101,15 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
-                <span>{siteContact.address}</span>
+                <a
+                  href={siteContact.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-brand hover:underline hover:underline-offset-2"
+                  aria-label="Open ELEVEIIM location in Google Maps"
+                >
+                  {siteContact.address}
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="size-4 shrink-0 text-brand" />

@@ -64,6 +64,29 @@ export function courseSchema(course: {
   };
 }
 
+export function industrialTrainingCourseSchema(course: {
+  title: string;
+  description: string;
+  path?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.description,
+    url: `${SITE_URL}${course.path ?? "/industrial-training"}`,
+    provider: { "@type": "Organization", name: SITE_NAME, sameAs: SITE_URL },
+    timeRequired: "P6M",
+    educationalCredentialAwarded: "Certificate of Completion",
+    occupationalCategory: [
+      "Software Developer",
+      "Digital Marketing Specialist",
+      "Graphic Designer",
+      "Business Consultant",
+    ],
+  };
+}
+
 export function articleSchema(article: {
   title: string;
   description: string;

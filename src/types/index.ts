@@ -157,4 +157,5 @@ export interface SiteContact {
   address: string;
   phone: string;
   email: string;
+  mapsUrl: string;
 }

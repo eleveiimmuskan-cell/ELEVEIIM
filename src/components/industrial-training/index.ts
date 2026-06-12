@@ -1,0 +1,14 @@
+export { HeroSection } from "./hero-section";
+export { WhyChooseSection } from "./why-choose-section";
+export { TrainingDomains } from "./training-domains";
+export { RoadmapTimeline } from "./roadmap-timeline";
+export { BenefitsSection } from "./benefits-section";
+export { PortfolioProjects } from "./portfolio-projects";
+export { CompanyLogos } from "./company-logos";
+export { Testimonials } from "./testimonials";
+export { PlacementProcess } from "./placement-process";
+export { CertificatesSection } from "./certificates-section";
+export { ComparisonTable } from "./comparison-table";
+export { MentorsSection } from "./mentors-section";
+export { FaqSection } from "./faq-section";
+export { FinalCTA } from "./final-cta";
