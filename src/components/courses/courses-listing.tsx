@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CourseCard } from "./course-card";
 import { cn } from "@/lib/utils";
+import { StaggerContainer, StaggerItem } from "@/components/common/motion-wrapper";
 
 export function CoursesListing() {
   const [search, setSearch] = useState("");
@@ -61,11 +62,13 @@ export function CoursesListing() {
           No courses found. Try adjusting your search or filters.
         </p>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" key={`${category}-${page}-${search}`}>
           {items.map((course, i) => (
-            <CourseCard key={course.slug} course={course} index={i} />
+            <StaggerItem key={course.slug}>
+              <CourseCard course={course} index={i} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       )}
 
       {totalPages > 1 && (

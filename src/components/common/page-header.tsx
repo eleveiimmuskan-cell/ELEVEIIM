@@ -76,26 +76,4 @@ export function PageHeader({
   );
 }
 
-export function PageHero({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow?: string;
-  title: string;
-  description?: string;
-}) {
-  return (
-    <section className="relative overflow-hidden bg-brand pt-24 pb-16 sm:pt-28 sm:pb-20">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.12),transparent_60%)]" />
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <PageHeader
-          eyebrow={eyebrow}
-          title={title}
-          description={description}
-          light
-        />
-      </div>
-    </section>
-  );
-}
+export { AnimatedPageHero as PageHero } from "./animated-page-hero";

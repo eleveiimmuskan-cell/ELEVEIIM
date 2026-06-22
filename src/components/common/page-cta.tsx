@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PREMIUM_EASE, VIEWPORT_ONCE } from "@/components/common/motion-wrapper";
 
 interface PageCtaProps {
   title?: string;
@@ -26,10 +27,10 @@ export function PageCta({
     <section className="py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, y: 28, scale: 0.96 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={VIEWPORT_ONCE}
+          transition={{ duration: 0.7, ease: PREMIUM_EASE }}
           className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand/85 px-8 py-14 text-center shadow-2xl shadow-brand/15 sm:px-16"
         >
           <div className="absolute -left-10 -top-10 size-40 rounded-full bg-white/10" />

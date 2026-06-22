@@ -4,10 +4,11 @@ import { TRAINING_DOMAINS } from "@/data/industrial-training";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { itSectionClass } from "./constants";
 import { SectionHeading } from "./section-heading";
+import { SectionReveal } from "@/components/common/motion-wrapper";
 
 export function TrainingDomains() {
   return (
-    <section className="bg-[#0B63CE]/[0.03] py-16 sm:py-20" aria-labelledby="domains-heading">
+    <SectionReveal className="bg-[#0B63CE]/[0.03] py-16 sm:py-20" aria-labelledby="domains-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           id="domains-heading"
@@ -69,6 +70,6 @@ export function TrainingDomains() {
           ))}
         </Tabs>
       </div>
-    </section>
+    </SectionReveal>
   );
 }

@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { AnimatedHeading } from "@/components/common/motion-wrapper";
 
 interface SectionHeaderProps {
   eyebrow?: string;
@@ -16,7 +19,7 @@ export function SectionHeader({
   className,
 }: SectionHeaderProps) {
   return (
-    <div
+    <AnimatedHeading
       className={cn(
         "mb-12 max-w-2xl",
         align === "center" && "mx-auto text-center",
@@ -36,6 +39,6 @@ export function SectionHeader({
           {description}
         </p>
       )}
-    </div>
+    </AnimatedHeading>
   );
 }

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BlogCard } from "./blog-card";
 import { cn } from "@/lib/utils";
+import { StaggerContainer, StaggerItem } from "@/components/common/motion-wrapper";
 
 export function BlogsListing() {
   const [search, setSearch] = useState("");
@@ -56,11 +57,13 @@ export function BlogsListing() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" key={`${category}-${page}-${search}`}>
         {items.map((post, i) => (
-          <BlogCard key={post.slug} post={post} index={i} />
+          <StaggerItem key={post.slug}>
+            <BlogCard post={post} index={i} />
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerContainer>
 
       {totalPages > 1 && (
         <div className="mt-10 flex items-center justify-center gap-3">

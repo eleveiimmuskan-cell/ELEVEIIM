@@ -27,6 +27,23 @@ export const scholarshipBenefits: ScholarshipBenefit[] = [
   },
 ];
 
+export const SCHOLARSHIP_APPLY_SECTION_ID = "scholarship-apply";
+
+export const SCHOLARSHIP_STUDENTS_IMAGE = "/images/scholarship-students-transparent.png";
+
+export const SCHOLARSHIP_STUDENTS_IMAGE_ALT =
+  "ELEVEIIM male and female students in branded apparel promoting the scholarship program";
+
+export const SCHOLARSHIP_HIGHLIGHT_STATS = {
+  badge: "Merit-Based Awards",
+  discountPrefix: "Up to",
+  discountValue: "100%",
+  discountSuffix: "OFF",
+  avgAwardAmount: "₹2.5 Crore+",
+  avgAwardLabel: "Average scholarship awarded",
+  avgAwardNote: "Based on recent approved applications",
+} as const;
+
 export const faqItems: FAQItem[] = [
   {
     question: "Who is eligible for the ELEVEIIM scholarship program?",
@@ -41,7 +58,7 @@ export const faqItems: FAQItem[] = [
   {
     question: "How long does the scholarship application process take?",
     answer:
-      "Most applications are reviewed within 5–7 business days. Approved candidates receive an offer letter with fee details and batch allocation.",
+      "Most applications are reviewed within 1–2 business days. Approved candidates receive an offer letter with fee details and batch allocation.",
   },
   {
     question: "Does ELEVEIIM provide placement assistance?",

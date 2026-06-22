@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { heroStats } from "@/data/counters";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
 import { AnimatedCounter } from "@/components/shared/motion-wrapper";
-import { FloatingShapes } from "@/components/shared/floating-shapes";
+import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
 import { GlassButton } from "@/components/shared/glass-card";
 import { ScholarshipButton } from "@/components/shared/scholarship-button";
 
@@ -17,7 +17,7 @@ export function HeroSection() {
       className="relative flex min-h-[40vh] items-center overflow-hidden bg-brand pt-16 pb-10 sm:pb-12"
       aria-label="Hero banner"
     >
-      <FloatingShapes />
+      <ScholarshipBannerDecorations variant="home" />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,103,0,0.12),transparent_50%)]" />
@@ -41,9 +41,14 @@ export function HeroSection() {
               Scholarship seats open — Apply today
             </motion.div>
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              {/* <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
                 {SITE_NAME}
-              </h1>
+              </h1> */}
+              {
+                <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  {SITE_NAME}
+                </h1>
+              }
               <p className="text-lg font-semibold text-white sm:text-xl">
                 {SITE_TAGLINE}
               </p>
@@ -97,12 +102,12 @@ export function HeroSection() {
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 className="text-4xl font-black uppercase leading-none tracking-tight text-white xl:text-5xl"
               >
-                Get
+                Get upto
               </motion.p>
 
               <p className="text-6xl font-black leading-none tracking-tighter xl:text-7xl">
                 <span className="bg-gradient-to-r from-brand-accent via-[#ff8533] to-brand-accent bg-clip-text text-transparent">
-                  75%
+                  100%
                 </span>
               </p>
 
@@ -136,8 +141,8 @@ export function HeroSection() {
               Limited Time Offer
             </p>
             <p className="mt-2 text-3xl font-black uppercase leading-tight text-white">
-              Get{" "}
-              <span className="text-brand-accent">75%</span> Scholarship
+              Get Upto{" "}
+              <span className="text-brand-accent">100%</span> Scholarship
             </p>
             <Link
               href="/scholarship"

@@ -8,10 +8,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { SectionHeading } from "./section-heading";
+import { SectionReveal } from "@/components/common/motion-wrapper";
 
 export function FaqSection() {
   return (
-    <section className="py-16 sm:py-20" aria-labelledby="faq-heading">
+    <SectionReveal className="py-16 sm:py-20" aria-labelledby="faq-heading">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           id="faq-heading"
@@ -32,6 +33,6 @@ export function FaqSection() {
           ))}
         </Accordion>
       </div>
-    </section>
+    </SectionReveal>
   );
 }

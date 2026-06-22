@@ -6,7 +6,7 @@ import {
   getFeaturedPlacements,
   placementStats,
 } from "@/services/placements.service";
-import { SectionReveal } from "@/components/common/motion-wrapper";
+import { SectionReveal, StaggerContainer, StaggerItem } from "@/components/common/motion-wrapper";
 import { SectionHeader } from "@/components/common/section-header";
 import { GlassCard } from "@/components/common/glass-card";
 import { PlacementCard } from "@/components/placements/placement-card";
@@ -24,20 +24,24 @@ export function PlacementHighlightsSection() {
           description="Real success stories from students who transformed their careers with ELEVEIIM."
         />
 
-        <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerContainer className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {placementStats.map((stat) => (
-            <GlassCard key={stat.id} className="text-center">
-              <p className="text-2xl font-bold text-brand">{stat.value}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
-            </GlassCard>
+            <StaggerItem key={stat.id}>
+              <GlassCard className="text-center">
+                <p className="text-2xl font-bold text-brand">{stat.value}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
+              </GlassCard>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <StaggerContainer className="grid gap-6 md:grid-cols-3">
           {stories.map((story, i) => (
-            <PlacementCard key={story.slug} story={story} index={i} />
+            <StaggerItem key={story.slug}>
+              <PlacementCard story={story} index={i} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
         <div className="mt-10 text-center">
           <Button asChild variant="outline" className="border-brand text-brand hover:bg-brand hover:text-white">

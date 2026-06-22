@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import { SectionReveal } from "@/components/common/motion-wrapper";
+import { SectionReveal, StaggerContainer, StaggerItem } from "@/components/common/motion-wrapper";
 import {
   BENEFITS_HEADING,
   CERTIFICATE_IMAGES,

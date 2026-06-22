@@ -1,13 +1,17 @@
 import Link from "next/link";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PAGE_HERO } from "@/data/industrial-training";
+import {
+  SectionReveal,
+  AnimatedHeading,
+} from "@/components/common/motion-wrapper";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-white via-[#0B63CE]/[0.04] to-white pt-28 pb-16 sm:pt-32 sm:pb-20">
+    <SectionReveal className="relative overflow-hidden bg-gradient-to-br from-white via-[#0B63CE]/[0.04] to-white pt-28 pb-16 sm:pt-32 sm:pb-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl">
+        <AnimatedHeading className="max-w-3xl">
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-[#0B63CE]">
             Industrial Training
           </p>
@@ -17,22 +21,16 @@ export function HeroSection() {
           <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
             {PAGE_HERO.subtitle}
           </p>
-          {/* <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg" className="rounded-xl bg-[#0B63CE] hover:bg-[#0B63CE]/90">
               <Link href="/contact">
                 Apply Now
                 <ArrowRight className="size-4" aria-hidden />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-xl border-[#0B63CE]/30 text-[#0B63CE]">
-              <Link href="#brochure">
-                <Download className="size-4" aria-hidden />
-                Download Brochure
-              </Link>
-            </Button>
-          </div> */}
-        </div>
+          </div>
+        </AnimatedHeading>
       </div>
-    </section>
+    </SectionReveal>
   );
 }

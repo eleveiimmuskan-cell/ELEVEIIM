@@ -6,3 +6,8 @@ export const siteContact: SiteContact = {
   email: "careers@eleveiim.com",
   mapsUrl: "https://share.google/nL8FmabJXisQhNyHZ",
 };
+
+export const CONTACT_HERO_IMAGE = "/images/contact_us.png";
+
+export const CONTACT_HERO_IMAGE_ALT =
+  "ELEVEIIM support representative ready to help with course, scholarship, and placement inquiries";

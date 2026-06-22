@@ -18,6 +18,7 @@ import { JsonLd } from "@/components/common/json-ld";
 import { Breadcrumb, PageHero } from "@/components/common/page-header";
 import { PageCta } from "@/components/common/page-cta";
 import { PageTransition } from "@/animations/page-transition";
+import { PageContentSection } from "@/components/common/motion-wrapper";
 import { CourseCard } from "@/components/courses/course-card";
 import { GlassCard } from "@/components/common/glass-card";
 import { Badge } from "@/components/ui/badge";
@@ -80,8 +81,7 @@ export default async function CourseDetailPage({ params }: Props) {
         description={course.shortDescription}
       />
 
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <PageContentSection>
           <Breadcrumb
             items={[
               { label: "Home", href: "/" },
@@ -199,8 +199,7 @@ export default async function CourseDetailPage({ params }: Props) {
               </div>
             </div>
           )}
-        </div>
-      </section>
+      </PageContentSection>
 
       <PageCta
         title={`Ready to start ${course.title}?`}

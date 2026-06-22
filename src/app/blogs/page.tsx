@@ -4,6 +4,7 @@ import { breadcrumbSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
 import { PageHero, Breadcrumb } from "@/components/common/page-header";
 import { PageTransition } from "@/animations/page-transition";
+import { PageContentSection } from "@/components/common/motion-wrapper";
 import { BlogsListing } from "@/components/blogs/blogs-listing";
 
 export const metadata: Metadata = createPageMetadata({
@@ -28,12 +29,12 @@ export default function BlogsPage() {
         title="Blog & Resources"
         description="Expert articles on careers, technology, placements, and education."
       />
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Blog" }]} />
+      <PageContentSection>
+          <Breadcrumb items={
+            [{ label: "Home", href: "/" }, { label: "Blog" }]
+            } />
           <BlogsListing />
-        </div>
-      </section>
+      </PageContentSection>
     </PageTransition>
   );
 }

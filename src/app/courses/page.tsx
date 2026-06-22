@@ -6,6 +6,7 @@ import { PageHero } from "@/components/common/page-header";
 import { Breadcrumb } from "@/components/common/page-header";
 import { PageCta } from "@/components/common/page-cta";
 import { PageTransition } from "@/animations/page-transition";
+import { PageContentSection } from "@/components/common/motion-wrapper";
 import { CoursesListing } from "@/components/courses/courses-listing";
 
 export const metadata: Metadata = createPageMetadata({
@@ -30,12 +31,10 @@ export default function CoursesPage() {
         title="Industry-Ready Courses"
         description="Hands-on learning with certifications, expert trainers, and flexible batch timings."
       />
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <PageContentSection>
           <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Courses" }]} />
           <CoursesListing />
-        </div>
-      </section>
+      </PageContentSection>
       <PageCta />
     </PageTransition>
   );

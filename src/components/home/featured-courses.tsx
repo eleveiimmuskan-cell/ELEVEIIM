@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getFeaturedCourses } from "@/services/courses.service";
-import { SectionReveal } from "@/components/common/motion-wrapper";
+import {
+  SectionReveal,
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/common/motion-wrapper";
 import { SectionHeader } from "@/components/common/section-header";
 import { CourseCard } from "@/components/courses/course-card";
 import { Button } from "@/components/ui/button";
@@ -19,11 +23,13 @@ export function FeaturedCoursesSection() {
           title="Featured Courses"
           description="Explore our most popular programs — designed for career-ready outcomes."
         />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {courses.map((course, i) => (
-            <CourseCard key={course.slug} course={course} index={i}/>
+            <StaggerItem key={course.slug}>
+              <CourseCard course={course} index={i} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
         <div className="mt-10 text-center">
           <Button asChild variant="outline" className="border-brand text-brand hover:bg-brand hover:text-white">
             <Link href="/courses">
