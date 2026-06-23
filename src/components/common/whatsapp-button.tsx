@@ -12,8 +12,8 @@ export function WhatsAppButton() {
       statusMessage="Typically replies within an hour"
       chatMessage="Hi! 👋 How can we help you with courses or scholarships?"
       placeholder="Type a message..."
-      allowClickAway
-      allowEsc
+      // allowClickAway
+      // allowEsc
       notification
       notificationSound
       buttonStyle={{
