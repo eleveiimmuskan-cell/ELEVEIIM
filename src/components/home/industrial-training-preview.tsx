@@ -57,7 +57,8 @@ export function IndustrialTrainingPreview() {
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button asChild size="lg" className="rounded-xl bg-[#0B63CE] hover:bg-[#0B63CE]/90">
-                  <Link href="/industrial-training">
+              
+                  <Link href="/contact">
                     Explore Program
                     <ArrowRight className="size-4" aria-hidden />
                   </Link>
