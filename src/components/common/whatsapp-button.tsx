@@ -6,10 +6,11 @@ import { BRAND } from "@/lib/constants";
 export function WhatsAppButton() {
   return (
     <FloatingWhatsApp
+
       phoneNumber={BRAND.whatsapp.replace("+", "")}
       accountName="ELEVEIIM"
       avatar="/images/favicon.png"
-      statusMessage="Typically replies within an hour"
+      statusMessage="Typically replies within an 30 minutes"
       chatMessage="Hi! 👋 How can we help you with courses or scholarships?"
       placeholder="Type a message..."
       // allowClickAway
