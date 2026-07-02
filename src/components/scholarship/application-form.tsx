@@ -62,7 +62,7 @@ export function ScholarshipApplicationForm() {
               <label htmlFor="phone" className="mb-1.5 block text-sm font-medium">
                 Phone
               </label>
-              <Input id="phone" type="tel" placeholder="+91 98765 43210" required />
+              <Input id="phone" type="tel" placeholder="+91 90563 63535" required />
             </div>
             <div>
               <label htmlFor="course" className="mb-1.5 block text-sm font-medium">

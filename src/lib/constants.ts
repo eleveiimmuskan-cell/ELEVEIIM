@@ -9,7 +9,7 @@ export const SITE_DESCRIPTION =
 export const BRAND = {
   primary: "#1877F2",
   accent: "#FF6700",
-  whatsapp: "+919876543210",
+  whatsapp: "+919056363535",
 } as const;
 
 export const NAV_LINKS: NavLink[] = [
