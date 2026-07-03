@@ -5,6 +5,7 @@ import { ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/common/motion-wrapper";
 import { ScholarshipButton } from "@/components/common/scholarship-button";
+import { phoneTelHref } from "@/data/site";
 
 export function CtaSection() {
   return (
@@ -40,7 +41,7 @@ export function CtaSection() {
                 variant="outline"
                 className="border-white/40 bg-transparent text-white hover:bg-white/10"
            >
-                <a href="tel:+919056363535">
+                <a href={phoneTelHref}>
                   <Phone className="size-4" />
                   Call Us
                 </a>

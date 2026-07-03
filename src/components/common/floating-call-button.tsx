@@ -2,15 +2,13 @@
 
 import { Phone } from "lucide-react";
 import { motion } from "framer-motion";
-import { siteContact } from "@/data/site";
+import { phoneTelHref, siteContact } from "@/data/site";
 import { cn } from "@/lib/utils";
-
-const PHONE_HREF = `tel:${siteContact.phone.replace(/\s/g, "")}`;
 
 export function FloatingCallButton() {
   return (
     <motion.a
-      href={PHONE_HREF}
+      href={phoneTelHref}
       aria-label={`Call ELEVEIIM now at ${siteContact.phone}`}
       title={`Call Now — ${siteContact.phone}`}
       className={cn(

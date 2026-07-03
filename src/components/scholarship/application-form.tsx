@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { CONTACT_PHONE } from "@/data/site";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { GlassCard } from "@/components/common/glass-card";
@@ -62,7 +63,7 @@ export function ScholarshipApplicationForm() {
               <label htmlFor="phone" className="mb-1.5 block text-sm font-medium">
                 Phone
               </label>
-              <Input id="phone" type="tel" placeholder="+91 90563 63535" required />
+              <Input id="phone" type="tel" placeholder={CONTACT_PHONE.display} required />
             </div>
             <div>
               <label htmlFor="course" className="mb-1.5 block text-sm font-medium">

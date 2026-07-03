@@ -1,8 +1,17 @@
 import type { SiteContact } from "@/types";
 
+/** Single source of truth for all call and WhatsApp contact numbers. */
+export const CONTACT_PHONE = {
+  display: "+91 9056363535",
+  tel: "+919056363535",
+  whatsapp: "+919056363535",
+} as const;
+
+export const phoneTelHref = `tel:${CONTACT_PHONE.tel}` as const;
+
 export const siteContact: SiteContact = {
   address: "Plot No - 1230, First Floor, JLPL Industrial Area Sector 82 Mohali, Punjab 140306",
-  phone: "+91 9056363535",
+  phone: CONTACT_PHONE.display,
   email: "careers@eleveiim.com",
   mapsUrl: "https://share.google/nL8FmabJXisQhNyHZ",
 };

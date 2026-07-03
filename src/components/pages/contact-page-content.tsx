@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   CONTACT_HERO_IMAGE,
   CONTACT_HERO_IMAGE_ALT,
+  phoneTelHref,
   siteContact,
 } from "@/data/site";
 import {
@@ -34,7 +35,7 @@ const contactItems = [
     icon: Phone,
     label: "Phone",
     content: siteContact.phone,
-    href: `tel:${siteContact.phone.replace(/\s/g, "")}`,
+    href: phoneTelHref,
     external: false,
   },
   {

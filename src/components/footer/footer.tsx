@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { getAllCourses } from "@/services/courses.service";
 import { NAV_LINKS, SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
-import { siteContact } from "@/data/site";
+import { phoneTelHref, siteContact } from "@/data/site";
 import { BrandImage } from "@/components/common/brand-image";
 import Image from "next/image";
 
@@ -113,7 +113,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="size-4 shrink-0 text-brand" />
-                <a href={`tel:${siteContact.phone.replace(/\s/g, "")}`} className="hover:text-brand">
+                <a href={phoneTelHref} className="hover:text-brand">
                   {siteContact.phone}
                 </a>
               </li>
