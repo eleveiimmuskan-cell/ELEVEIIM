@@ -75,7 +75,7 @@ function ContactIllustration() {
 
 function ContactInfoRow() {
   return (
-    <StaggerContainer className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4" stagger={0.08}>
+    <StaggerContainer className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-2" stagger={0.08}>
       {contactItems.map((item) => {
         const Icon = item.icon;
 
@@ -166,9 +166,10 @@ export function ContactPageContent() {
               </form>
             </GlassCard>
 
-            <ContactInfoRow />
+          
           </StaggerItem>
         </StaggerContainer>
+          <ContactInfoRow />
       </div>
     </PageContentSection>
   );

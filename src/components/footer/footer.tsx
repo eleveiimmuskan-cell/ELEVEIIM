@@ -99,6 +99,7 @@ export function Footer() {
               Contact
             </h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
+            
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
                 <a
@@ -129,7 +130,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} {SITE_NAME}. All rights reserved.
+            © {currentYear} {SITE_NAME} Educations Private Limited. All rights reserved.
           </p>
         </div>
       </div>

@@ -63,13 +63,14 @@ export const defaultMetadata: Metadata = {
 
   title: {
     default:
-      "ELEVEIIM | Tech & Non-Tech Career Training Institute in Mohali",
+      "ELEVEIIM | Tech, Non-Tech Professional and Business Training Institute in Mohali",
     template: "%s | ELEVEIIM",
   },
 
   description:
-    "ELEVEIIM is a leading career training institute in Mohali offering Software Development, Full Stack Development, PHP, Laravel, Next.js, Node.js, Flutter, Digital Marketing, Graphic Designing, Real Estate, Personality Development, Soft Skills, Leadership Training, and placement-oriented professional courses.",
+    "ELEVEIIM is a leading career training institute in Mohali offering Data Science & AI, Computer Vision and Robotics AI,  Gen AI & Prompt Engineering, Software Development, Full Stack Development, PHP, Laravel, Next.js, Node.js, Flutter, Digital Marketing, Graphic Designing, Real Estate, Personality Development, Soft Skills, Leadership Training, and placement-oriented professional courses.",
 
+    
   keywords: [
     // Brand
     "ELEVEIIM",
@@ -145,9 +146,9 @@ export const defaultMetadata: Metadata = {
     url: SITE_URL,
     siteName: "ELEVEIIM",
     title:
-      "ELEVEIIM | Tech & Non-Tech Career Training Institute in Mohali",
+      "ELEVEIIM | Tech, Non-Tech Professional and Business Training Institute in Mohali",
     description:
-      "Learn Full Stack Development, PHP, Laravel, Next.js, Node.js, Flutter, Digital Marketing, Graphic Designing, Real Estate, Personality Development, and Soft Skills with industry-focused training.",
+      "Learn Data Science & AI, Computer Vision and Robotics AI,  Gen AI & Prompt Engineering, Full Stack Development, PHP, Laravel, Next.js, Node.js, Flutter, Digital Marketing, Graphic Designing, Real Estate, Personality Development, and Soft Skills with industry-focused training.",
     images: [
       {
         url: "/og-image.jpg",
@@ -161,9 +162,9 @@ export const defaultMetadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "ELEVEIIM | Tech & Non-Tech Career Training Institute in Mohali",
+      "ELEVEIIM | Tech, Non-Tech Professional and Business Training Institute in Mohali",
     description:
-      "Industry-focused training for Software Development, Marketing, Design, Real Estate, Leadership and Career Growth.",
+      "Industry-focused training for Data Science & AI, Computer Vision and Robotics AI,  Gen AI & Prompt Engineering, Software Development, Marketing, Design, Real Estate, Leadership and Career Growth.",
     images: ["/og-image.jpg"],
   },
 

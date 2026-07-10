@@ -10,10 +10,11 @@ export const CONTACT_PHONE = {
 export const phoneTelHref = `tel:${CONTACT_PHONE.tel}` as const;
 
 export const siteContact: SiteContact = {
-  address: "Plot No - 1230, First Floor, JLPL Industrial Area Sector 82 Mohali, Punjab 140306",
+
+  address: "ELEVEIIM Educations Private Limited.\nPlot No - 1230, First Floor, JLPL Industrial Area Sector 82 Mohali, Punjab 140306",
   phone: CONTACT_PHONE.display,
   email: "careers@eleveiim.com",
-  mapsUrl: "https://share.google/nL8FmabJXisQhNyHZ",
+  mapsUrl: "https://share.google/Mz231Vb0oXGaqKUmQ",
 };
 
 export const CONTACT_HERO_IMAGE = "/images/contact_us.png";

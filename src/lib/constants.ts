@@ -26,8 +26,8 @@ export const SOCIAL_LINKS = {
   facebook: "https://www.facebook.com/people/Eleveiim/61590698637936/",
   instagram: "https://www.instagram.com/eleveiim/",
   linkedin: "https://linkedin.com/company/eleveiim",
-  youtube: "https://youtube.com/@eleveiim",
-  twitter: "https://twitter.com/eleveiim",
+  youtube: "https://www.youtube.com/@Eleveiim",
+  twitter: "https://x.com/Eleveiim",
 } as const;
 
 export const COURSE_CATEGORIES = [
