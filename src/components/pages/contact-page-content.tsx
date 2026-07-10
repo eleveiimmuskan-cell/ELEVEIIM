@@ -75,7 +75,7 @@ function ContactIllustration() {
 
 function ContactInfoRow() {
   return (
-    <StaggerContainer className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-2" stagger={0.08}>
+    <StaggerContainer className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4" stagger={0.08}>
       {contactItems.map((item) => {
         const Icon = item.icon;
 
@@ -141,7 +141,7 @@ export function ContactPageContent() {
               className="border-brand/10 bg-white shadow-[0_8px_40px_rgba(11,99,206,0.08)]"
             >
               <AnimatedHeading>
-                <h2 className="text-xl font-bold sm:text-2xl">Send a Message</h2>
+                <h2 className="text-xl font-bold sm:text-2xl">We'd Love to Hear From You!</h2>
               </AnimatedHeading>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
                 Tell us about your goals — courses, scholarships, or placements. Our counselors
