@@ -46,7 +46,8 @@ export function PageCta({
               <Button
                 asChild
                 size="lg"
-                className="bg-white text-brand hover:bg-white/90"
+                // className="bg-white text-brand hover:bg-white"
+                 className="border-white/40 bg-transparent text-white hover:bg-white/10"
               >
                 <Link href={primaryHref}>
                   {primaryLabel}
