@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getFeaturedCourses } from "@/services/courses.service";
 import {
   SectionReveal,
   StaggerContainer,
@@ -11,9 +10,14 @@ import {
 import { SectionHeader } from "@/components/common/section-header";
 import { CourseCard } from "@/components/courses/course-card";
 import { Button } from "@/components/ui/button";
+import type { Course } from "@/types";
 
-export function FeaturedCoursesSection() {
-  const courses = getFeaturedCourses(3);
+interface FeaturedCoursesSectionProps {
+  courses: Course[];
+}
+
+export function FeaturedCoursesSection({ courses }: FeaturedCoursesSectionProps) {
+  if (courses.length === 0) return null;
 
   return (
     <SectionReveal id="courses" className="bg-white py-20">
@@ -23,9 +27,9 @@ export function FeaturedCoursesSection() {
           title="Featured Courses"
           description="Explore our most popular programs — designed for career-ready outcomes."
         />
-        <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <StaggerContainer className="grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
           {courses.map((course, i) => (
-            <StaggerItem key={course.slug}>
+            <StaggerItem key={course.id || course.slug} className="h-full">
               <CourseCard course={course} index={i} />
             </StaggerItem>
           ))}
@@ -42,4 +46,3 @@ export function FeaturedCoursesSection() {
     </SectionReveal>
   );
 }
-                                          

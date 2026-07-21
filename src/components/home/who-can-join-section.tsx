@@ -7,23 +7,27 @@ import {
   StaggerItem,
 } from "@/components/common/motion-wrapper";
 import { SectionHeader } from "@/components/common/section-header";
+import { resolveHomeIcon } from "@/lib/home-icons";
 import { cn } from "@/lib/utils";
-import {
-  WHO_CAN_JOIN_HEADING,
-  whoCanJoinItems,
-} from "@/data/home-sections";
+import type { ApiWhoCanJoinSection } from "@/types/api-who-can-join";
 
-export function WhoCanJoinSection() {
+interface WhoCanJoinSectionProps {
+  section: ApiWhoCanJoinSection;
+}
+
+export function WhoCanJoinSection({ section }: WhoCanJoinSectionProps) {
+  if (!section.cards.length) return null;
+
   return (
-    <SectionReveal
-      id="who-can-join"
-      className="bg-white py-20"
-    >
+    <SectionReveal id="who-can-join" className="bg-white py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <header>
           <SectionHeader
-            title={WHO_CAN_JOIN_HEADING.title}
-            description={WHO_CAN_JOIN_HEADING.description}
+            title={section.title || "Who Can Join ELEVEIIM?"}
+            description={
+              section.description ||
+              "Our training programs are designed for learners, professionals, entrepreneurs, and creators who want to build successful careers."
+            }
           />
         </header>
 
@@ -37,8 +41,8 @@ export function WhoCanJoinSection() {
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
           stagger={0.08}
         >
-          {whoCanJoinItems.map((item) => {
-            const Icon = item.icon;
+          {section.cards.map((item) => {
+            const Icon = resolveHomeIcon(item.iconName);
 
             return (
               <StaggerItem key={item.id} className="h-full">

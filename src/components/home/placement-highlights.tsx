@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import {
-  getFeaturedPlacements,
-  placementStats,
-} from "@/services/placements.service";
+import { placementStats } from "@/services/placements.service";
 import { SectionReveal, StaggerContainer, StaggerItem } from "@/components/common/motion-wrapper";
 import { SectionHeader } from "@/components/common/section-header";
 import { GlassCard } from "@/components/common/glass-card";
 import { PlacementCard } from "@/components/placements/placement-card";
 import { Button } from "@/components/ui/button";
+import type { PlacementStory } from "@/types";
 
-export function PlacementHighlightsSection() {
-  const stories = getFeaturedPlacements(3);
+interface PlacementHighlightsSectionProps {
+  stories: PlacementStory[];
+}
 
+export function PlacementHighlightsSection({
+  stories,
+}: PlacementHighlightsSectionProps) {
   return (
     <SectionReveal className="bg-muted/30 py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -35,13 +37,15 @@ export function PlacementHighlightsSection() {
           ))}
         </StaggerContainer>
 
-        <StaggerContainer className="grid gap-6 md:grid-cols-3">
-          {stories.map((story, i) => (
-            <StaggerItem key={story.slug}>
-              <PlacementCard story={story} index={i} />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+        {stories.length > 0 && (
+          <StaggerContainer className="grid items-stretch gap-6 md:grid-cols-3">
+            {stories.map((story, i) => (
+              <StaggerItem key={story.id || story.slug} className="h-full">
+                <PlacementCard story={story} index={i} />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        )}
 
         <div className="mt-10 text-center">
           <Button asChild variant="outline" className="border-brand text-brand hover:bg-brand hover:text-white">

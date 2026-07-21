@@ -1,5 +1,11 @@
+import { cache } from "react";
 import { courses } from "@/data/courses";
+import { apiFetch, ApiError } from "@/lib/api/client";
+import { mapApiCourseToCourse } from "@/lib/mappers/course";
+import type { ApiCourse } from "@/types/api-course";
 import type { Course } from "@/types";
+
+const DEFAULT_REVALIDATE_SECONDS = 60;
 
 export interface CourseFilters {
   search?: string;
@@ -8,12 +14,110 @@ export interface CourseFilters {
   pageSize?: number;
 }
 
+/**
+ * Featured published courses for the homepage (max `limit`).
+ * Cached per-request via React `cache` and revalidated via Next ISR.
+ */
+export const getFeaturedCourses = cache(
+  async (limit = 3): Promise<Course[]> => {
+    try {
+      const { data } = await apiFetch<ApiCourse[]>("/courses", {
+        query: {
+          isFeatured: true,
+          isPublished: true,
+          page: 1,
+          limit,
+        },
+        next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+      });
+      return (Array.isArray(data) ? data : [])
+        .slice(0, limit)
+        .map(mapApiCourseToCourse);
+    } catch (error) {
+      console.error("[courses] Failed to load featured courses:", error);
+      return [];
+    }
+  }
+);
+
+/**
+ * Published course by slug for the public course detail page.
+ */
+export const getCourseBySlug = cache(
+  async (slug: string): Promise<Course | null> => {
+    if (!slug?.trim()) return null;
+
+    try {
+      const { data } = await apiFetch<ApiCourse>(
+        `/courses/slug/${encodeURIComponent(slug)}`,
+        { next: { revalidate: DEFAULT_REVALIDATE_SECONDS } }
+      );
+
+      if (!data || data.isPublished === false) return null;
+      return mapApiCourseToCourse(data);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null;
+      console.error(`[courses] Failed to load course "${slug}":`, error);
+      return null;
+    }
+  }
+);
+
+/**
+ * Related published courses for a detail page (same category when possible).
+ */
+export const getRelatedCourses = cache(
+  async (slug: string, limit = 3): Promise<Course[]> => {
+    try {
+      const current = await getCourseBySlug(slug);
+      const { data } = await apiFetch<ApiCourse[]>("/courses", {
+        query: {
+          isPublished: true,
+          page: 1,
+          limit: Math.max(limit * 4, 12),
+        },
+        next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+      });
+
+      const mapped = (Array.isArray(data) ? data : [])
+        .map(mapApiCourseToCourse)
+        .filter((course) => course.slug !== slug);
+
+      const sameCategory = current
+        ? mapped.filter((course) => course.category === current.category)
+        : [];
+
+      const pool = sameCategory.length >= limit ? sameCategory : mapped;
+      return pool.slice(0, limit);
+    } catch (error) {
+      console.error("[courses] Failed to load related courses:", error);
+      return [];
+    }
+  }
+);
+
+/** Published course slugs for static/ISR path generation. */
+export const getPublishedCourseSlugs = cache(async (): Promise<string[]> => {
+  try {
+    const { data } = await apiFetch<ApiCourse[]>("/courses", {
+      query: {
+        isPublished: true,
+        page: 1,
+        limit: 100,
+      },
+      next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+    });
+    return (Array.isArray(data) ? data : [])
+      .map((course) => course.slug)
+      .filter(Boolean);
+  } catch (error) {
+    console.error("[courses] Failed to load published course slugs:", error);
+    return [];
+  }
+});
+
 export function getAllCourses(): Course[] {
   return courses;
-}
-
-export function getCourseBySlug(slug: string): Course | undefined {
-  return courses.find((c) => c.slug === slug);
 }
 
 export function getCourseSlugs(): string[] {
@@ -56,16 +160,4 @@ export function filterCourses(filters: CourseFilters): {
   const items = result.slice(start, start + pageSize);
 
   return { items, total, page, pageSize, totalPages };
-}
-
-export function getRelatedCourses(slug: string, limit = 3): Course[] {
-  const current = getCourseBySlug(slug);
-  if (!current) return courses.slice(0, limit);
-  return courses
-    .filter((c) => c.slug !== slug && c.category === current.category)
-    .slice(0, limit);
-}
-
-export function getFeaturedCourses(limit = 3): Course[] {
-  return courses.slice(0, limit);
 }

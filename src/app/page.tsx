@@ -9,17 +9,39 @@ import { BenefitsSection } from "@/components/home/benefits-section";
 import { IndustrialTrainingPreview } from "@/components/home/industrial-training-preview";
 import { PageCta } from "@/components/common/page-cta";
 import { PageTransition } from "@/animations/page-transition";
+import { getActiveIndustryPartners } from "@/services/industry-partners.service";
+import { getFeaturedCourses } from "@/services/courses.service";
+import { getFeaturedPlacements } from "@/services/placements.service";
+import { getActiveTestimonials } from "@/services/testimonials.service";
+import { getWhoCanJoinSection } from "@/services/homepage.service";
 
-export default function HomePage() {
+/** Homepage ISR — extend Promise.all below as more sections go dynamic. */
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [
+    partners,
+    featuredCourses,
+    featuredPlacements,
+    testimonials,
+    whoCanJoin,
+  ] = await Promise.all([
+    getActiveIndustryPartners(),
+    getFeaturedCourses(3),
+    getFeaturedPlacements(3),
+    getActiveTestimonials(20),
+    getWhoCanJoinSection(),
+  ]);
+
   return (
     <PageTransition>
       <HeroSection />
-      <TrustedPartnersSection />
-      <FeaturedCoursesSection />
-      <PlacementHighlightsSection />
+      <TrustedPartnersSection partners={partners} />
+      <FeaturedCoursesSection courses={featuredCourses} />
+      <PlacementHighlightsSection stories={featuredPlacements} />
       <ScholarshipHighlightSection />
-      <TestimonialsSection />
-      <WhoCanJoinSection />
+      <TestimonialsSection testimonials={testimonials} />
+      {whoCanJoin && <WhoCanJoinSection section={whoCanJoin} />}
       <BenefitsSection />
       <IndustrialTrainingPreview />
       <PageCta />

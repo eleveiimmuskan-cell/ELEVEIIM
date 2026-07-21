@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   offerLetters,
   placementCompanies,
@@ -5,13 +6,44 @@ import {
   placementStories,
   salaryPackages,
 } from "@/data/placements";
+import { apiFetch } from "@/lib/api/client";
+import { mapApiPlacementToStory } from "@/lib/mappers/placement";
+import type { ApiPlacement } from "@/types/api-placement";
 import type { PlacementStory } from "@/types";
+
+const DEFAULT_REVALIDATE_SECONDS = 60;
 
 export interface PlacementFilters {
   search?: string;
   page?: number;
   pageSize?: number;
 }
+
+/**
+ * Featured active placements for the homepage (max `limit`).
+ * Cached per-request via React `cache` and revalidated via Next ISR.
+ */
+export const getFeaturedPlacements = cache(
+  async (limit = 3): Promise<PlacementStory[]> => {
+    try {
+      const { data } = await apiFetch<ApiPlacement[]>("/placements", {
+        query: {
+          featured: true,
+          active: true,
+          page: 1,
+          limit,
+        },
+        next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+      });
+      return (Array.isArray(data) ? data : [])
+        .slice(0, limit)
+        .map(mapApiPlacementToStory);
+    } catch (error) {
+      console.error("[placements] Failed to load featured placements:", error);
+      return [];
+    }
+  }
+);
 
 export function getAllPlacementStories(): PlacementStory[] {
   return placementStories;
@@ -60,7 +92,3 @@ export {
   salaryPackages,
   offerLetters,
 };
-
-export function getFeaturedPlacements(limit = 3): PlacementStory[] {
-  return placementStories.slice(0, limit);
-}

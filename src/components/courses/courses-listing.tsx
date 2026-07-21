@@ -62,9 +62,9 @@ export function CoursesListing() {
           No courses found. Try adjusting your search or filters.
         </p>
       ) : (
-        <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" key={`${category}-${page}-${search}`}>
+        <StaggerContainer className="grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3" key={`${category}-${page}-${search}`}>
           {items.map((course, i) => (
-            <StaggerItem key={course.slug}>
+            <StaggerItem key={course.slug} className="h-full">
               <CourseCard course={course} index={i} />
             </StaggerItem>
           ))}

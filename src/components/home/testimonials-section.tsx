@@ -1,11 +1,17 @@
 "use client";
 
-import { testimonials } from "@/data/testimonials";
 import { SectionReveal } from "@/components/common/motion-wrapper";
 import { SectionHeader } from "@/components/common/section-header";
 import { TestimonialMarquee } from "@/components/home/testimonial-marquee";
+import type { Testimonial } from "@/types";
 
-export function TestimonialsSection() {
+interface TestimonialsSectionProps {
+  testimonials: Testimonial[];
+}
+
+export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
+  if (testimonials.length === 0) return null;
+
   return (
     <SectionReveal className="overflow-hidden bg-brand py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

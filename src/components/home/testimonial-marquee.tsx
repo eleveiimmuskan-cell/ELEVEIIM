@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import type { Testimonial } from "@/types";
 import { GlassCard } from "@/components/common/glass-card";
+import { isRemoteMediaUrl } from "@/lib/media-url";
 import { cn } from "@/lib/utils";
 
 const GAP = 24;
@@ -29,7 +31,32 @@ interface TestimonialMarqueeProps {
   className?: string;
 }
 
+function TestimonialAvatar({ item }: { item: Testimonial }) {
+  const [failed, setFailed] = useState(false);
+  const showPhoto = Boolean(item.photoUrl) && !failed;
+
+  return (
+    <div className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/20 text-sm font-bold">
+      {showPhoto ? (
+        <Image
+          src={item.photoUrl!}
+          alt={item.name}
+          width={44}
+          height={44}
+          className="size-full object-cover"
+          unoptimized={isRemoteMediaUrl(item.photoUrl!)}
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        item.image
+      )}
+    </div>
+  );
+}
+
 function TestimonialCard({ item }: { item: Testimonial }) {
+  const stars = Math.min(5, Math.max(1, Math.round(item.rating) || 5));
+
   return (
     <motion.div
       className="h-full shrink-0"
@@ -38,26 +65,24 @@ function TestimonialCard({ item }: { item: Testimonial }) {
     >
       <GlassCard
         hover={false}
-        className="h-full border-white/20 bg-white/10 text-white backdrop-blur-xl hover:border-white/40"
+        className="flex h-full flex-col border-white/20 bg-white/10 text-white backdrop-blur-xl hover:border-white/40"
       >
         <div className="mb-3 flex gap-0.5">
-          {Array.from({ length: item.rating }).map((_, i) => (
+          {Array.from({ length: stars }).map((_, i) => (
             <Star
               key={i}
               className="size-4 fill-brand-accent text-brand-accent"
             />
           ))}
         </div>
-        <p className="text-sm leading-relaxed text-white/90">
+        <p className="line-clamp-5 flex-1 text-sm leading-relaxed text-white/90">
           &ldquo;{item.content}&rdquo;
         </p>
         <div className="mt-5 flex items-center gap-3">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold">
-            {item.image}
-          </div>
+          <TestimonialAvatar item={item} />
           <div className="min-w-0">
             <p className="font-semibold">{item.name}</p>
-            <p className="text-xs text-white/70">
+            <p className="truncate text-xs text-white/70">
               {item.role} · {item.company}
             </p>
           </div>
@@ -173,6 +198,8 @@ export function TestimonialMarquee({ items, className }: TestimonialMarqueeProps
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
   };
+
+  if (items.length === 0) return null;
 
   return (
     <div className={cn("relative mt-2 w-full", className)}>

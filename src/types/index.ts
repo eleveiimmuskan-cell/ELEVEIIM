@@ -17,6 +17,27 @@ export interface Partner {
   logo: string;
 }
 
+export type { IndustryPartner } from "./industry-partner";
+export type {
+  ApiCourse,
+  ApiCourseBatch,
+  ApiCourseCategory,
+  ApiCourseCertification,
+  ApiCourseTestimonial,
+  ApiCourseTrainer,
+} from "./api-course";
+export type {
+  ApiPlacement,
+  ApiPlacementCourse,
+  ApiPlacementPartner,
+} from "./api-placement";
+export type {
+  ApiTestimonial,
+  ApiTestimonialCourse,
+  ApiTestimonialPartner,
+} from "./api-testimonial";
+export type { ApiWhoCanJoinCard, ApiWhoCanJoinSection } from "./api-who-can-join";
+
 export interface CurriculumModule {
   title: string;
   topics: string[];
@@ -38,6 +59,8 @@ export interface Course {
   level: string;
   curriculum: CurriculumModule[];
   faqs: FAQItem[];
+  /** Optional reviews mapped from course testimonials on detail payloads. */
+  reviews?: Review[];
 }
 
 export interface Trainer {
@@ -89,7 +112,10 @@ export interface PlacementStory {
   batch: string;
   summary: string;
   story: string;
+  /** Initials fallback when no photo is available. */
   image: string;
+  /** Resolved student photo URL from the backend, if any. */
+  photoUrl?: string | null;
 }
 
 export interface Workshop {
@@ -109,7 +135,10 @@ export interface Testimonial {
   company: string;
   content: string;
   rating: number;
+  /** Initials fallback when no photo is available. */
   image: string;
+  /** Resolved student photo URL from the backend, if any. */
+  photoUrl?: string | null;
 }
 
 export interface Review {

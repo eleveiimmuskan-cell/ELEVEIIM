@@ -16,6 +16,7 @@ interface CourseCardProps {
 export function CourseCard({ course, index = 0 }: CourseCardProps) {
   return (
     <motion.div
+      className="h-full"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -23,7 +24,7 @@ export function CourseCard({ course, index = 0 }: CourseCardProps) {
       whileHover={{ scale: 1.02 }}
     >
       <GlassCard className="flex h-full flex-col">
-        <div className="mb-4 flex items-start justify-between gap-2">
+        <div className="mb-4 flex shrink-0 items-start justify-between gap-2">
           <Badge variant="outline" className="border-brand/20 text-brand">
             {course.category}
           </Badge>
@@ -33,27 +34,31 @@ export function CourseCard({ course, index = 0 }: CourseCardProps) {
           </div>
         </div>
 
-        <h3 className="text-lg font-bold text-foreground">{course.title}</h3>
-        <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+        <h3 className="line-clamp-2 min-h-[3.5rem] text-lg font-bold leading-snug text-foreground">
+          {course.title}
+        </h3>
+        <p className="mt-2 line-clamp-3 min-h-[3.75rem] flex-1 text-sm leading-relaxed text-muted-foreground">
           {course.shortDescription}
         </p>
 
-        <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+        <ul className="mt-4 shrink-0 space-y-2 text-sm text-muted-foreground">
           <li className="flex items-center gap-2">
             <Clock className="size-4 shrink-0 text-brand" />
-            {course.duration} · {course.batchTiming}
+            <span className="line-clamp-1">
+              {course.duration} · {course.batchTiming}
+            </span>
           </li>
           <li className="flex items-center gap-2">
             <Award className="size-4 shrink-0 text-brand" />
-            {course.certification}
+            <span className="line-clamp-1">{course.certification}</span>
           </li>
           <li className="flex items-center gap-2">
             <User className="size-4 shrink-0 text-brand" />
-            {course.trainer}
+            <span className="line-clamp-1">{course.trainer}</span>
           </li>
         </ul>
 
-        <Button asChild className="mt-6 w-full bg-brand hover:bg-brand/90">
+        <Button asChild className="mt-6 w-full shrink-0 bg-brand hover:bg-brand/90">
           <Link href={`/courses/${course.slug}`}>View Course</Link>
         </Button>
       </GlassCard>
