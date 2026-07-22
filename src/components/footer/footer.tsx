@@ -1,22 +1,77 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { getAllCourses } from "@/services/courses.service";
-import { NAV_LINKS, SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
+import { SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
 import { phoneTelHref, siteContact } from "@/data/site";
 import { BrandImage } from "@/components/common/brand-image";
-import Image from "next/image";
+import type { ApiFooter } from "@/types/api-footer";
 
-const SOCIAL_ITEMS = [
-  { label: "Facebook", href: SOCIAL_LINKS.facebook, icon: "/images/socials/facebook.png" },
-  { label: "Instagram", href: SOCIAL_LINKS.instagram, icon: "/images/socials/instagram.png" },
-  { label: "LinkedIn", href: SOCIAL_LINKS.linkedin, icon: "/images/socials/linkedin.png" },
-  { label: "YouTube", href: SOCIAL_LINKS.youtube, icon: "/images/socials/youtube.png" },
-  { label: "Twitter", href: SOCIAL_LINKS.twitter, icon: "/images/socials/twitter.png" },
-] as const;
+const FALLBACK_DESCRIPTION =
+  "Premium training institute empowering learners with industry-ready skills, expert mentorship, and guaranteed career support.";
 
-export function Footer() {
-  const courses = getAllCourses().slice(0, 5);
-  const currentYear = new Date().getFullYear();
+const FALLBACK_QUICK_LINKS = [
+  { id: "ql-about", label: "About Us", url: "/about" },
+  { id: "ql-courses", label: "Courses", url: "/courses" },
+  { id: "ql-placements", label: "Placements", url: "/placements" },
+  { id: "ql-blogs", label: "Blogs", url: "/blogs" },
+  { id: "ql-contact", label: "Contact", url: "/contact" },
+  { id: "ql-scholarship", label: "Scholarship", url: "/scholarship" },
+];
+
+const FALLBACK_SOCIAL = [
+  { id: "fb", platform: "Facebook", url: SOCIAL_LINKS.facebook },
+  { id: "ig", platform: "Instagram", url: SOCIAL_LINKS.instagram },
+  { id: "li", platform: "LinkedIn", url: SOCIAL_LINKS.linkedin },
+  { id: "yt", platform: "YouTube", url: SOCIAL_LINKS.youtube },
+  { id: "tw", platform: "Twitter", url: SOCIAL_LINKS.twitter },
+];
+
+const SOCIAL_ICONS: Record<string, string> = {
+  facebook: "/images/socials/facebook.png",
+  instagram: "/images/socials/instagram.png",
+  linkedin: "/images/socials/linkedin.png",
+  youtube: "/images/socials/youtube.png",
+  twitter: "/images/socials/twitter.png",
+  x: "/images/socials/twitter.png",
+};
+
+function socialIconPath(platform: string): string | null {
+  const key = platform.trim().toLowerCase().replace(/\s+/g, "");
+  return SOCIAL_ICONS[key] ?? null;
+}
+
+function phoneHref(phone: string): string {
+  const digits = phone.replace(/[^\d+]/g, "");
+  return digits ? `tel:${digits}` : phoneTelHref;
+}
+
+function mapsHref(address: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+}
+
+interface FooterProps {
+  data?: ApiFooter | null;
+}
+
+export function Footer({ data = null }: FooterProps) {
+  const description = data?.description?.trim() || FALLBACK_DESCRIPTION;
+  const quickLinks =
+    data?.quickLinks?.filter((l) => l.label.trim() && l.url.trim()) ??
+    FALLBACK_QUICK_LINKS;
+  const programs =
+    data?.programs?.filter((l) => l.label.trim() && l.url.trim()) ?? [];
+  const socialLinks =
+    data?.socialLinks?.filter((s) => s.platform.trim() && s.url.trim()) ??
+    FALLBACK_SOCIAL;
+  const email = data?.email?.trim() || siteContact.email;
+  const phone = data?.phone?.trim() || siteContact.phone;
+  const address = data?.address?.trim() || siteContact.address;
+  const copyrightText =
+    data?.copyrightText?.trim() ||
+    `© ${new Date().getFullYear()} ${SITE_NAME} Educations Private Limited. All rights reserved.`;
+  const addressMapsUrl = data?.address?.trim()
+    ? mapsHref(address)
+    : siteContact.mapsUrl;
 
   return (
     <footer className="border-t border-border bg-white" aria-label="Site footer">
@@ -25,28 +80,34 @@ export function Footer() {
           <div className="space-y-4">
             <BrandImage href="/" size="md" />
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Premium training institute empowering learners with industry-ready
-              skills, expert mentorship, and guaranteed career support.
+              {description}
             </p>
-            <div className="flex gap-3">
-              {SOCIAL_ITEMS.map(({ label, href, icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="flex size-9 items-center justify-center rounded-lg border border-border text-xs font-bold uppercase text-muted-foreground transition-colors hover:border-brand hover:bg-brand/5 hover:text-brand"
-                >
-                  <Image
-                    src={icon}
-                    alt={label}
-                    width={20}
-                    height={20}
-                    className="object-contain"
-                  />
-                </a>
-              ))}
+            <div className="flex flex-wrap gap-3">
+              {socialLinks.map(({ id, platform, url }) => {
+                const icon = socialIconPath(platform);
+                return (
+                  <a
+                    key={id}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={platform}
+                    className="flex size-9 items-center justify-center rounded-lg border border-border text-xs font-bold uppercase text-muted-foreground transition-colors hover:border-brand hover:bg-brand/5 hover:text-brand"
+                  >
+                    {icon ? (
+                      <Image
+                        src={icon}
+                        alt={platform}
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    ) : (
+                      platform.slice(0, 1)
+                    )}
+                  </a>
+                );
+              })}
             </div>
           </div>
 
@@ -55,24 +116,16 @@ export function Footer() {
               Quick Links
             </h3>
             <ul className="space-y-2">
-              {NAV_LINKS.map((link) => (
-                <li key={link.href}>
+              {quickLinks.map((link) => (
+                <li key={link.id}>
                   <Link
-                    href={link.href}
+                    href={link.url}
                     className="text-sm text-muted-foreground transition-colors hover:text-brand"
                   >
                     {link.label}
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  href="/scholarship"
-                  className="text-sm text-muted-foreground transition-colors hover:text-brand"
-                >
-                  Scholarship
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -81,16 +134,20 @@ export function Footer() {
               Programs
             </h3>
             <ul className="space-y-2">
-              {courses.map((course) => (
-                <li key={course.slug}>
-                  <Link
-                    href={`/courses/${course.slug}`}
-                    className="text-sm text-muted-foreground transition-colors hover:text-brand"
-                  >
-                    {course.title}
-                  </Link>
-                </li>
-              ))}
+              {programs.length > 0 ? (
+                programs.map((link) => (
+                  <li key={link.id}>
+                    <Link
+                      href={link.url}
+                      className="text-sm text-muted-foreground transition-colors hover:text-brand"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="text-sm text-muted-foreground">—</li>
+              )}
             </ul>
           </div>
 
@@ -99,29 +156,28 @@ export function Footer() {
               Contact
             </h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
-            
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
                 <a
-                  href={siteContact.mapsUrl}
+                  href={addressMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-brand hover:underline hover:underline-offset-2"
+                  className="whitespace-pre-line transition-colors hover:text-brand hover:underline hover:underline-offset-2"
                   aria-label="Open ELEVEIIM location in Google Maps"
                 >
-                  {siteContact.address}
+                  {address}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="size-4 shrink-0 text-brand" />
-                <a href={phoneTelHref} className="hover:text-brand">
-                  {siteContact.phone}
+                <a href={phoneHref(phone)} className="hover:text-brand">
+                  {phone}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="size-4 shrink-0 text-brand" />
-                <a href={`mailto:${siteContact.email}`} className="hover:text-brand">
-                  {siteContact.email}
+                <a href={`mailto:${email}`} className="hover:text-brand">
+                  {email}
                 </a>
               </li>
             </ul>
@@ -129,9 +185,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
-          <p className="text-sm text-muted-foreground">
-            © {currentYear} {SITE_NAME} Educations Private Limited. All rights reserved.
-          </p>
+          <p className="text-sm text-muted-foreground">{copyrightText}</p>
         </div>
       </div>
     </footer>

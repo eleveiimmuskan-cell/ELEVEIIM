@@ -9,6 +9,7 @@ import { WhatsAppButton } from "@/components/common/whatsapp-button";
 import { FloatingCallButton } from "@/components/common/floating-call-button";
 import { ScholarshipModalProvider } from "@/components/common/scholarship-modal-provider";
 import { SmoothScrollProvider } from "@/components/common/smooth-scroll";
+import { getSiteFooter } from "@/services/footer.service";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -24,9 +25,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = defaultMetadata;
 
-export default function RootLayout({
+/** Footer chrome ISR — matches other public API sections. */
+export const revalidate = 60;
+
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const footer = await getSiteFooter();
+
   return (
     <html lang="en" className={`${jakarta.variable} ${geistMono.variable}`}>
       <body className="min-h-screen bg-white font-sans text-foreground antialiased">
@@ -34,7 +40,7 @@ export default function RootLayout({
         <SmoothScrollProvider>
           <Navbar />
           <main>{children}</main>
-          <Footer />
+          <Footer data={footer} />
           <FloatingCallButton />
           <WhatsAppButton />
           <ScholarshipModalProvider />
