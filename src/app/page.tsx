@@ -13,7 +13,10 @@ import { getActiveIndustryPartners } from "@/services/industry-partners.service"
 import { getFeaturedCourses } from "@/services/courses.service";
 import { getFeaturedPlacements } from "@/services/placements.service";
 import { getActiveTestimonials } from "@/services/testimonials.service";
-import { getWhoCanJoinSection } from "@/services/homepage.service";
+import {
+  getWhoCanJoinSection,
+  getFooterCtaSection,
+} from "@/services/homepage.service";
 
 /** Homepage ISR — extend Promise.all below as more sections go dynamic. */
 export const revalidate = 60;
@@ -25,12 +28,14 @@ export default async function HomePage() {
     featuredPlacements,
     testimonials,
     whoCanJoin,
+    footerCta,
   ] = await Promise.all([
     getActiveIndustryPartners(),
     getFeaturedCourses(3),
     getFeaturedPlacements(3),
     getActiveTestimonials(20),
     getWhoCanJoinSection(),
+    getFooterCtaSection(),
   ]);
 
   return (
@@ -44,7 +49,18 @@ export default async function HomePage() {
       {whoCanJoin && <WhoCanJoinSection section={whoCanJoin} />}
       <BenefitsSection />
       <IndustrialTrainingPreview />
-      <PageCta />
+      {footerCta ? (
+        <PageCta
+          title={footerCta.title}
+          description={footerCta.description}
+          primaryLabel={footerCta.button1Text}
+          primaryHref={footerCta.button1Url}
+          secondaryLabel={footerCta.button2Text}
+          secondaryHref={footerCta.button2Url}
+        />
+      ) : (
+        <PageCta />
+      )}
     </PageTransition>
   );
 }

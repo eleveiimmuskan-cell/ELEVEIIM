@@ -46,22 +46,23 @@ export function PageCta({
               <Button
                 asChild
                 size="lg"
-                // className="bg-white text-brand hover:bg-white"
-                 className="border-white/40 bg-transparent text-white hover:bg-white/10"
+                className="border-white/40 bg-transparent text-white hover:bg-white/10"
               >
                 <Link href={primaryHref}>
                   {primaryLabel}
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/40 bg-transparent text-white hover:bg-white/10"
-              >
-                <Link href={secondaryHref}>{secondaryLabel}</Link>
-              </Button>
+              {secondaryLabel && secondaryHref ? (
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-white/40 bg-transparent text-white hover:bg-white/10"
+                >
+                  <Link href={secondaryHref}>{secondaryLabel}</Link>
+                </Button>
+              ) : null}
             </div>
           </div>
         </motion.div>
