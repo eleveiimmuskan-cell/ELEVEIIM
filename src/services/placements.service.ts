@@ -7,7 +7,10 @@ import {
   salaryPackages,
 } from "@/data/placements";
 import { apiFetch } from "@/lib/api/client";
-import { mapApiPlacementToStory } from "@/lib/mappers/placement";
+import {
+  extractPlacementIdFromSlug,
+  mapApiPlacementToStory,
+} from "@/lib/mappers/placement";
 import type { ApiPlacement } from "@/types/api-placement";
 import type { PlacementStory } from "@/types";
 
@@ -27,7 +30,9 @@ export interface PlacementFilters {
 export const getFeaturedPlacements = cache(
   async (limit = 3): Promise<PlacementStory[]> => {
     const mapList = (data: ApiPlacement[] | undefined) =>
-      (Array.isArray(data) ? data : []).slice(0, limit).map(mapApiPlacementToStory);
+      (Array.isArray(data) ? data : [])
+        .slice(0, limit)
+        .map(mapApiPlacementToStory);
 
     try {
       const { data } = await apiFetch<ApiPlacement[]>("/placements", {
@@ -69,9 +74,37 @@ export function getAllPlacementStories(): PlacementStory[] {
   return placementStories;
 }
 
-export function getPlacementBySlug(slug: string): PlacementStory | undefined {
+/** Mock-only lookup (sitemap / legacy static paths). */
+export function getMockPlacementBySlug(
+  slug: string
+): PlacementStory | undefined {
   return placementStories.find((p) => p.slug === slug);
 }
+
+/**
+ * Resolve a placement story by URL slug.
+ * Supports mock stories and API placements (`name-slug-{uuid}` or raw UUID).
+ */
+export const getPlacementBySlug = cache(
+  async (slug: string): Promise<PlacementStory | null> => {
+    const mock = getMockPlacementBySlug(slug);
+    if (mock) return mock;
+
+    const id = extractPlacementIdFromSlug(slug);
+    if (!id) return null;
+
+    try {
+      const { data } = await apiFetch<ApiPlacement>(`/placements/${id}`, {
+        next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+      });
+      if (!data) return null;
+      return mapApiPlacementToStory(data);
+    } catch (error) {
+      console.error(`[placements] Failed to load placement "${slug}":`, error);
+      return null;
+    }
+  }
+);
 
 export function getPlacementSlugs(): string[] {
   return placementStories.map((p) => p.slug);

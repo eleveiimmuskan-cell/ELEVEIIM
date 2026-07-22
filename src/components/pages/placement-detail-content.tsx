@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
@@ -11,7 +13,31 @@ import {
   PREMIUM_EASE,
   VIEWPORT_ONCE,
 } from "@/components/common/motion-wrapper";
+import { isRemoteMediaUrl } from "@/lib/media-url";
 import type { PlacementStory } from "@/types";
+
+function StudentHeroAvatar({ story }: { story: PlacementStory }) {
+  const [failed, setFailed] = useState(false);
+  const showPhoto = Boolean(story.photoUrl) && !failed;
+
+  return (
+    <div className="relative mx-auto mb-4 flex size-20 items-center justify-center overflow-hidden rounded-2xl bg-white/15 text-2xl font-bold text-white backdrop-blur-sm">
+      {showPhoto ? (
+        <Image
+          src={story.photoUrl!}
+          alt={story.studentName}
+          width={80}
+          height={80}
+          className="size-full object-cover"
+          unoptimized={isRemoteMediaUrl(story.photoUrl!)}
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        story.image
+      )}
+    </div>
+  );
+}
 
 export function PlacementDetailContent({ story }: { story: PlacementStory }) {
   return (
@@ -24,9 +50,7 @@ export function PlacementDetailContent({ story }: { story: PlacementStory }) {
             viewport={VIEWPORT_ONCE}
             transition={{ duration: 0.75, ease: PREMIUM_EASE }}
           >
-            <div className="mx-auto mb-4 flex size-20 items-center justify-center rounded-2xl bg-white/15 text-2xl font-bold text-white backdrop-blur-sm">
-              {story.image}
-            </div>
+            <StudentHeroAvatar story={story} />
             <h1 className="text-3xl font-bold text-white sm:text-4xl">{story.studentName}</h1>
             <p className="mt-2 text-lg text-white/85">
               {story.role} at {story.company}

@@ -15,13 +15,15 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   return getPlacementSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const story = getPlacementBySlug(slug);
+  const story = await getPlacementBySlug(slug);
   if (!story) return { title: "Placement Not Found" };
 
   return createPageMetadata({
@@ -33,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PlacementDetailPage({ params }: Props) {
   const { slug } = await params;
-  const story = getPlacementBySlug(slug);
+  const story = await getPlacementBySlug(slug);
   if (!story) notFound();
 
   return (

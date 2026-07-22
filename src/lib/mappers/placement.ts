@@ -24,7 +24,8 @@ export function mapApiPlacementToStory(api: ApiPlacement): PlacementStory {
 
   return {
     id: api.id,
-    slug: `${slugBase}-${api.id.slice(0, 8)}`,
+    // Full UUID suffix so `/placements/[slug]` can resolve via GET /placements/:id
+    slug: `${slugBase}-${api.id}`,
     studentName: api.studentName,
     course: api.course?.title?.trim() || "ELEVEIIM Program",
     company: api.industryPartner?.name?.trim() || "Industry Partner",
@@ -36,4 +37,21 @@ export function mapApiPlacementToStory(api: ApiPlacement): PlacementStory {
     image: studentInitials(api.studentName),
     photoUrl,
   };
+}
+
+const PLACEMENT_UUID_RE =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Extracts a placement UUID from a detail slug or raw id. */
+export function extractPlacementIdFromSlug(slug: string): string | null {
+  const trimmed = slug.trim();
+  if (
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      trimmed
+    )
+  ) {
+    return trimmed;
+  }
+  const match = trimmed.match(PLACEMENT_UUID_RE);
+  return match ? match[0] : null;
 }
