@@ -9,12 +9,8 @@ import { aboutContent } from "@/data/about";
 import { AboutPageContent } from "@/components/pages/animated-page-sections";
 import { TrainersSection } from "@/components/home/trainers-section";
 import { WorkshopsSection } from "@/components/home/workshops-section";
-import {
-  getAboutHero,
-  getAboutMissionVision,
-  getAboutStatistics,
-  getAboutValues,
-} from "@/services/about.service";
+import { getAboutPage } from "@/services/about.service";
+import { getFeaturedTrainers } from "@/services/trainers.service";
 
 export const metadata: Metadata = createPageMetadata({
   title: "About Us",
@@ -23,7 +19,7 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ["about", "training institute", "mission", "vision", "ELEVEIIM"],
 });
 
-/** About page ISR — all four About CMS sections load in parallel. */
+/** About page ISR — CMS aggregate + trainers. */
 export const revalidate = 60;
 
 const HERO_FALLBACK = {
@@ -34,12 +30,15 @@ const HERO_FALLBACK = {
 } as const;
 
 export default async function AboutPage() {
-  const [hero, missionVision, valuesSection, statistics] = await Promise.all([
-    getAboutHero(),
-    getAboutMissionVision(),
-    getAboutValues(),
-    getAboutStatistics(),
+  const [about, trainers] = await Promise.all([
+    getAboutPage(),
+    getFeaturedTrainers(8),
   ]);
+
+  const hero = about?.hero ?? null;
+  const missionVision = about?.missionVision ?? null;
+  const valuesSection = about?.values ?? null;
+  const statistics = about?.statistics ?? null;
 
   return (
     <PageTransition>
@@ -77,7 +76,7 @@ export default async function AboutPage() {
             : null
         }
       />
-      <TrainersSection />
+      <TrainersSection trainers={trainers} />
       <WorkshopsSection />
       <PageCta />
     </PageTransition>

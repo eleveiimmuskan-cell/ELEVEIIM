@@ -1,4 +1,4 @@
-/** About hero from `GET /about/hero`. */
+/** About hero from `GET /about` (or `/about/hero`). */
 export interface ApiAboutHero {
   id: string;
   title: string;
@@ -10,7 +10,7 @@ export interface ApiAboutHero {
   updatedAt: string;
 }
 
-/** About mission & vision from `GET /about/mission-vision`. */
+/** About mission & vision from `GET /about` (or `/about/mission-vision`). */
 export interface ApiAboutMissionVision {
   id: string;
   mission: string;
@@ -20,7 +20,7 @@ export interface ApiAboutMissionVision {
   updatedAt: string;
 }
 
-/** About statistics from `GET /about/statistics`. */
+/** About statistics from `GET /about` (or `/about/statistics`). */
 export interface ApiAboutStatistics {
   id: string;
   studentsTrained: number;
@@ -32,7 +32,7 @@ export interface ApiAboutStatistics {
   updatedAt: string;
 }
 
-/** Value card inside `GET /about/values`. */
+/** Value card inside the About values section. */
 export interface ApiAboutValueItem {
   id: string;
   title: string;
@@ -44,7 +44,7 @@ export interface ApiAboutValueItem {
   updatedAt: string;
 }
 
-/** About values section from `GET /about/values`. */
+/** About values section from `GET /about` (or `/about/values`). */
 export interface ApiAboutValues {
   id: string;
   title: string;
@@ -52,4 +52,12 @@ export interface ApiAboutValues {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+/** Aggregate About page payload from `GET /about`. Inactive sections are null. */
+export interface ApiAboutPage {
+  hero: ApiAboutHero | null;
+  missionVision: ApiAboutMissionVision | null;
+  statistics: ApiAboutStatistics | null;
+  values: ApiAboutValues | null;
 }

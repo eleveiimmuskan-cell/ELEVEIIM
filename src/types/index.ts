@@ -71,7 +71,10 @@ export interface Trainer {
   experience: string;
   students: number;
   rating: number;
+  /** Initials fallback when no photo is available. */
   image: string;
+  /** Resolved trainer photo URL from the backend, if any. */
+  photoUrl?: string | null;
 }
 
 export interface PlacementCompany {
