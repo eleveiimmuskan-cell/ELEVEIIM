@@ -28,6 +28,7 @@ export const courses: Course[] = [
     rating: 4.9,
     batchTiming: "Weekday · 10 AM – 1 PM",
     category: "Development",
+    tags: ["Development"],
     students: 2400,
     level: "Beginner to Advanced",
     curriculum: [
@@ -51,6 +52,7 @@ export const courses: Course[] = [
     rating: 4.8,
     batchTiming: "Weekend · 2 PM – 6 PM",
     category: "Data & AI",
+    tags: ["Data & AI"],
     students: 1800,
     level: "Intermediate",
     curriculum: [
@@ -74,6 +76,7 @@ export const courses: Course[] = [
     rating: 4.7,
     batchTiming: "Weekday · 6 PM – 9 PM",
     category: "Marketing",
+    tags: ["Marketing"],
     students: 1200,
     level: "All Levels",
     curriculum: [
@@ -97,6 +100,7 @@ export const courses: Course[] = [
     rating: 4.9,
     batchTiming: "Weekend · 10 AM – 2 PM",
     category: "Design",
+    tags: ["Design"],
     students: 950,
     level: "Beginner",
     curriculum: [
@@ -120,6 +124,7 @@ export const courses: Course[] = [
     rating: 4.8,
     batchTiming: "Weekday · 7 PM – 10 PM",
     category: "Cloud",
+    tags: ["Cloud"],
     students: 1100,
     level: "Advanced",
     curriculum: [
@@ -143,6 +148,7 @@ export const courses: Course[] = [
     rating: 4.9,
     batchTiming: "Weekend · 3 PM – 7 PM",
     category: "Security",
+    tags: ["Security"],
     students: 780,
     level: "Intermediate",
     curriculum: [

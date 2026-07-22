@@ -8,6 +8,7 @@ import { PageCta } from "@/components/common/page-cta";
 import { PageTransition } from "@/animations/page-transition";
 import { PageContentSection } from "@/components/common/motion-wrapper";
 import { CoursesListing } from "@/components/courses/courses-listing";
+import { getPublishedCourses } from "@/services/courses.service";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Courses",
@@ -17,7 +18,12 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ["courses", "training programs", "certification", "ELEVEIIM"],
 });
 
-export default function CoursesPage() {
+/** Courses listing ISR. */
+export const revalidate = 60;
+
+export default async function CoursesPage() {
+  const courses = await getPublishedCourses(50);
+
   return (
     <PageTransition>
       <JsonLd
@@ -32,8 +38,10 @@ export default function CoursesPage() {
         description="Hands-on learning with certifications, expert trainers, and flexible batch timings."
       />
       <PageContentSection>
-          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Courses" }]} />
-          <CoursesListing />
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Courses" }]}
+        />
+        <CoursesListing courses={courses} />
       </PageContentSection>
       <PageCta />
     </PageTransition>

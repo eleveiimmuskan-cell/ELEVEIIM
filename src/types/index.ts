@@ -55,6 +55,8 @@ export interface Course {
   rating: number;
   batchTiming: string;
   category: string;
+  /** Course tags from the API (used for listing chip filters). */
+  tags: string[];
   students: number;
   level: string;
   curriculum: CurriculumModule[];

@@ -243,6 +243,9 @@ export function mapApiCourseToCourse(api: ApiCourse): Course {
     rating: resolveRating(api),
     batchTiming: resolveBatchTiming(api),
     category: api.category?.name?.trim() || api.tags?.[0] || levelLabel,
+    tags: Array.isArray(api.tags)
+      ? api.tags.map((t) => t.trim()).filter(Boolean)
+      : [],
     students: resolveMockStudents(api.title),
     level: levelLabel,
     curriculum:

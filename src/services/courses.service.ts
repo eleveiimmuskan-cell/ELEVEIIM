@@ -15,6 +15,29 @@ export interface CourseFilters {
 }
 
 /**
+ * All published courses for the public listing page (~50 max).
+ * Filtering (search + chips) is done on the client.
+ */
+export const getPublishedCourses = cache(
+  async (limit = 50): Promise<Course[]> => {
+    try {
+      const { data } = await apiFetch<ApiCourse[]>("/courses", {
+        query: {
+          isPublished: true,
+          page: 1,
+          limit,
+        },
+        next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+      });
+      return (Array.isArray(data) ? data : []).map(mapApiCourseToCourse);
+    } catch (error) {
+      console.error("[courses] Failed to load published courses:", error);
+      return [];
+    }
+  }
+);
+
+/**
  * Featured published courses for the homepage (max `limit`).
  * Cached per-request via React `cache` and revalidated via Next ISR.
  */
