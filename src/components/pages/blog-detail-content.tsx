@@ -13,15 +13,26 @@ import {
 } from "@/components/common/motion-wrapper";
 import type { BlogPost } from "@/types";
 
+function formatPostDate(value: string): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
 export function BlogDetailContent({
   post,
   related,
-  paragraphs,
 }: {
   post: BlogPost;
   related: BlogPost[];
-  paragraphs: string[];
 }) {
+  const publishedLabel = formatPostDate(post.publishedAt);
+
   return (
     <PageContentSection narrow className="pt-24">
       <Breadcrumb
@@ -39,18 +50,16 @@ export function BlogDetailContent({
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{post.title}</h1>
 
         <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <span>{post.author} · {post.authorRole}</span>
+          <span>
+            {post.author} · {post.authorRole}
+          </span>
           <span className="flex items-center gap-1">
             <Clock className="size-4" />
             {post.readingTime} min read
           </span>
-          <time dateTime={post.publishedAt}>
-            {new Date(post.publishedAt).toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
+          {publishedLabel ? (
+            <time dateTime={post.publishedAt}>{publishedLabel}</time>
+          ) : null}
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
@@ -63,13 +72,10 @@ export function BlogDetailContent({
         </div>
       </AnimatedHeading>
 
-      <StaggerContainer className="prose prose-neutral mt-10 max-w-none" stagger={0.06}>
-        {paragraphs.map((p, i) => (
-          <StaggerItem key={i}>
-            <p className="mb-4 leading-relaxed text-muted-foreground">{p}</p>
-          </StaggerItem>
-        ))}
-      </StaggerContainer>
+      <div
+        className="prose prose-neutral mt-10 max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-brand prose-strong:text-foreground"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
 
       <StaggerContainer stagger={0.1}>
         <StaggerItem>

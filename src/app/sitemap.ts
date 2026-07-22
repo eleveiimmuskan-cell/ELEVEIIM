@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/constants";
 import { getCourseSlugs } from "@/services/courses.service";
-import { getBlogSlugs } from "@/services/blogs.service";
+import { getPublishedBlogSlugs } from "@/services/blogs.service";
 import { getPlacementSlugs } from "@/services/placements.service";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
     "/about",
@@ -21,6 +21,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : 0.8,
   }));
 
+  const blogSlugs = await getPublishedBlogSlugs();
+
   const courseRoutes = getCourseSlugs().map((slug) => ({
     url: `${SITE_URL}/courses/${slug}`,
     lastModified: new Date(),
@@ -28,7 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  const blogRoutes = getBlogSlugs().map((slug) => ({
+  const blogRoutes = blogSlugs.map((slug) => ({
     url: `${SITE_URL}/blogs/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,

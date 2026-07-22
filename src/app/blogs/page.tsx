@@ -6,6 +6,7 @@ import { PageHero, Breadcrumb } from "@/components/common/page-header";
 import { PageTransition } from "@/animations/page-transition";
 import { PageContentSection } from "@/components/common/motion-wrapper";
 import { BlogsListing } from "@/components/blogs/blogs-listing";
+import { getPublishedBlogPosts } from "@/services/blogs.service";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Blog",
@@ -15,7 +16,12 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ["blog", "career tips", "education", "technology"],
 });
 
-export default function BlogsPage() {
+/** Blogs listing ISR. */
+export const revalidate = 60;
+
+export default async function BlogsPage() {
+  const posts = await getPublishedBlogPosts(50);
+
   return (
     <PageTransition>
       <JsonLd
@@ -30,10 +36,10 @@ export default function BlogsPage() {
         description="Expert articles on careers, technology, placements, and education."
       />
       <PageContentSection>
-          <Breadcrumb items={
-            [{ label: "Home", href: "/" }, { label: "Blog" }]
-            } />
-          <BlogsListing />
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Blog" }]}
+        />
+        <BlogsListing posts={posts} />
       </PageContentSection>
     </PageTransition>
   );

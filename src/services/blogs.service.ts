@@ -1,75 +1,89 @@
-import { blogPosts } from "@/data/blogs";
+import { cache } from "react";
+import { ApiError, apiFetch } from "@/lib/api/client";
+import { mapApiBlogPostToUi } from "@/lib/mappers/blog";
+import type { ApiBlogPost } from "@/types/api-blog";
 import type { BlogPost } from "@/types";
+
+const DEFAULT_REVALIDATE_SECONDS = 60;
 
 export interface BlogFilters {
   search?: string;
   category?: string;
-  tag?: string;
   page?: number;
   pageSize?: number;
 }
 
-export function getAllBlogPosts(): BlogPost[] {
-  return blogPosts;
-}
-
-export function getBlogBySlug(slug: string): BlogPost | undefined {
-  return blogPosts.find((b) => b.slug === slug);
-}
-
-export function getBlogSlugs(): string[] {
-  return blogPosts.map((b) => b.slug);
-}
-
-export function getBlogCategories(): string[] {
-  return [...new Set(blogPosts.map((b) => b.category))];
-}
-
-export function filterBlogPosts(filters: BlogFilters) {
-  const pageSize = filters.pageSize ?? 6;
-  const page = filters.page ?? 1;
-
-  let result = [...blogPosts];
-
-  if (filters.category && filters.category !== "All") {
-    result = result.filter((b) => b.category === filters.category);
+/**
+ * Published blog posts for the public listing (~50 max).
+ * Search/category filtering is done on the client.
+ */
+export const getPublishedBlogPosts = cache(
+  async (limit = 50): Promise<BlogPost[]> => {
+    try {
+      const { data } = await apiFetch<ApiBlogPost[]>("/blog", {
+        query: {
+          isPublished: true,
+          page: 1,
+          limit,
+        },
+        next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+      });
+      return (Array.isArray(data) ? data : []).map(mapApiBlogPostToUi);
+    } catch (error) {
+      console.error("[blog] Failed to load published posts:", error);
+      return [];
+    }
   }
+);
 
-  if (filters.tag) {
-    result = result.filter((b) => b.tags.includes(filters.tag!));
+/** Slugs for ISR static params. */
+export const getPublishedBlogSlugs = cache(async (): Promise<string[]> => {
+  const posts = await getPublishedBlogPosts(50);
+  return posts.map((p) => p.slug).filter(Boolean);
+});
+
+/**
+ * Published blog post by slug for the public detail page.
+ */
+export const getBlogBySlug = cache(
+  async (slug: string): Promise<BlogPost | null> => {
+    if (!slug?.trim()) return null;
+
+    try {
+      const { data } = await apiFetch<ApiBlogPost>(
+        `/blog/slug/${encodeURIComponent(slug)}`,
+        { next: { revalidate: DEFAULT_REVALIDATE_SECONDS } }
+      );
+
+      if (!data || data.isPublished === false) return null;
+      return mapApiBlogPostToUi(data);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null;
+      console.error(`[blog] Failed to load post "${slug}":`, error);
+      return null;
+    }
   }
+);
 
-  if (filters.search?.trim()) {
-    const q = filters.search.toLowerCase();
-    result = result.filter(
-      (b) =>
-        b.title.toLowerCase().includes(q) ||
-        b.excerpt.toLowerCase().includes(q) ||
-        b.tags.some((t) => t.includes(q))
-    );
+/**
+ * Related published posts for a detail page (same category when possible).
+ */
+export const getRelatedPosts = cache(
+  async (slug: string, limit = 3): Promise<BlogPost[]> => {
+    try {
+      const current = await getBlogBySlug(slug);
+      const posts = await getPublishedBlogPosts(50);
+      const others = posts.filter((p) => p.slug !== slug);
+
+      const sameCategory = current
+        ? others.filter((p) => p.category === current.category)
+        : [];
+
+      const pool = sameCategory.length >= limit ? sameCategory : others;
+      return pool.slice(0, limit);
+    } catch (error) {
+      console.error(`[blog] Failed to load related posts for "${slug}":`, error);
+      return [];
+    }
   }
-
-  const total = result.length;
-  const totalPages = Math.ceil(total / pageSize);
-  const start = (page - 1) * pageSize;
-
-  return {
-    items: result.slice(start, start + pageSize),
-    total,
-    page,
-    pageSize,
-    totalPages,
-  };
-}
-
-export function getRelatedPosts(slug: string, limit = 3): BlogPost[] {
-  const current = getBlogBySlug(slug);
-  if (!current) return blogPosts.slice(0, limit);
-  return blogPosts
-    .filter((b) => b.slug !== slug && b.category === current.category)
-    .slice(0, limit);
-}
-
-export function getFeaturedPosts(limit = 2): BlogPost[] {
-  return blogPosts.filter((b) => b.featured).slice(0, limit);
-}
+);

@@ -7,7 +7,7 @@ import { PageTransition } from "@/animations/page-transition";
 import { BlogDetailContent } from "@/components/pages/blog-detail-content";
 import {
   getBlogBySlug,
-  getBlogSlugs,
+  getPublishedBlogSlugs,
   getRelatedPosts,
 } from "@/services/blogs.service";
 
@@ -15,13 +15,17 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+/** Blog detail ISR. */
+export const revalidate = 60;
+
 export async function generateStaticParams() {
-  return getBlogSlugs().map((slug) => ({ slug }));
+  const slugs = await getPublishedBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogBySlug(slug);
+  const post = await getBlogBySlug(slug);
   if (!post) return { title: "Article Not Found" };
 
   return createArticleMetadata(
@@ -35,11 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogDetailPage({ params }: Props) {
   const { slug } = await params;
-  const post = getBlogBySlug(slug);
+  const post = await getBlogBySlug(slug);
   if (!post) notFound();
 
-  const related = getRelatedPosts(slug);
-  const paragraphs = post.content.split("\n\n");
+  const related = await getRelatedPosts(slug);
 
   return (
     <PageTransition>
@@ -60,7 +63,7 @@ export default async function BlogDetailPage({ params }: Props) {
         ]}
       />
 
-      <BlogDetailContent post={post} related={related} paragraphs={paragraphs} />
+      <BlogDetailContent post={post} related={related} />
     </PageTransition>
   );
 }
