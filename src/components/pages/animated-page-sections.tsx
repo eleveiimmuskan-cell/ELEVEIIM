@@ -29,7 +29,57 @@ const examInfo = [
   { title: "Personal Interview", description: "Short interview to understand your goals and motivation." },
 ];
 
-export function AboutPageContent() {
+export function AboutPageContent({
+  mission,
+  vision,
+  values,
+  statistics,
+}: {
+  mission?: string | null;
+  vision?: string | null;
+  values?: Array<{ id?: string; title: string; description: string }> | null;
+  statistics?: {
+    studentsTrained: number;
+    placementPartners: number;
+    placementRate: number;
+    expertTrainers: number;
+  } | null;
+} = {}) {
+  const missionText = mission?.trim() || aboutContent.mission;
+  const visionText = vision?.trim() || aboutContent.vision;
+  const valueCards =
+    values && values.length > 0
+      ? values.filter((v) => v.title.trim() && v.description.trim())
+      : aboutContent.values;
+  const stats = statistics
+    ? [
+        {
+          id: "students-trained",
+          value: statistics.studentsTrained,
+          suffix: "+",
+          label: "Students Trained",
+        },
+        {
+          id: "placement-partners",
+          value: statistics.placementPartners,
+          suffix: "+",
+          label: "Placement Partners",
+        },
+        {
+          id: "placement-rate",
+          value: statistics.placementRate,
+          suffix: "%",
+          label: "Placement Rate",
+        },
+        {
+          id: "expert-trainers",
+          value: statistics.expertTrainers,
+          suffix: "+",
+          label: "Expert Trainers",
+        },
+      ]
+    : counterStats;
+
   return (
     <PageContentSection>
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "About" }]} />
@@ -39,19 +89,19 @@ export function AboutPageContent() {
           <AnimatedHeading>
             <h2 className="text-2xl font-bold">Our Mission</h2>
           </AnimatedHeading>
-          <p className="mt-4 leading-relaxed text-muted-foreground">{aboutContent.mission}</p>
+          <p className="mt-4 leading-relaxed text-muted-foreground">{missionText}</p>
         </StaggerItem>
         <StaggerItem>
           <AnimatedHeading>
             <h2 className="text-2xl font-bold">Our Vision</h2>
           </AnimatedHeading>
-          <p className="mt-4 leading-relaxed text-muted-foreground">{aboutContent.vision}</p>
+          <p className="mt-4 leading-relaxed text-muted-foreground">{visionText}</p>
         </StaggerItem>
       </StaggerContainer>
 
       <StaggerContainer className="mt-12 grid gap-6 sm:grid-cols-3">
-        {aboutContent.values.map((v) => (
-          <StaggerItem key={v.title}>
+        {valueCards.map((v, index) => (
+          <StaggerItem key={v.id ?? `${v.title}-${index}`}>
             <GlassCard hover={false}>
               <h3 className="font-bold text-brand">{v.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{v.description}</p>
@@ -61,11 +111,12 @@ export function AboutPageContent() {
       </StaggerContainer>
 
       <StaggerContainer className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {counterStats.map((s) => (
+        {stats.map((s) => (
           <StaggerItem key={s.id}>
             <GlassCard className="text-center">
               <p className="text-2xl font-bold text-brand">
-                {s.value}{s.suffix}
+                {s.value}
+                {s.suffix}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
             </GlassCard>
