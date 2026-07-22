@@ -21,10 +21,14 @@ export interface PlacementFilters {
 
 /**
  * Featured active placements for the homepage (max `limit`).
- * Cached per-request via React `cache` and revalidated via Next ISR.
+ * Falls back to active placements when none are marked featured, or when the
+ * live API rejects the `featured` filter (older backend deployments).
  */
 export const getFeaturedPlacements = cache(
   async (limit = 3): Promise<PlacementStory[]> => {
+    const mapList = (data: ApiPlacement[] | undefined) =>
+      (Array.isArray(data) ? data : []).slice(0, limit).map(mapApiPlacementToStory);
+
     try {
       const { data } = await apiFetch<ApiPlacement[]>("/placements", {
         query: {
@@ -35,11 +39,27 @@ export const getFeaturedPlacements = cache(
         },
         next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
       });
-      return (Array.isArray(data) ? data : [])
-        .slice(0, limit)
-        .map(mapApiPlacementToStory);
+      const featured = mapList(data);
+      if (featured.length > 0) return featured;
     } catch (error) {
-      console.error("[placements] Failed to load featured placements:", error);
+      console.error(
+        "[placements] Featured placements request failed, trying active fallback:",
+        error
+      );
+    }
+
+    try {
+      const { data } = await apiFetch<ApiPlacement[]>("/placements", {
+        query: {
+          active: true,
+          page: 1,
+          limit,
+        },
+        next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+      });
+      return mapList(data);
+    } catch (error) {
+      console.error("[placements] Failed to load active placements:", error);
       return [];
     }
   }
