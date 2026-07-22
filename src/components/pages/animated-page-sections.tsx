@@ -47,7 +47,7 @@ export function AboutPageContent({
 } = {}) {
   const missionText = mission?.trim() || aboutContent.mission;
   const visionText = vision?.trim() || aboutContent.vision;
-  const valueCards =
+  const valueCards: Array<{ id?: string; title: string; description: string }> =
     values && values.length > 0
       ? values.filter((v) => v.title.trim() && v.description.trim())
       : aboutContent.values;

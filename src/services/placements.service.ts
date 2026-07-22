@@ -23,6 +23,29 @@ export interface PlacementFilters {
 }
 
 /**
+ * Active placements for the public placements listing page.
+ * Search/pagination are handled on the client.
+ */
+export const getActivePlacements = cache(
+  async (limit = 50): Promise<PlacementStory[]> => {
+    try {
+      const { data } = await apiFetch<ApiPlacement[]>("/placements", {
+        query: {
+          active: true,
+          page: 1,
+          limit,
+        },
+        next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
+      });
+      return (Array.isArray(data) ? data : []).map(mapApiPlacementToStory);
+    } catch (error) {
+      console.error("[placements] Failed to load active placements:", error);
+      return [];
+    }
+  }
+);
+
+/**
  * Featured active placements for the homepage (max `limit`).
  * Falls back to active placements when none are marked featured, or when the
  * live API rejects the `featured` filter (older backend deployments).

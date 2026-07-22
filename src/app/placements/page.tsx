@@ -6,6 +6,9 @@ import { PageHero } from "@/components/common/page-header";
 import { PageCta } from "@/components/common/page-cta";
 import { PageTransition } from "@/animations/page-transition";
 import { PlacementsPageContent } from "@/components/pages/placements-page-content";
+import { getActiveIndustryPartners } from "@/services/industry-partners.service";
+import { getActivePlacements } from "@/services/placements.service";
+import { getActiveTestimonials } from "@/services/testimonials.service";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Placements",
@@ -15,7 +18,16 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ["placements", "jobs", "salary", "career", "ELEVEIIM"],
 });
 
-export default function PlacementsPage() {
+/** Placements page ISR — extend Promise.all below as more sections go dynamic. */
+export const revalidate = 60;
+
+export default async function PlacementsPage() {
+  const [partners, stories, testimonials] = await Promise.all([
+    getActiveIndustryPartners(),
+    getActivePlacements(50),
+    getActiveTestimonials(12),
+  ]);
+
   return (
     <PageTransition>
       <JsonLd
@@ -30,7 +42,11 @@ export default function PlacementsPage() {
         description="From resume building to offer letters — our placement cell connects you with top hiring partners."
       />
 
-      <PlacementsPageContent />
+      <PlacementsPageContent
+        partners={partners}
+        stories={stories}
+        testimonials={testimonials}
+      />
       <PageCta />
     </PageTransition>
   );
