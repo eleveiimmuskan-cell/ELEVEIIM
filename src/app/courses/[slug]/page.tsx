@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return createPageMetadata({
     title: course.title,
-    description: course.description,
+    description: course.seoDescription || course.description,
     path: `/courses/${slug}`,
     keywords: [course.category, course.title, "course", "ELEVEIIM"],
   });
@@ -71,7 +71,7 @@ export default async function CourseDetailPage({ params }: Props) {
       <PageHero
         eyebrow={course.category}
         title={course.title}
-        description={course.shortDescription}
+        description={course.seoDescription || course.shortDescription}
       />
 
       <PageContentSection>

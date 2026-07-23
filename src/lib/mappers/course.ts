@@ -50,13 +50,23 @@ function formatDuration(weeks: number | null | undefined): string {
 function toShortDescription(course: ApiCourse): string {
   const text = (
     course.shortDescription ||
-    course.seoDesc ||
     course.description ||
     ""
   ).trim();
   if (!text) return "Industry-ready training designed for career outcomes.";
   if (text.length <= 140) return text;
   return `${text.slice(0, 137).trimEnd()}…`;
+}
+
+function toSeoDescription(course: ApiCourse): string {
+  const text = (
+    course.seoDesc ||
+    course.shortDescription ||
+    course.description ||
+    ""
+  ).trim();
+  if (!text) return "Industry-ready training designed for career outcomes.";
+  return text;
 }
 
 function resolveTrainerName(course: ApiCourse): string {
@@ -237,6 +247,7 @@ export function mapApiCourseToCourse(api: ApiCourse): Course {
     title: api.title,
     description: api.description?.trim() || toShortDescription(api),
     shortDescription: toShortDescription(api),
+    seoDescription: toSeoDescription(api),
     duration: formatDuration(api.durationWeeks),
     certification: resolveCertification(api),
     trainer: resolveTrainerName(api),

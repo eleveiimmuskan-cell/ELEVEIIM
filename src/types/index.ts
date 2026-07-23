@@ -53,7 +53,10 @@ export interface Course {
   slug: string;
   title: string;
   description: string;
+  /** Card/listing blurb — normal short or truncated description (not SEO). */
   shortDescription: string;
+  /** SEO description shown under the title on the course detail hero. */
+  seoDescription?: string;
   duration: string;
   certification: string;
   trainer: string;
