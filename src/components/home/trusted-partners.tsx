@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { SectionReveal } from "@/components/common/motion-wrapper";
 import { SectionHeader } from "@/components/common/section-header";
@@ -38,19 +38,57 @@ function PartnerLogoBadge({ partner }: { partner: IndustryPartner }) {
   );
 }
 
+/** Original CSS marquee used 10s to travel half the visible width. */
+const ORIGINAL_LOOP_SECONDS = 10;
+
 /** Right-to-left partner logo marquee — shared by homepage and placements. */
 export function IndustryPartnersMarquee({
   partners,
 }: {
   partners: IndustryPartner[];
 }) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [durationSeconds, setDurationSeconds] = useState(ORIGINAL_LOOP_SECONDS);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track || partners.length === 0) return;
+
+    const syncDuration = () => {
+      const visibleWidth = viewport.clientWidth;
+      const trackWidth = track.scrollWidth;
+      if (visibleWidth <= 0 || trackWidth <= 0) return;
+
+      // Keep the same px/sec as the original 10s / half-viewport animation.
+      setDurationSeconds(
+        Math.max(
+          ORIGINAL_LOOP_SECONDS,
+          (trackWidth / visibleWidth) * ORIGINAL_LOOP_SECONDS
+        )
+      );
+    };
+
+    syncDuration();
+
+    const observer = new ResizeObserver(syncDuration);
+    observer.observe(viewport);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [partners.length]);
+
   if (partners.length === 0) return null;
 
   const marqueeItems = [...partners, ...partners];
 
   return (
-    <div className="relative overflow-hidden">
-      <div className="flex animate-marquee gap-6 whitespace-nowrap sm:gap-8">
+    <div ref={viewportRef} className="relative overflow-hidden">
+      <div
+        ref={trackRef}
+        className="flex w-max animate-marquee gap-6 whitespace-nowrap sm:gap-8"
+        style={{ animationDuration: `${durationSeconds}s` }}
+      >
         {marqueeItems.map((partner, i) => {
           const tileClassName =
             "flex h-24 w-40 shrink-0 items-center justify-center rounded-2xl border border-border bg-white px-3 py-3 transition-colors hover:border-brand/30 sm:h-28 sm:w-48 sm:px-4 sm:py-4";
