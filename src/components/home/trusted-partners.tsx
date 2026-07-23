@@ -20,14 +20,14 @@ function PartnerLogoBadge({ partner }: { partner: IndustryPartner }) {
   const showImage = Boolean(resolved) && !failed;
 
   return (
-    <span className="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand/10 text-sm font-bold text-brand">
+    <span className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand/10 text-sm font-bold text-brand">
       {showImage ? (
         <Image
           src={resolved}
           alt=""
-          width={40}
-          height={40}
-          className="size-full object-contain p-1"
+          width={48}
+          height={48}
+          className="size-full object-contain p-1.5"
           unoptimized={isRemoteMediaUrl(partner.logoUrl ?? "")}
           onError={() => setFailed(true)}
         />
@@ -61,10 +61,10 @@ export function TrustedPartnersSection({ partners }: TrustedPartnersSectionProps
             {marqueeItems.map((partner, i) => (
               <div
                 key={`${partner.id}-${i}`}
-                className="flex shrink-0 items-center gap-3 rounded-2xl border border-border bg-muted/30 px-8 py-4 transition-colors hover:border-brand/30 hover:bg-brand/5"
+                className="flex w-36 shrink-0 flex-col items-center gap-3 rounded-2xl border border-border bg-muted/30 px-5 py-5 transition-colors hover:border-brand/30 hover:bg-brand/5 sm:w-40"
               >
                 <PartnerLogoBadge partner={partner} />
-                <span className="text-sm font-semibold text-foreground">
+                <span className="w-full truncate text-center text-sm font-semibold text-foreground">
                   {partner.name}
                 </span>
               </div>
