@@ -37,6 +37,11 @@ export type {
   ApiTestimonialPartner,
 } from "./api-testimonial";
 export type { ApiWhoCanJoinCard, ApiWhoCanJoinSection } from "./api-who-can-join";
+export type {
+  ApiBenefitsSection,
+  BenefitsSectionData,
+} from "./api-benefits";
+export type { ApiFooterCtaSection } from "./api-footer-cta";
 
 export interface CurriculumModule {
   title: string;

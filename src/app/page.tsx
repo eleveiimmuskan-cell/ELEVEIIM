@@ -16,6 +16,8 @@ import { getActiveTestimonials } from "@/services/testimonials.service";
 import {
   getWhoCanJoinSection,
   getFooterCtaSection,
+  getBenefitsSection,
+  getHeroBannerSection,
 } from "@/services/homepage.service";
 
 /** Homepage ISR — extend Promise.all below as more sections go dynamic. */
@@ -29,6 +31,8 @@ export default async function HomePage() {
     testimonials,
     whoCanJoin,
     footerCta,
+    benefits,
+    heroBanner,
   ] = await Promise.all([
     getActiveIndustryPartners(),
     getFeaturedCourses(3),
@@ -36,18 +40,20 @@ export default async function HomePage() {
     getActiveTestimonials(20),
     getWhoCanJoinSection(),
     getFooterCtaSection(),
+    getBenefitsSection(),
+    getHeroBannerSection(),
   ]);
 
   return (
     <PageTransition>
-      <HeroSection />
+      <HeroSection banner={heroBanner} />
       <TrustedPartnersSection partners={partners} />
       <FeaturedCoursesSection courses={featuredCourses} />
       <PlacementHighlightsSection stories={featuredPlacements} />
       <ScholarshipHighlightSection />
       <TestimonialsSection testimonials={testimonials} />
       {whoCanJoin && <WhoCanJoinSection section={whoCanJoin} />}
-      <BenefitsSection />
+      <BenefitsSection section={benefits} />
       <IndustrialTrainingPreview />
       {footerCta ? (
         <PageCta

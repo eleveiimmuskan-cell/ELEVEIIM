@@ -1,26 +1,87 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { heroStats } from "@/data/counters";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
+import { isRemoteMediaUrl } from "@/lib/media-url";
 import { AnimatedCounter } from "@/components/shared/motion-wrapper";
 import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
 import { GlassButton } from "@/components/shared/glass-card";
 import { ScholarshipButton } from "@/components/shared/scholarship-button";
+import type { HeroBannerData } from "@/types/api-hero-banner";
 
-export function HeroSection() {
+interface HeroSectionProps {
+  banner?: HeroBannerData | null;
+}
+
+const FALLBACK_BANNER: HeroBannerData = {
+  scholarshipText: "Scholarship seats open — Apply today",
+  mainHeading: SITE_TAGLINE,
+  subHeading: "",
+  description:
+    "Industry-ready courses, expert trainers, and placement support to launch your dream career.",
+  buttonText: "Explore Courses",
+  buttonUrl: "/courses",
+  backgroundImage: "",
+  liveCourseCount: 120,
+  studentRating: 4.9,
+  successRate: 98,
+};
+
+export function HeroSection({ banner }: HeroSectionProps) {
+  const data = banner ?? FALLBACK_BANNER;
+  const hasBackground = Boolean(data.backgroundImage?.trim());
+  const stats = [
+    {
+      id: "live-courses",
+      value: data.liveCourseCount,
+      suffix: "+",
+      label: "Live Courses",
+    },
+    {
+      id: "student-rating",
+      value: data.studentRating,
+      suffix: "",
+      label: "Student Rating",
+    },
+    {
+      id: "success-rate",
+      value: data.successRate,
+      suffix: "%",
+      label: "Success Rate",
+    },
+  ];
+
   return (
     <section
       id="home"
       className="relative flex min-h-[40vh] items-center overflow-hidden bg-brand pt-16 pb-10 sm:pb-12"
       aria-label="Hero banner"
     >
-      <ScholarshipBannerDecorations variant="home" />
-
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,103,0,0.12),transparent_50%)]" />
+      {hasBackground ? (
+        <>
+          <Image
+            src={data.backgroundImage}
+            alt=""
+            fill
+            priority
+            className="object-cover"
+            unoptimized={isRemoteMediaUrl(data.backgroundImage)}
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-brand/80" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.12),transparent_60%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,103,0,0.1),transparent_50%)]" />
+        </>
+      ) : (
+        <>
+          <ScholarshipBannerDecorations variant="home" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,103,0,0.12),transparent_50%)]" />
+        </>
+      )}
 
       <div className="relative isolate z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
@@ -31,44 +92,46 @@ export function HeroSection() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-20 flex min-w-0 flex-col gap-5 sm:gap-6"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm"
-            >
-              <Sparkles className="size-3.5" />
-              Scholarship seats open — Apply today
-            </motion.div>
+            {data.scholarshipText ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm"
+              >
+                <Sparkles className="size-3.5" />
+                {data.scholarshipText}
+              </motion.div>
+            ) : null}
+
             <div className="space-y-2">
-              {/* <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
                 {SITE_NAME}
-              </h1> */}
-              {
-                <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-                  {SITE_NAME}
-                </h1>
-              }
+              </h1>
               <p className="text-lg font-semibold text-white sm:text-xl">
-                {SITE_TAGLINE}
+                {data.mainHeading}
               </p>
+              {data.subHeading ? (
+                <p className="text-sm font-medium text-white/85 sm:text-base">
+                  {data.subHeading}
+                </p>
+              ) : null}
             </div>
 
             <p className="max-w-md text-sm leading-relaxed text-white/80 sm:text-base">
-              Industry-ready courses, expert trainers, and placement support to
-              launch your dream career.
+              {data.description}
             </p>
 
             <div className="relative z-20 flex flex-wrap items-center gap-3">
-              <GlassButton href="/courses" variant="light">
-                Explore Courses
+              <GlassButton href={data.buttonUrl} variant="light">
+                {data.buttonText}
                 <ArrowRight className="size-4" />
               </GlassButton>
               <ScholarshipButton href="/scholarship" />
             </div>
 
             <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-white/15 pt-5 sm:gap-x-10">
-              {heroStats.map((stat) => (
+              {stats.map((stat) => (
                 <div key={stat.id}>
                   <p className="text-xl font-bold tabular-nums text-white sm:text-2xl">
                     <AnimatedCounter
@@ -85,7 +148,7 @@ export function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right — scholarship headline */}
+          {/* Right — scholarship headline (static for now) */}
           <motion.div
             initial={{ opacity: 0, x: 32 }}
             animate={{ opacity: 1, x: 0 }}
