@@ -87,7 +87,7 @@ export function BenefitsSection({ section }: BenefitsSectionProps) {
 
           {certificates.length > 0 && (
             <div
-              className="relative mx-auto flex min-h-[380px] w-full max-w-lg items-center justify-center sm:min-h-[460px] lg:mx-0 lg:max-w-none"
+              className="relative mx-auto flex min-h-[280px] w-full max-w-xl items-center justify-center sm:min-h-[340px] lg:mx-0 lg:max-w-none"
               aria-label="Sample ELEVEIIM certification previews"
             >
               <motion.div
@@ -97,7 +97,7 @@ export function BenefitsSection({ section }: BenefitsSectionProps) {
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="relative h-[360px] w-full max-w-[420px] sm:h-[440px] sm:max-w-[480px]"
+                className="relative h-[260px] w-full max-w-[520px] sm:h-[320px] sm:max-w-[560px]"
               >
                 {primary && (
                   <motion.div
@@ -105,21 +105,21 @@ export function BenefitsSection({ section }: BenefitsSectionProps) {
                     transition={{ type: "spring", stiffness: 260, damping: 20 }}
                     className={
                       secondary
-                        ? "absolute left-0 top-0 z-10 w-[56%] origin-bottom-right sm:w-[54%]"
-                        : "absolute inset-x-0 top-1/2 z-10 mx-auto w-[58%] -translate-y-1/2"
+                        ? "absolute left-0 top-0 z-10 w-[68%] origin-bottom-right sm:w-[66%]"
+                        : "absolute inset-x-0 top-1/2 z-10 mx-auto w-[78%] -translate-y-1/2"
                     }
                     style={{ perspective: 1000 }}
                   >
-                    <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-white/70 bg-white p-2 shadow-[0_20px_50px_rgba(30,99,255,0.18)] sm:p-3">
+                    <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-white/70 bg-white p-2 shadow-[0_20px_50px_rgba(30,99,255,0.18)] sm:p-2.5">
                       <Image
                         src={primary.imageUrl}
                         alt={primary.alt}
-                        width={480}
-                        height={640}
+                        width={640}
+                        height={480}
                         loading="lazy"
                         unoptimized={isRemoteMediaUrl(primary.imageUrl)}
                         className="h-full w-full object-contain"
-                        sizes="(max-width: 1024px) 45vw, 240px"
+                        sizes="(max-width: 1024px) 55vw, 320px"
                       />
                     </div>
                   </motion.div>
@@ -129,19 +129,19 @@ export function BenefitsSection({ section }: BenefitsSectionProps) {
                   <motion.div
                     whileHover={{ rotate: 6, scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                    className="absolute bottom-0 right-0 z-20 w-[56%] origin-bottom-left sm:w-[54%]"
+                    className="absolute bottom-0 right-0 z-20 w-[68%] origin-bottom-left sm:w-[66%]"
                     style={{ perspective: 1000 }}
                   >
-                    <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-white/70 bg-white p-2 shadow-[0_24px_56px_rgba(30,99,255,0.22)] sm:p-3">
+                    <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-white/70 bg-white p-2 shadow-[0_24px_56px_rgba(30,99,255,0.22)] sm:p-2.5">
                       <Image
                         src={secondary.imageUrl}
                         alt={secondary.alt}
-                        width={480}
-                        height={640}
+                        width={640}
+                        height={480}
                         loading="lazy"
                         unoptimized={isRemoteMediaUrl(secondary.imageUrl)}
                         className="h-full w-full object-contain"
-                        sizes="(max-width: 1024px) 45vw, 240px"
+                        sizes="(max-width: 1024px) 55vw, 320px"
                       />
                     </div>
                   </motion.div>

@@ -23,6 +23,10 @@ import {
   getRelatedCourses,
 } from "@/services/courses.service";
 
+/** Flip to `true` when Student Reviews / FAQ are ready to show again. */
+const SHOW_COURSE_REVIEWS = false;
+const SHOW_COURSE_FAQS = false;
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -61,7 +65,7 @@ export default async function CourseDetailPage({ params }: Props) {
       { label: course.title },
     ]),
     courseSchema(course),
-    faqSchema(course.faqs),
+    ...(SHOW_COURSE_FAQS ? [faqSchema(course.faqs)] : []),
   ];
 
   return (
@@ -125,58 +129,62 @@ export default async function CourseDetailPage({ params }: Props) {
               </div>
             )}
 
-            <div>
-              <h2 className="text-2xl font-bold">Student Reviews</h2>
-              <div className="mt-6 space-y-4">
-                {courseReviews.map((r) => (
-                  <GlassCard key={r.id} hover={false}>
-                    <div className="flex items-center gap-2">
-                      <Star className="size-4 fill-brand-accent text-brand-accent" />
-                      <span className="font-semibold">{r.name}</span>
-                      {r.date && (
-                        <span className="text-sm text-muted-foreground">
-                          · {r.date}
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {r.content}
-                    </p>
-                  </GlassCard>
-                ))}
+            {SHOW_COURSE_REVIEWS && (
+              <div>
+                <h2 className="text-2xl font-bold">Student Reviews</h2>
+                <div className="mt-6 space-y-4">
+                  {courseReviews.map((r) => (
+                    <GlassCard key={r.id} hover={false}>
+                      <div className="flex items-center gap-2">
+                        <Star className="size-4 fill-brand-accent text-brand-accent" />
+                        <span className="font-semibold">{r.name}</span>
+                        {r.date && (
+                          <span className="text-sm text-muted-foreground">
+                            · {r.date}
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        {r.content}
+                      </p>
+                    </GlassCard>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div itemScope itemType="https://schema.org/FAQPage">
-              <h2 className="text-2xl font-bold">FAQ</h2>
-              <div className="mt-6 space-y-4">
-                {course.faqs.map((faq) => (
-                  <GlassCard key={faq.question} hover={false}>
-                    <div
-                      itemScope
-                      itemProp="mainEntity"
-                      itemType="https://schema.org/Question"
-                    >
-                      <h3 itemProp="name" className="font-semibold">
-                        {faq.question}
-                      </h3>
+            {SHOW_COURSE_FAQS && (
+              <div itemScope itemType="https://schema.org/FAQPage">
+                <h2 className="text-2xl font-bold">FAQ</h2>
+                <div className="mt-6 space-y-4">
+                  {course.faqs.map((faq) => (
+                    <GlassCard key={faq.question} hover={false}>
                       <div
                         itemScope
-                        itemProp="acceptedAnswer"
-                        itemType="https://schema.org/Answer"
+                        itemProp="mainEntity"
+                        itemType="https://schema.org/Question"
                       >
-                        <p
-                          itemProp="text"
-                          className="mt-2 text-sm text-muted-foreground"
+                        <h3 itemProp="name" className="font-semibold">
+                          {faq.question}
+                        </h3>
+                        <div
+                          itemScope
+                          itemProp="acceptedAnswer"
+                          itemType="https://schema.org/Answer"
                         >
-                          {faq.answer}
-                        </p>
+                          <p
+                            itemProp="text"
+                            className="mt-2 text-sm text-muted-foreground"
+                          >
+                            {faq.answer}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </GlassCard>
-                ))}
+                    </GlassCard>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <aside>
