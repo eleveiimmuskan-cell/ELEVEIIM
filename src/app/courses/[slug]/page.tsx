@@ -92,32 +92,38 @@ export default async function CourseDetailPage({ params }: Props) {
               </p>
             </div>
 
-            <div>
-              <h2 className="text-2xl font-bold">Curriculum</h2>
-              <div className="mt-6 space-y-4">
-                {course.curriculum.map((mod, i) => (
-                  <GlassCard key={mod.title} hover={false} className="bg-muted/20">
-                    <div className="flex items-start gap-4">
-                      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand text-sm font-bold text-white">
-                        {i + 1}
-                      </span>
-                      <div>
-                        <h3 className="font-semibold">{mod.title}</h3>
-                        {mod.topics.length > 0 && (
-                          <ul className="mt-2 flex flex-wrap gap-2">
-                            {mod.topics.map((t) => (
-                              <Badge key={t} variant="secondary">
-                                {t}
-                              </Badge>
-                            ))}
-                          </ul>
-                        )}
+            {course.curriculum.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold">Curriculum</h2>
+                <div className="mt-6 space-y-4">
+                  {course.curriculum.map((mod, i) => (
+                    <GlassCard
+                      key={`${mod.title}-${i}`}
+                      hover={false}
+                      className="bg-muted/20"
+                    >
+                      <div className="flex items-start gap-4">
+                        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand text-sm font-bold text-white">
+                          {i + 1}
+                        </span>
+                        <div>
+                          <h3 className="font-semibold">{mod.title}</h3>
+                          {mod.topics.length > 0 && (
+                            <ul className="mt-2 flex flex-wrap gap-2">
+                              {mod.topics.map((t) => (
+                                <Badge key={t} variant="secondary">
+                                  {t}
+                                </Badge>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </GlassCard>
-                ))}
+                    </GlassCard>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <div>
               <h2 className="text-2xl font-bold">Student Reviews</h2>

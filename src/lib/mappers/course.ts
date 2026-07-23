@@ -3,22 +3,6 @@ import type { ApiCourse } from "@/types/api-course";
 import { courses as mockCourses } from "@/data/courses";
 import { reviews as mockReviews } from "@/data/reviews";
 
-const FALLBACK_CURRICULUM: CurriculumModule[] =
-  mockCourses[0]?.curriculum ?? [
-    {
-      title: "Foundations",
-      topics: ["Core concepts", "Hands-on practice", "Industry tools"],
-    },
-    {
-      title: "Applied Projects",
-      topics: ["Live projects", "Portfolio building", "Code reviews"],
-    },
-    {
-      title: "Career Prep",
-      topics: ["Resume building", "Mock interviews", "Placement support"],
-    },
-  ];
-
 const FALLBACK_FAQS: FAQItem[] =
   mockCourses[0]?.faqs ?? [
     {
@@ -198,14 +182,6 @@ function mapCourseReviews(course: ApiCourse): Review[] {
     }));
 }
 
-function resolveMockCurriculum(title: string): CurriculumModule[] {
-  const keyword = title.split(/\s+/)[0]?.toLowerCase() ?? "";
-  const matched = mockCourses.find((c) =>
-    c.title.toLowerCase().includes(keyword)
-  );
-  return matched?.curriculum?.length ? matched.curriculum : FALLBACK_CURRICULUM;
-}
-
 function resolveMockFaqs(title: string): FAQItem[] {
   const keyword = title.split(/\s+/)[0]?.toLowerCase() ?? "";
   const matched = mockCourses.find((c) =>
@@ -233,7 +209,8 @@ function resolveMockStudents(title: string): number {
 
 /**
  * Maps a backend course list/detail item into the UI `Course` shape.
- * Curriculum, FAQs, reviews, and enrolled count fall back to mock data when needed.
+ * Curriculum comes only from `syllabus` (admin-managed). FAQs, reviews, and
+ * enrolled count still fall back to mock data when the API has none.
  */
 export function mapApiCourseToCourse(api: ApiCourse): Course {
   const levelLabel = formatLevel(api.level);
@@ -259,8 +236,7 @@ export function mapApiCourseToCourse(api: ApiCourse): Course {
       : [],
     students: resolveMockStudents(api.title),
     level: levelLabel,
-    curriculum:
-      curriculum.length > 0 ? curriculum : resolveMockCurriculum(api.title),
+    curriculum,
     faqs: faqs.length > 0 ? faqs : resolveMockFaqs(api.title),
     reviews: reviews.length > 0 ? reviews : resolveMockReviews(api.title),
   };
