@@ -10,8 +10,16 @@ function studentInitials(name: string): string {
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function toSummary(story: string | null | undefined): string {
-  const text = (story || "").trim();
+  const text = stripHtml(story || "");
   if (!text) return "A career transformation story from ELEVEIIM.";
   if (text.length <= 120) return text;
   return `${text.slice(0, 117).trimEnd()}…`;
@@ -21,6 +29,8 @@ function toSummary(story: string | null | undefined): string {
 export function mapApiPlacementToStory(api: ApiPlacement): PlacementStory {
   const slugBase = slugify(api.studentName) || "placement";
   const photoUrl = resolveMediaUrl(api.studentPhotoUrl) || null;
+
+  const storyHtml = api.placementStory?.trim() || "";
 
   return {
     id: api.id,
@@ -32,8 +42,8 @@ export function mapApiPlacementToStory(api: ApiPlacement): PlacementStory {
     role: api.role?.trim() || "Professional",
     package: api.package?.trim() || "—",
     batch: api.batch?.trim() || "",
-    summary: toSummary(api.placementStory),
-    story: api.placementStory?.trim() || toSummary(api.placementStory),
+    summary: toSummary(storyHtml),
+    story: stripHtml(storyHtml) ? storyHtml : toSummary(null),
     image: studentInitials(api.studentName),
     photoUrl,
   };

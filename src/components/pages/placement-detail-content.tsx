@@ -91,7 +91,10 @@ export function PlacementDetailContent({ story }: { story: PlacementStory }) {
               <p className="font-semibold text-brand-accent">{story.package}</p>
             </div>
           </div>
-          <p className="leading-relaxed text-muted-foreground">{story.story}</p>
+          <div
+            className="prose prose-neutral max-w-none leading-relaxed prose-p:text-muted-foreground prose-headings:text-foreground prose-a:text-brand prose-strong:text-foreground"
+            dangerouslySetInnerHTML={{ __html: story.story }}
+          />
         </GlassCard>
       </PageContentSection>
     </>
