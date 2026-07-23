@@ -20,14 +20,14 @@ function PartnerLogoBadge({ partner }: { partner: IndustryPartner }) {
   const showImage = Boolean(resolved) && !failed;
 
   return (
-    <span className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand/10 text-sm font-bold text-brand">
+    <span className="relative flex size-full items-center justify-center overflow-hidden rounded-xl bg-white text-lg font-bold text-brand">
       {showImage ? (
         <Image
           src={resolved}
-          alt=""
-          width={48}
-          height={48}
-          className="size-full object-contain p-1.5"
+          alt={partner.name}
+          width={160}
+          height={80}
+          className="size-full object-contain p-2"
           unoptimized={isRemoteMediaUrl(partner.logoUrl ?? "")}
           onError={() => setFailed(true)}
         />
@@ -38,14 +38,66 @@ function PartnerLogoBadge({ partner }: { partner: IndustryPartner }) {
   );
 }
 
+/** Right-to-left partner logo marquee — shared by homepage and placements. */
+export function IndustryPartnersMarquee({
+  partners,
+}: {
+  partners: IndustryPartner[];
+}) {
+  if (partners.length === 0) return null;
+
+  const marqueeItems = [...partners, ...partners];
+
+  return (
+    <div className="relative overflow-hidden">
+      <div className="flex animate-marquee gap-6 whitespace-nowrap sm:gap-8">
+        {marqueeItems.map((partner, i) => {
+          const tileClassName =
+            "flex h-24 w-40 shrink-0 items-center justify-center rounded-2xl border border-border bg-white px-3 py-3 transition-colors hover:border-brand/30 sm:h-28 sm:w-48 sm:px-4 sm:py-4";
+          const logo = <PartnerLogoBadge partner={partner} />;
+          const website = partner.website?.trim();
+
+          if (website) {
+            const href = /^https?:\/\//i.test(website)
+              ? website
+              : `https://${website}`;
+
+            return (
+              <a
+                key={`${partner.id}-${i}`}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${tileClassName} cursor-pointer`}
+                title={partner.name}
+                aria-label={`Visit ${partner.name}`}
+              >
+                {logo}
+              </a>
+            );
+          }
+
+          return (
+            <div
+              key={`${partner.id}-${i}`}
+              className={tileClassName}
+              title={partner.name}
+            >
+              {logo}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 interface TrustedPartnersSectionProps {
   partners: IndustryPartner[];
 }
 
 export function TrustedPartnersSection({ partners }: TrustedPartnersSectionProps) {
   if (partners.length === 0) return null;
-
-  const marqueeItems = [...partners, ...partners];
 
   return (
     <SectionReveal className="bg-white py-16">
@@ -56,21 +108,7 @@ export function TrustedPartnersSection({ partners }: TrustedPartnersSectionProps
           description="Collaborating with leading companies to deliver career-ready training and placement opportunities."
         />
 
-        <div className="relative overflow-hidden">
-          <div className="flex animate-marquee gap-8 whitespace-nowrap">
-            {marqueeItems.map((partner, i) => (
-              <div
-                key={`${partner.id}-${i}`}
-                className="flex w-36 shrink-0 flex-col items-center gap-3 rounded-2xl border border-border bg-muted/30 px-5 py-5 transition-colors hover:border-brand/30 hover:bg-brand/5 sm:w-40"
-              >
-                <PartnerLogoBadge partner={partner} />
-                <span className="w-full truncate text-center text-sm font-semibold text-foreground">
-                  {partner.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <IndustryPartnersMarquee partners={partners} />
       </div>
     </SectionReveal>
   );

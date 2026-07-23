@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
 import { Breadcrumb } from "@/components/common/page-header";
 import { GlassCard } from "@/components/common/glass-card";
+import { IndustryPartnersMarquee } from "@/components/home/trusted-partners";
 import { PlacementsListing } from "@/components/placements/placements-listing";
 import {
   placementStats,
@@ -15,59 +14,8 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/components/common/motion-wrapper";
-import { isRemoteMediaUrl, resolveMediaUrl } from "@/lib/media-url";
 import type { IndustryPartner } from "@/types/industry-partner";
 import type { PlacementStory, Testimonial } from "@/types";
-
-function partnerInitials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
-}
-
-function HiringPartnerChip({ partner }: { partner: IndustryPartner }) {
-  const [failed, setFailed] = useState(false);
-  const resolved = resolveMediaUrl(partner.logoUrl);
-  const showImage = Boolean(resolved) && !failed;
-
-  const chip = (
-    <div className="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-2 shadow-sm">
-      <span className="relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-brand/10 text-xs font-bold text-brand">
-        {showImage ? (
-          <Image
-            src={resolved}
-            alt=""
-            width={32}
-            height={32}
-            className="size-full object-contain p-0.5"
-            unoptimized={isRemoteMediaUrl(partner.logoUrl ?? "")}
-            onError={() => setFailed(true)}
-          />
-        ) : (
-          partnerInitials(partner.name)
-        )}
-      </span>
-      <span className="text-sm font-medium">{partner.name}</span>
-    </div>
-  );
-
-  if (partner.website?.trim()) {
-    return (
-      <a
-        href={partner.website.trim()}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="transition-opacity hover:opacity-90"
-        aria-label={`Visit ${partner.name}`}
-      >
-        {chip}
-      </a>
-    );
-  }
-
-  return chip;
-}
 
 interface PlacementsPageContentProps {
   partners?: IndustryPartner[];
@@ -105,13 +53,9 @@ export function PlacementsPageContent({
           Hiring partners will appear here soon.
         </p>
       ) : (
-        <StaggerContainer className="mb-12 flex flex-wrap gap-3" stagger={0.05}>
-          {partners.map((partner) => (
-            <StaggerItem key={partner.id}>
-              <HiringPartnerChip partner={partner} />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+        <div className="mb-12">
+          <IndustryPartnersMarquee partners={partners} />
+        </div>
       )}
 
       <AnimatedHeading>
