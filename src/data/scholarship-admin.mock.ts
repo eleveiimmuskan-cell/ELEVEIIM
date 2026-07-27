@@ -7,7 +7,7 @@ import type { ScholarshipAdminSettings } from "@/types/scholarship-settings";
  * Admin panel → update `lastDateToApply` → countdown recalculates automatically.
  */
 export const SCHOLARSHIP_ADMIN_SETTINGS: ScholarshipAdminSettings = {
-  lastDateToApply: "2026-07-30",
+  lastDateToApply: "2026-08-30",
   seatsMessage: "Limited Scholarship Seats Available",
   closedMessage: "Scholarship Applications Closed",
   isActive: true,

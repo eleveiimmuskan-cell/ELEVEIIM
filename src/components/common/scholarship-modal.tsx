@@ -220,7 +220,7 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
                       className="h-12 w-full rounded-2xl bg-brand text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(24,119,242,0.3)] transition-all hover:bg-brand/90 hover:shadow-[0_8px_28px_rgba(24,119,242,0.35)]"
                     >
                       <Link
-                        href="/scholarship"
+                        href={`/scholarship#${SCHOLARSHIP_APPLY_SECTION_ID}`}
                         onClick={() => onOpenChange(false)}
                       >
                         {modal.primaryButtonText}

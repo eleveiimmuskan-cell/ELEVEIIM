@@ -106,6 +106,19 @@ export function ScholarshipApplicationForm() {
     setSubmitting(true);
 
     try {
+      if (name.trim().length < 2) {
+        throw new Error("Please enter your full name.");
+      }
+      if (phone.trim().length < 7) {
+        throw new Error("Please enter a valid phone number.");
+      }
+      if (message.trim().length < 5) {
+        throw new Error("Please tell us a bit more about why you need a scholarship.");
+      }
+      if (!courseId) {
+        throw new Error("Please select a preferred course.");
+      }
+
       const result = await submitScholarshipApplication({
         name,
         email,
@@ -126,7 +139,9 @@ export function ScholarshipApplicationForm() {
       setError(
         err instanceof ApiError
           ? err.message
-          : "Something went wrong. Please try again."
+          : err instanceof Error
+            ? err.message
+            : "Something went wrong. Please try again."
       );
     } finally {
       setSubmitting(false);

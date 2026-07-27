@@ -23,7 +23,8 @@ function fallbackSettings(): ApiScholarshipSettings {
     lastDateToApply: SCHOLARSHIP_ADMIN_SETTINGS.lastDateToApply,
     seatsMessage: SCHOLARSHIP_ADMIN_SETTINGS.seatsMessage,
     closedMessage: SCHOLARSHIP_ADMIN_SETTINGS.closedMessage,
-    applicationsOpen: SCHOLARSHIP_ADMIN_SETTINGS.isActive,
+    // Never open applications from a CMS fallback / outage path.
+    applicationsOpen: false,
     discountPrefix: SCHOLARSHIP_HIGHLIGHT_STATS.discountPrefix,
     discountValue: SCHOLARSHIP_HIGHLIGHT_STATS.discountValue,
     discountSuffix: SCHOLARSHIP_HIGHLIGHT_STATS.discountSuffix,
@@ -33,7 +34,7 @@ function fallbackSettings(): ApiScholarshipSettings {
     avgAwardNote: SCHOLARSHIP_HIGHLIGHT_STATS.avgAwardNote,
     studentsImage: SCHOLARSHIP_STUDENTS_IMAGE,
     studentsImageAlt: SCHOLARSHIP_STUDENTS_IMAGE_ALT,
-    isActive: true,
+    isActive: false,
     createdAt: "",
     updatedAt: "",
   };
@@ -130,7 +131,14 @@ export const getScholarshipCmsSettings = cache(
         "/scholarships/cms/settings",
         { next: { revalidate: DEFAULT_REVALIDATE_SECONDS } }
       );
-      if (!data || data.isActive === false) return fallbackSettings();
+      if (!data) return fallbackSettings();
+      if (data.isActive === false) {
+        return normalizeSettings({
+          ...data,
+          applicationsOpen: false,
+          isActive: false,
+        });
+      }
       return normalizeSettings(data);
     } catch (error) {
       console.error("[scholarship-cms] Failed to load settings:", error);
