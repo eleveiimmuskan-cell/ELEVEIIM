@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
@@ -11,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import {
   CONTACT_HERO_IMAGE,
   CONTACT_HERO_IMAGE_ALT,
-  phoneTelHref,
   siteContact,
 } from "@/data/site";
 import {
@@ -22,30 +22,18 @@ import {
   StaggerItem,
   VIEWPORT_ONCE,
 } from "@/components/common/motion-wrapper";
+import {
+  ApiError,
+  submitContactForm,
+} from "@/services/contact.service";
 
-const contactItems = [
-  {
-    icon: MapPin,
-    label: "Address",
-    content: siteContact.address,
-    href: siteContact.mapsUrl,
-    external: true,
-  },
-  {
-    icon: Phone,
-    label: "Phone",
-    content: siteContact.phone,
-    href: phoneTelHref,
-    external: false,
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    content: siteContact.email,
-    href: `mailto:${siteContact.email}`,
-    external: false,
-  },
-];
+export interface ContactDisplayInfo {
+  address: string;
+  phone: string;
+  email: string;
+  mapsUrl: string;
+  phoneTelHref: string;
+}
 
 function ContactIllustration() {
   return (
@@ -73,10 +61,37 @@ function ContactIllustration() {
   );
 }
 
-function ContactInfoRow() {
+function ContactInfoRow({ contact }: { contact: ContactDisplayInfo }) {
+  const items = [
+    {
+      icon: MapPin,
+      label: "Address",
+      content: contact.address,
+      href: contact.mapsUrl,
+      external: true,
+    },
+    {
+      icon: Phone,
+      label: "Phone",
+      content: contact.phone,
+      href: contact.phoneTelHref,
+      external: false,
+    },
+    {
+      icon: Mail,
+      label: "Email",
+      content: contact.email,
+      href: `mailto:${contact.email}`,
+      external: false,
+    },
+  ];
+
   return (
-    <StaggerContainer className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4" stagger={0.08}>
-      {contactItems.map((item) => {
+    <StaggerContainer
+      className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4"
+      stagger={0.08}
+    >
+      {items.map((item) => {
         const Icon = item.icon;
 
         return (
@@ -96,8 +111,10 @@ function ContactInfoRow() {
                   <Icon className="size-5" aria-hidden />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-foreground">{item.label}</p>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                  <p className="text-sm font-semibold text-foreground">
+                    {item.label}
+                  </p>
+                  <p className="mt-1.5 whitespace-pre-line text-xs leading-relaxed text-muted-foreground sm:text-sm">
                     {item.content}
                   </p>
                 </div>
@@ -110,7 +127,165 @@ function ContactInfoRow() {
   );
 }
 
-export function ContactPageContent() {
+function ContactForm() {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  // Anti-bot: form mount time + honeypot (must stay empty; avoid autofill names).
+  const [formLoadedAt] = useState(() => Date.now());
+  const [hp, setHp] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setSubmitting(true);
+
+    try {
+      const result = await submitContactForm({
+        name,
+        phone,
+        email,
+        subject,
+        message,
+        hp,
+        formLoadedAt,
+      });
+      setSuccess(result.message);
+      setName("");
+      setPhone("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+      setHp("");
+    } catch (err) {
+      const messageText =
+        err instanceof ApiError
+          ? err.message
+          : "Something went wrong. Please try again.";
+      setError(messageText);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <form className="relative mt-6 space-y-4" onSubmit={onSubmit} noValidate>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0"
+      >
+        <label htmlFor="contact_hp">Company</label>
+        <input
+          id="contact_hp"
+          type="text"
+          name="contact_hp"
+          value={hp}
+          onChange={(e) => setHp(e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          data-lpignore="true"
+          data-1p-ignore="true"
+          data-bwignore="true"
+          data-form-type="other"
+        />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input
+          name="name"
+          placeholder="Your name"
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={submitting}
+        />
+        <Input
+          name="phone"
+          type="tel"
+          placeholder="Phone number"
+          required
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          disabled={submitting}
+        />
+        <Input
+          name="email"
+          type="email"
+          placeholder="Email address"
+          required
+          className="sm:col-span-2"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={submitting}
+        />
+        <Input
+          name="subject"
+          placeholder="Subject"
+          required
+          className="sm:col-span-2"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          disabled={submitting}
+        />
+      </div>
+      <Textarea
+        name="message"
+        placeholder="Your message..."
+        rows={5}
+        required
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        disabled={submitting}
+      />
+
+      {success && (
+        <p
+          className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800"
+          role="status"
+        >
+          {success}
+        </p>
+      )}
+      {error && (
+        <p
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          role="alert"
+        >
+          {error}
+        </p>
+      )}
+
+      <Button
+        type="submit"
+        className="w-full bg-brand hover:bg-brand/90"
+        disabled={submitting}
+      >
+        {submitting ? "Sending…" : "Send Message"}
+      </Button>
+    </form>
+  );
+}
+
+export function ContactPageContent({
+  contact = {
+    address: siteContact.address,
+    phone: siteContact.phone,
+    email: siteContact.email,
+    mapsUrl: siteContact.mapsUrl,
+    phoneTelHref: `tel:${siteContact.phone.replace(/\s+/g, "")}`,
+  },
+}: {
+  contact?: ContactDisplayInfo;
+}) {
   return (
     <PageContentSection className="relative overflow-hidden bg-white">
       <div
@@ -123,7 +298,9 @@ export function ContactPageContent() {
       />
 
       <div className="relative">
-        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact" }]} />
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Contact" }]}
+        />
 
         <StaggerContainer
           className="mt-2 grid items-stretch gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-14"
@@ -141,35 +318,21 @@ export function ContactPageContent() {
               className="border-brand/10 bg-white shadow-[0_8px_40px_rgba(11,99,206,0.08)]"
             >
               <AnimatedHeading>
-                <h2 className="text-xl font-bold sm:text-2xl">We'd Love to Hear From You!</h2>
+                <h2 className="text-xl font-bold sm:text-2xl">
+                  We&apos;d Love to Hear From You!
+                </h2>
               </AnimatedHeading>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                Tell us about your goals — courses, scholarships, or placements. Our counselors
-                will get back to you shortly.
+                Tell us about your goals — courses, scholarships, or placements.
+                Our counselors will get back to you shortly.
               </p>
-              <form className="mt-6 space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Input placeholder="Your name" required />
-                  <Input type="tel" placeholder="Phone number" required />
-                  <Input
-                    type="email"
-                    placeholder="Email address"
-                    required
-                    className="sm:col-span-2"
-                  />
-                  <Input placeholder="Subject" required className="sm:col-span-2" />
-                </div>
-                <Textarea placeholder="Your message..." rows={5} required />
-                <Button type="submit" className="w-full bg-brand hover:bg-brand/90">
-                  Send Message
-                </Button>
-              </form>
+              <ContactForm />
             </GlassCard>
-
-          
           </StaggerItem>
         </StaggerContainer>
-          <ContactInfoRow />
+        <div className="mt-8 sm:mt-10">
+          <ContactInfoRow contact={contact} />
+        </div>
       </div>
     </PageContentSection>
   );
