@@ -63,6 +63,7 @@ export interface ApiCourse {
   pricing: unknown;
   isPublished: boolean;
   isFeatured: boolean;
+  displayOrder?: number;
   brochureUrl: string | null;
   videoEmbedUrl: string | null;
   seoTitle: string | null;
