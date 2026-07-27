@@ -3,11 +3,9 @@
 import { GraduationCap, IndianRupee, Sparkles } from "lucide-react";
 import { motion, type MotionProps } from "framer-motion";
 import { GlassCard } from "@/components/common/glass-card";
-import {
-  SCHOLARSHIP_APPLY_SECTION_ID,
-  SCHOLARSHIP_HIGHLIGHT_STATS,
-} from "@/data/scholarship";
+import { SCHOLARSHIP_APPLY_SECTION_ID } from "@/data/scholarship";
 import { useScholarshipApplicationsOpen } from "@/hooks/use-scholarship-deadline";
+import { useScholarshipCms } from "@/components/common/scholarship-cms-provider";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -27,7 +25,7 @@ interface ScholarshipHighlightStatsProps {
 }
 
 function StatsContent({ variant }: { variant: "page" | "modal" }) {
-  const stats = SCHOLARSHIP_HIGHLIGHT_STATS;
+  const { highlightStats: stats } = useScholarshipCms();
   const isModal = variant === "modal";
 
   return (
@@ -189,7 +187,7 @@ export function ScholarshipHighlightStats({
   scrollToApply = false,
   onApplyClick,
 }: ScholarshipHighlightStatsProps) {
-  const stats = SCHOLARSHIP_HIGHLIGHT_STATS;
+  const { highlightStats: stats } = useScholarshipCms();
   const isModal = variant === "modal";
   const isInteractive = scrollToApply || Boolean(onApplyClick);
 

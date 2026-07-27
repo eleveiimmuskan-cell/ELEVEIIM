@@ -2,17 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useScholarshipCms } from "@/components/common/scholarship-cms-provider";
 
 /** localStorage key — timestamp (ms) when the modal was last shown or dismissed */
 export const SCHOLARSHIP_MODAL_LAST_SHOWN_KEY = "eleveiim_scholarship_last_shown";
-
-/** Minimum time between automatic displays while browsing */
-export const SCHOLARSHIP_MODAL_INTERVAL_MS = 2 * 60 * 1000;
-
-const INITIAL_DELAY_MS = 900;
-
-/** Prevents duplicate initial timers when React Strict Mode double-mounts in dev */
-let initialShowTimerId: number | null = null;
 
 /** Paths where the promotional modal should not appear */
 const SKIP_PATHS = ["/scholarship"];
@@ -25,33 +18,32 @@ function getLastShown(): number {
 }
 
 function markLastShown() {
-  localStorage.setItem(
-    SCHOLARSHIP_MODAL_LAST_SHOWN_KEY,
-    String(Date.now())
-  );
-}
-
-function canShowAgain(): boolean {
-  return Date.now() - getLastShown() >= SCHOLARSHIP_MODAL_INTERVAL_MS;
+  localStorage.setItem(SCHOLARSHIP_MODAL_LAST_SHOWN_KEY, String(Date.now()));
 }
 
 /**
- * Coordinates scholarship modal timing:
- * - Opens shortly after mount (first visit + every full page refresh)
- * - Re-opens every 2 minutes while the user stays on the site
- * - Uses localStorage for last-shown timestamp to avoid duplicate rapid opens
+ * Coordinates scholarship modal timing using CMS interval/delay settings.
  */
 export function useScholarshipModal() {
   const pathname = usePathname();
-  const shouldSkip = SKIP_PATHS.some((path) => pathname.startsWith(path));
+  const { modal } = useScholarshipCms();
+  const shouldSkip =
+    !modal.enabled || SKIP_PATHS.some((path) => pathname.startsWith(path));
+
+  const initialDelayMs = modal.initialDelayMs ?? 900;
+  const intervalMs = modal.intervalMs ?? 120000;
 
   const [isOpen, setIsOpen] = useState(false);
   const isOpenRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const initialTimerRef = useRef<number | null>(null);
+
+  const canShowAgain = useCallback(() => {
+    return Date.now() - getLastShown() >= intervalMs;
+  }, [intervalMs]);
 
   const openModal = useCallback(() => {
     if (shouldSkip || isOpenRef.current) return;
-
     isOpenRef.current = true;
     setIsOpen(true);
     markLastShown();
@@ -78,32 +70,28 @@ export function useScholarshipModal() {
       return;
     }
 
-    // Initial display on load / refresh (slight delay for a polished entrance)
-    if (initialShowTimerId === null) {
-      initialShowTimerId = window.setTimeout(() => {
-        initialShowTimerId = null;
-        if (!isOpenRef.current) openModal();
-      }, INITIAL_DELAY_MS);
-    }
+    initialTimerRef.current = window.setTimeout(() => {
+      initialTimerRef.current = null;
+      if (!isOpenRef.current) openModal();
+    }, initialDelayMs);
 
-    // Periodic re-display every 2 minutes while the session continues
     intervalRef.current = setInterval(() => {
       if (!isOpenRef.current && canShowAgain()) {
         openModal();
       }
-    }, SCHOLARSHIP_MODAL_INTERVAL_MS);
+    }, intervalMs);
 
     return () => {
-      if (initialShowTimerId !== null) {
-        window.clearTimeout(initialShowTimerId);
-        initialShowTimerId = null;
+      if (initialTimerRef.current !== null) {
+        window.clearTimeout(initialTimerRef.current);
+        initialTimerRef.current = null;
       }
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };
-  }, [shouldSkip, openModal]);
+  }, [shouldSkip, openModal, initialDelayMs, intervalMs, canShowAgain]);
 
   return {
     isOpen,
@@ -112,3 +100,6 @@ export function useScholarshipModal() {
     onOpenChange,
   };
 }
+
+/** @deprecated use modal.intervalMs from CMS */
+export const SCHOLARSHIP_MODAL_INTERVAL_MS = 2 * 60 * 1000;

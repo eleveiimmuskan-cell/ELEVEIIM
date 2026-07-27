@@ -4,9 +4,11 @@ import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
 import { PageCta } from "@/components/common/page-cta";
 import { PageTransition } from "@/animations/page-transition";
-import { faqItems } from "@/data/scholarship";
 import { ScholarshipPageHero } from "@/components/scholarship/scholarship-page-hero";
 import { ScholarshipPageContent } from "@/components/pages/animated-page-sections";
+import { getScholarshipPageView } from "@/services/scholarship-cms.service";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = createPageMetadata({
   title: "Scholarship Program",
@@ -16,7 +18,9 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ["scholarship", "fee waiver", "financial aid", "ELEVEIIM"],
 });
 
-export default function ScholarshipPage() {
+export default async function ScholarshipPage() {
+  const { page } = await getScholarshipPageView();
+
   return (
     <PageTransition>
       <JsonLd
@@ -25,12 +29,20 @@ export default function ScholarshipPage() {
             { label: "Home", href: "/" },
             { label: "Scholarship" },
           ]),
-          faqSchema(faqItems),
+          faqSchema(
+            page.faqs.map((faq) => ({
+              question: faq.question,
+              answer: faq.answer,
+            }))
+          ),
         ]}
       />
 
-      <ScholarshipPageHero />
-      <ScholarshipPageContent />
+      <ScholarshipPageHero
+        eyebrow={page.heroEyebrow}
+        description={page.heroDescription}
+      />
+      <ScholarshipPageContent page={page} />
 
       <PageCta
         primaryHref="/courses"

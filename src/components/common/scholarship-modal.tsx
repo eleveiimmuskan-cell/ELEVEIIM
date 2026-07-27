@@ -15,7 +15,8 @@ import { CountdownTimer } from "@/components/scholarship/countdown-timer";
 import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
 import { ScholarshipHighlightStats } from "@/components/scholarship/scholarship-stats-card";
 import { useScholarshipApplicationsOpen } from "@/hooks/use-scholarship-deadline";
-import { SCHOLARSHIP_APPLY_SECTION_ID, SCHOLARSHIP_HIGHLIGHT_STATS, SCHOLARSHIP_STUDENTS_IMAGE } from "@/data/scholarship";
+import { useScholarshipCms } from "@/components/common/scholarship-cms-provider";
+import { SCHOLARSHIP_APPLY_SECTION_ID } from "@/data/scholarship";
 import {
   Dialog,
   DialogDescription,
@@ -26,24 +27,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const TRUST_ITEMS = [
-  "Merit Based",
-  "Instant Registration",
-  "Limited Seats",
-] as const;
-
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const MODAL_GRADIENT =
   "linear-gradient(135deg, #f8fbff 0%, #f4f8ff 50%, #eef5ff 100%)";
-
-const STUDENT_IMAGE = SCHOLARSHIP_STUDENTS_IMAGE;
 
 function HeroDecorations() {
   return <ScholarshipBannerDecorations variant="modal" />;
 }
 
 function FloatingScholarshipBadge({ className }: { className?: string }) {
+  const { highlightStats } = useScholarshipCms();
   return (
     <div
       className={cn(
@@ -55,8 +49,7 @@ function FloatingScholarshipBadge({ className }: { className?: string }) {
         Scholarship
       </p>
       <p className="text-xs font-bold text-brand-accent sm:text-[13px]">
-        {SCHOLARSHIP_HIGHLIGHT_STATS.discountPrefix}{" "}
-        {SCHOLARSHIP_HIGHLIGHT_STATS.discountValue} Waiver
+        {highlightStats.discountPrefix} {highlightStats.discountValue} Waiver
       </p>
     </div>
   );
@@ -89,6 +82,8 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
   const router = useRouter();
   const pathname = usePathname();
   const applicationsOpen = useScholarshipApplicationsOpen();
+  const { modal, highlightStats, studentsImage, studentsImageAlt } =
+    useScholarshipCms();
 
   const handleStatsCardClick = () => {
     onOpenChange(false);
@@ -150,7 +145,7 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
             />
 
             <Image
-              src={STUDENT_IMAGE}
+              src={studentsImage}
               alt=""
               width={1024}
               height={682}
@@ -175,20 +170,19 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
             >
               <div className="mb-3 inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-brand/12 bg-white/75 px-3 py-1.5 text-[11px] font-semibold text-brand shadow-[0_2px_12px_rgba(24,119,242,0.06)] sm:mb-5 sm:px-3.5 sm:text-xs">
                 <GraduationCap className="size-3.5 shrink-0" aria-hidden />
-                <span className="truncate">ELEVEIIM Scholarship Program</span>
+                <span className="truncate">{modal.eyebrow}</span>
               </div>
 
               <DialogTitle className="max-w-lg text-left text-xl font-bold leading-[1.2] tracking-tight text-foreground sm:text-[1.65rem] md:text-[2rem]">
-                Unlock {SCHOLARSHIP_HIGHLIGHT_STATS.discountPrefix}{" "}
-                {SCHOLARSHIP_HIGHLIGHT_STATS.discountValue} Scholarship
+                Unlock {highlightStats.discountPrefix}{" "}
+                {highlightStats.discountValue} Scholarship
               </DialogTitle>
 
               <DialogDescription
                 id="scholarship-modal-description"
                 className="mt-2 max-w-md text-left text-[13px] leading-relaxed text-muted-foreground sm:mt-3 sm:text-sm md:text-[15px]"
               >
-                Take the scholarship assessment and earn fee waivers based on
-                your performance.
+                {modal.description}
               </DialogDescription>
 
               <CountdownTimer variant="modal" className="mt-3 sm:mt-4" />
@@ -199,16 +193,16 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
                 className="mt-4 grid grid-cols-1 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-x-5 sm:gap-y-2.5"
                 aria-label="Program highlights"
               >
-                {TRUST_ITEMS.map((item) => (
+                {modal.trustItems.map((item) => (
                   <li
-                    key={item}
+                    key={item.id}
                     className="flex items-center gap-1.5 text-[13px] font-medium text-foreground/85 sm:text-sm"
                   >
                     <Check
                       className="size-4 shrink-0 text-emerald-500"
                       aria-hidden
                     />
-                    {item}
+                    {item.text}
                   </li>
                 ))}
               </ul>
@@ -229,7 +223,7 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
                         href="/scholarship"
                         onClick={() => onOpenChange(false)}
                       >
-                        Apply Now
+                        {modal.primaryButtonText}
                         <ArrowRight className="size-4" aria-hidden />
                       </Link>
                     </Button>
@@ -248,20 +242,17 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
                   className="h-10 w-full rounded-2xl text-sm font-medium text-muted-foreground hover:bg-white/50 hover:text-foreground sm:w-auto sm:px-5"
                   onClick={() => onOpenChange(false)}
                 >
-                  Maybe Later
+                  {modal.secondaryButtonText}
                 </Button>
               </div>
 
               <p className="mt-4 pb-1 text-center text-[11px] text-muted-foreground/80 sm:mt-5 sm:text-left sm:text-xs">
-                Trusted by aspiring learners across India
+                {modal.footerNote}
               </p>
             </div>
           </motion.div>
 
-          <span className="sr-only">
-            ELEVEIIM male and female students in branded apparel representing
-            scholarship opportunities
-          </span>
+          <span className="sr-only">{studentsImageAlt}</span>
         </DialogPrimitive.Content>
       </DialogPortal>
     </Dialog>

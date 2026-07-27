@@ -33,9 +33,25 @@ export function resolveScholarshipSettings(
 }
 
 /**
- * Returns current scholarship timer settings.
- * TODO: swap mock with `fetch('/api/admin/scholarship-settings')` when API is ready.
+ * Returns current scholarship timer settings (sync fallback / mock).
+ * Prefer CMS settings via ScholarshipCmsProvider when available.
  */
 export function getScholarshipSettings(): ScholarshipSettings {
   return resolveScholarshipSettings(SCHOLARSHIP_ADMIN_SETTINGS);
+}
+
+/** Map CMS API settings into countdown settings. */
+export function mapApiScholarshipSettings(api: {
+  lastDateToApply: string;
+  seatsMessage: string;
+  closedMessage: string;
+  applicationsOpen: boolean;
+  isActive: boolean;
+}): ScholarshipSettings {
+  return resolveScholarshipSettings({
+    lastDateToApply: api.lastDateToApply,
+    seatsMessage: api.seatsMessage,
+    closedMessage: api.closedMessage,
+    isActive: api.applicationsOpen && api.isActive,
+  });
 }

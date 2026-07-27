@@ -3,7 +3,6 @@
 import { CheckCircle2 } from "lucide-react";
 import { aboutContent } from "@/data/about";
 import { counterStats } from "@/data/counters";
-import { faqItems, scholarshipBenefits } from "@/data/scholarship";
 import { Breadcrumb } from "@/components/common/page-header";
 import { GlassCard } from "@/components/common/glass-card";
 import { ScholarshipApplicationForm } from "@/components/scholarship/application-form";
@@ -15,19 +14,7 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/components/common/motion-wrapper";
-
-const eligibility = [
-  "Strong academic record or exceptional talent in tech/design",
-  "Financial need documentation (if applicable)",
-  "Minimum age 18 years",
-  "Commitment to complete the full program",
-];
-
-const examInfo = [
-  { title: "Aptitude Test", description: "Logical reasoning, quantitative ability, and verbal skills." },
-  { title: "Domain Assessment", description: "Basic knowledge in your chosen course area." },
-  { title: "Personal Interview", description: "Short interview to understand your goals and motivation." },
-];
+import type { ApiScholarshipPage } from "@/types/api-scholarship-cms";
 
 export function AboutPageContent({
   mission,
@@ -127,7 +114,7 @@ export function AboutPageContent({
   );
 }
 
-export function ScholarshipPageContent() {
+export function ScholarshipPageContent({ page }: { page: ApiScholarshipPage }) {
   return (
     <PageContentSection>
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Scholarship" }]} />
@@ -141,7 +128,7 @@ export function ScholarshipPageContent() {
               <h2 className="text-2xl font-bold">Benefits</h2>
             </AnimatedHeading>
             <StaggerContainer className="mt-6 space-y-4" stagger={0.08}>
-              {scholarshipBenefits.map((b) => (
+              {page.benefits.map((b) => (
                 <StaggerItem key={b.id}>
                   <li className="flex list-none gap-3">
                     <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-brand" />
@@ -160,11 +147,11 @@ export function ScholarshipPageContent() {
               <h2 className="text-2xl font-bold">Eligibility</h2>
             </AnimatedHeading>
             <StaggerContainer className="mt-4 space-y-2" stagger={0.06}>
-              {eligibility.map((item) => (
-                <StaggerItem key={item}>
+              {page.eligibility.map((item) => (
+                <StaggerItem key={item.id}>
                   <li className="flex list-none items-start gap-2 text-sm text-muted-foreground">
                     <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-brand" />
-                    {item}
+                    {item.text}
                   </li>
                 </StaggerItem>
               ))}
@@ -176,8 +163,8 @@ export function ScholarshipPageContent() {
               <h2 className="text-2xl font-bold">Scholarship Exam</h2>
             </AnimatedHeading>
             <StaggerContainer className="mt-6 space-y-4" stagger={0.1}>
-              {examInfo.map((step, i) => (
-                <StaggerItem key={step.title}>
+              {page.examSteps.map((step, i) => (
+                <StaggerItem key={step.id}>
                   <GlassCard hover={false}>
                     <div className="flex gap-4">
                       <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand text-sm font-bold text-white">
@@ -210,8 +197,8 @@ export function ScholarshipPageContent() {
           <h2 className="text-2xl font-bold">Frequently Asked Questions</h2>
         </AnimatedHeading>
         <StaggerContainer className="mt-6 grid gap-4 md:grid-cols-2">
-          {faqItems.map((faq) => (
-            <StaggerItem key={faq.question}>
+          {page.faqs.map((faq) => (
+            <StaggerItem key={faq.id}>
               <GlassCard hover={false}>
                 <div itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
                   <h3 itemProp="name" className="font-semibold">{faq.question}</h3>

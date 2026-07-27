@@ -8,11 +8,7 @@ import {
   PREMIUM_EASE,
   VIEWPORT_ONCE,
 } from "@/components/common/motion-wrapper";
-import {
-  SCHOLARSHIP_HIGHLIGHT_STATS,
-  SCHOLARSHIP_STUDENTS_IMAGE,
-  SCHOLARSHIP_STUDENTS_IMAGE_ALT,
-} from "@/data/scholarship";
+import { useScholarshipCms } from "@/components/common/scholarship-cms-provider";
 import { cn } from "@/lib/utils";
 
 function StudentsIllustration({
@@ -22,6 +18,8 @@ function StudentsIllustration({
   className?: string;
   priority?: boolean;
 }) {
+  const { studentsImage, studentsImageAlt } = useScholarshipCms();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24, scale: 0.95 }}
@@ -35,8 +33,8 @@ function StudentsIllustration({
         aria-hidden
       />
       <Image
-        src={SCHOLARSHIP_STUDENTS_IMAGE}
-        alt={SCHOLARSHIP_STUDENTS_IMAGE_ALT}
+        src={studentsImage}
+        alt={studentsImageAlt}
         width={1024}
         height={682}
         priority={priority}
@@ -47,7 +45,15 @@ function StudentsIllustration({
   );
 }
 
-export function ScholarshipPageHero() {
+export function ScholarshipPageHero({
+  eyebrow,
+  description,
+}: {
+  eyebrow: string;
+  description: string;
+}) {
+  const { highlightStats } = useScholarshipCms();
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-brand via-[#1565d8] to-[#0e4a9e]">
       <div
@@ -74,9 +80,9 @@ export function ScholarshipPageHero() {
             className="pb-6 pt-2 sm:pb-8 lg:pb-12 lg:pt-4"
           >
             <PageHeader
-              eyebrow="Scholarship Program"
-              title={`GET ${SCHOLARSHIP_HIGHLIGHT_STATS.discountPrefix.toUpperCase()} ${SCHOLARSHIP_HIGHLIGHT_STATS.discountValue} SCHOLARSHIP`}
-              description="Merit-based scholarships make premium education accessible. Limited seats — apply today."
+              eyebrow={eyebrow}
+              title={`GET ${highlightStats.discountPrefix.toUpperCase()} ${highlightStats.discountValue} SCHOLARSHIP`}
+              description={description}
               light
             />
           </motion.div>
