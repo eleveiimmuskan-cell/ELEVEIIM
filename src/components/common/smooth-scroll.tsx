@@ -13,6 +13,15 @@ export function SmoothScrollProvider({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      prevent: (node) => {
+        const tag = node.nodeName;
+        return (
+          tag === "SELECT" ||
+          tag === "INPUT" ||
+          tag === "TEXTAREA" ||
+          (node instanceof HTMLElement && node.closest("select, [role='listbox']") !== null)
+        );
+      },
     });
 
     function raf(time: number) {

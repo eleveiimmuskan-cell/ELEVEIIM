@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,9 @@ export function PageCta({
   secondaryHref = "/scholarship",
   secondaryLabel = "Apply for Scholarship",
 }: PageCtaProps) {
+  const pathname = usePathname();
+  const isPrimaryCurrentPage = pathname === primaryHref;
+
   return (
     <section className="py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -48,7 +52,14 @@ export function PageCta({
                 size="lg"
                 className="border-white/40 bg-transparent text-white hover:bg-white/10"
               >
-                <Link href={primaryHref}>
+                <Link
+                  href={primaryHref}
+                  onClick={(event) => {
+                    if (!isPrimaryCurrentPage) return;
+                    event.preventDefault();
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                >
                   {primaryLabel}
                   <ArrowRight className="size-4" />
                 </Link>

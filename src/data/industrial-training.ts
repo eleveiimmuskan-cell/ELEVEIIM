@@ -30,7 +30,7 @@ export const HOME_PREVIEW = {
     "Mock Interviews",
     "Industry Experts",
   ],
-  heroImage: "/images/industrial-training-hero.webp",
+  heroImage: "/images/industrial-training-hero.png",
   heroImageAlt:
     "ELEVEIIM industrial training program students learning full stack development and digital skills",
   brochureHref: "/industrial-training#brochure",

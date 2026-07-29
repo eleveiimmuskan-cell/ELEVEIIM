@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, GraduationCap } from "lucide-react";
 import { useScholarshipDeadline } from "@/hooks/use-scholarship-deadline";
@@ -68,9 +68,16 @@ export interface CountdownTimerProps {
 }
 
 export function CountdownTimer({ variant = "page", className }: CountdownTimerProps) {
+  // Prevent hydration mismatch: the countdown values (Date/time) can differ
+  // between server-rendered HTML and the first client render.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const { days, hours, minutes, seconds, isExpired, settings } =
     useScholarshipDeadline();
   const isModal = variant === "modal";
+
+  if (!mounted) return null;
 
   return (
     <motion.div

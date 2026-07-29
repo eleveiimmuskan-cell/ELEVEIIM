@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CONTACT_PHONE } from "@/data/site";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { GlassCard } from "@/components/common/glass-card";
 import { SCHOLARSHIP_APPLY_SECTION_ID } from "@/data/scholarship";
+import { SCHOLARSHIP_TERMS_PATH } from "@/data/scholarship-terms";
 import {
   useScholarshipApplicationsOpen,
   useScholarshipSettings,
 } from "@/hooks/use-scholarship-deadline";
-import { apiFetch } from "@/lib/api/client";
 import { cn } from "@/lib/utils";
 import type { ApiCourse } from "@/types/api-course";
 import {
@@ -68,15 +69,12 @@ export function ScholarshipApplicationForm() {
       setCoursesLoading(true);
       setCoursesError(null);
       try {
-        const { data } = await apiFetch<ApiCourse[]>("/courses", {
-          query: {
-            isPublished: true,
-            page: 1,
-            limit: 100,
-          },
-          cache: "no-store",
-        });
+        const res = await fetch("/api/courses", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = (await res.json()) as ApiCourse[];
         if (cancelled) return;
+
         const options = (Array.isArray(data) ? data : [])
           .filter((c) => c?.id && c?.title)
           .map((c) => ({ id: c.id, title: c.title }))
@@ -159,7 +157,7 @@ export function ScholarshipApplicationForm() {
       <h3 className="text-xl font-bold text-foreground">Apply for Scholarship</h3>
       <p className="mt-2 text-sm text-muted-foreground">
         {applicationsOpen
-          ? "Fill out the form below. Our team will contact you within 5–7 business days."
+          ? "Fill out the form below. Our team will contact you within 48 hours."
           : settings.closedMessage}
       </p>
       <form className="relative mt-6 space-y-4" onSubmit={onSubmit} noValidate>
@@ -315,6 +313,15 @@ export function ScholarshipApplicationForm() {
           </Button>
         </fieldset>
       </form>
+
+      <p className="mt-5 text-center text-sm">
+        <Link
+          href={SCHOLARSHIP_TERMS_PATH}
+          className="font-medium text-[#2563EB] underline-offset-4 transition-colors hover:underline dark:text-blue-400"
+        >
+          Scholarship Terms and Conditions
+        </Link>
+      </p>
     </GlassCard>
   );
 }
