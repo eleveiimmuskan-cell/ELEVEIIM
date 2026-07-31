@@ -36,7 +36,7 @@ export async function submitScholarshipApplication(
   return {
     message:
       data?.message ||
-      "Thank you! Your scholarship application was received. Our team will contact you within 5–7 business days.",
+      "Thank you! Your scholarship application was received. Our team will contact you within 48 hours",
   };
 }
 
