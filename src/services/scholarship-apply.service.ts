@@ -1,4 +1,4 @@
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { ApiError } from "@/lib/api/client";
 
 export interface ScholarshipApplyInput {
   name: string;
@@ -16,12 +16,20 @@ export interface ScholarshipApplyResult {
   message: string;
 }
 
+/**
+ * Submits via same-origin `/api/scholarships/apply` so the browser never
+ * hits the Nest API directly (avoids CORS on eleveiim.com → api.eleveiim.com).
+ */
 export async function submitScholarshipApplication(
   input: ScholarshipApplyInput
 ): Promise<ScholarshipApplyResult> {
-  const { data } = await apiFetch<ScholarshipApplyResult>("/scholarships/apply", {
+  const res = await fetch("/api/scholarships/apply", {
     method: "POST",
-    body: {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       name: input.name.trim(),
       email: input.email.trim(),
       phone: input.phone.trim(),
@@ -29,13 +37,27 @@ export async function submitScholarshipApplication(
       message: input.message.trim(),
       hp: input.hp?.trim() || "",
       formLoadedAt: input.formLoadedAt,
-    },
+    }),
     cache: "no-store",
   });
 
+  let payload: { message?: string } | null = null;
+  try {
+    payload = (await res.json()) as { message?: string };
+  } catch {
+    // non-JSON error body
+  }
+
+  if (!res.ok) {
+    throw new ApiError(
+      payload?.message || `API Error: ${res.status} ${res.statusText}`,
+      res.status
+    );
+  }
+
   return {
     message:
-      data?.message ||
+      payload?.message ||
       "Thank you! Your scholarship application was received. Our team will contact you within 48 hours",
   };
 }

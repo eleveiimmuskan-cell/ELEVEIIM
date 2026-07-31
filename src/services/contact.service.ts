@@ -1,4 +1,4 @@
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { ApiError } from "@/lib/api/client";
 
 export interface ContactSubmitInput {
   name: string;
@@ -16,12 +16,20 @@ export interface ContactSubmitResult {
   message: string;
 }
 
+/**
+ * Submits via same-origin `/api/contact` so the browser never hits the
+ * Nest API directly (avoids CORS on eleveiim.com → api.eleveiim.com).
+ */
 export async function submitContactForm(
   input: ContactSubmitInput
 ): Promise<ContactSubmitResult> {
-  const { data } = await apiFetch<ContactSubmitResult>("/contact", {
+  const res = await fetch("/api/contact", {
     method: "POST",
-    body: {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       name: input.name.trim(),
       phone: input.phone.trim(),
       email: input.email.trim(),
@@ -29,12 +37,26 @@ export async function submitContactForm(
       message: input.message.trim(),
       hp: input.hp?.trim() || "",
       formLoadedAt: input.formLoadedAt,
-    },
+    }),
     cache: "no-store",
   });
 
+  let payload: { message?: string } | null = null;
+  try {
+    payload = (await res.json()) as { message?: string };
+  } catch {
+    // non-JSON error body
+  }
+
+  if (!res.ok) {
+    throw new ApiError(
+      payload?.message || `API Error: ${res.status} ${res.statusText}`,
+      res.status
+    );
+  }
+
   return {
-    message: data?.message || "Thank you! We will get back to you shortly.",
+    message: payload?.message || "Thank you! We will get back to you shortly.",
   };
 }
 
