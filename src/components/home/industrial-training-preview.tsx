@@ -82,7 +82,7 @@ export function IndustrialTrainingPreview() {
                   height={480}
                   loading="lazy"
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="aspect-[4/3] w-full object-cover"
+                  className="aspect-[5/3.5] w-full object-cover"
                 />
               </div>
           </motion.div>
