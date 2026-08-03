@@ -319,7 +319,7 @@ export function ScholarshipApplicationForm() {
           href={SCHOLARSHIP_TERMS_PATH}
           className="font-medium text-[#2563EB] underline-offset-4 transition-colors hover:underline dark:text-blue-400"
         >
-          Scholarship Terms and Conditions
+          T & C
         </Link>
       </p>
     </GlassCard>
