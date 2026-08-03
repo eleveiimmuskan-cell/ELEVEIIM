@@ -265,7 +265,7 @@ export function ScholarshipApplicationForm() {
           </div>
           <div>
             <label htmlFor="message" className="mb-1.5 block text-sm font-medium">
-              Why do you need a scholarship?
+            Why are you applying for this scholarship?
             </label>
             <Textarea
               id="message"

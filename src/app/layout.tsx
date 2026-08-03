@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { defaultMetadata } from "@/lib/seo/metadata";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
@@ -10,7 +11,10 @@ import { FloatingCallButton } from "@/components/common/floating-call-button";
 import { ScholarshipCmsProvider } from "@/components/common/scholarship-cms-provider";
 import { ScholarshipModalHost } from "@/components/common/scholarship-modal-provider";
 import { SmoothScrollProvider } from "@/components/common/smooth-scroll";
+import { MetaPixel } from "@/components/analytics/MetaPixel";
+import { FacebookPixelEvents } from "@/components/analytics/FacebookPixelEvents";
 import { getSiteFooter } from "@/services/footer.service";
+import { getFeaturedCourses } from "@/services/courses.service";
 import {
   getScholarshipCmsModal,
   getScholarshipCmsSettings,
@@ -36,15 +40,21 @@ export const revalidate = 60;
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [footer, scholarshipSettings, scholarshipModal] = await Promise.all([
-    getSiteFooter(),
-    getScholarshipCmsSettings(),
-    getScholarshipCmsModal(),
-  ]);
+  const [footer, featuredCourses, scholarshipSettings, scholarshipModal] =
+    await Promise.all([
+      getSiteFooter(),
+      getFeaturedCourses(5),
+      getScholarshipCmsSettings(),
+      getScholarshipCmsModal(),
+    ]);
 
   return (
     <html lang="en" className={`${jakarta.variable} ${geistMono.variable}`}>
       <body className="min-h-screen bg-white font-sans text-foreground antialiased">
+        <MetaPixel />
+        <Suspense fallback={null}>
+          <FacebookPixelEvents />
+        </Suspense>
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <SmoothScrollProvider>
           <ScholarshipCmsProvider
@@ -53,7 +63,7 @@ export default async function RootLayout({
           >
             <Navbar />
             <main>{children}</main>
-            <Footer data={footer} />
+            <Footer data={footer} featuredCourses={featuredCourses} />
             <FloatingCallButton />
             <WhatsAppButton />
             <ScholarshipModalHost />

@@ -5,6 +5,7 @@ import { SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
 import { phoneTelHref, siteContact } from "@/data/site";
 import { BrandImage } from "@/components/common/brand-image";
 import type { ApiFooter } from "@/types/api-footer";
+import type { Course } from "@/types";
 
 const FALLBACK_DESCRIPTION =
   "Premium training institute empowering learners with industry-ready skills, expert mentorship, and guaranteed career support.";
@@ -49,17 +50,30 @@ function mapsHref(address: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
 
-interface FooterProps {
-  data?: ApiFooter | null;
+/** Build Programs links from featured courses — always `/courses/[slug]`. */
+function programsFromFeaturedCourses(courses: Course[]) {
+  return courses
+    .filter((course) => course.slug?.trim() && course.title?.trim())
+    .slice(0, 5)
+    .map((course) => ({
+      id: course.id || course.slug,
+      label: course.title.trim(),
+      url: `/courses/${course.slug.trim()}`,
+    }));
 }
 
-export function Footer({ data = null }: FooterProps) {
+interface FooterProps {
+  data?: ApiFooter | null;
+  /** Top featured courses for the Programs column (preferred over CMS programs). */
+  featuredCourses?: Course[];
+}
+
+export function Footer({ data = null, featuredCourses = [] }: FooterProps) {
   const description = data?.description?.trim() || FALLBACK_DESCRIPTION;
   const quickLinks =
     data?.quickLinks?.filter((l) => l.label.trim() && l.url.trim()) ??
     FALLBACK_QUICK_LINKS;
-  const programs =
-    data?.programs?.filter((l) => l.label.trim() && l.url.trim()) ?? [];
+  const programs = programsFromFeaturedCourses(featuredCourses);
   const socialLinks =
     data?.socialLinks?.filter((s) => s.platform.trim() && s.url.trim()) ??
     FALLBACK_SOCIAL;
@@ -146,7 +160,14 @@ export function Footer({ data = null }: FooterProps) {
                   </li>
                 ))
               ) : (
-                <li className="text-sm text-muted-foreground">—</li>
+                <li>
+                  <Link
+                    href="/courses"
+                    className="text-sm text-muted-foreground transition-colors hover:text-brand"
+                  >
+                    Browse all courses
+                  </Link>
+                </li>
               )}
             </ul>
           </div>
