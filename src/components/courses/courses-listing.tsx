@@ -14,6 +14,14 @@ import {
 
 const PAGE_SIZE = 12;
 
+/** Display-only Title Case for filter chips (does not affect filter values). */
+function formatChipLabel(label: string): string {
+  if (label === "All") return "All";
+  return label.replace(/\w\S*/g, (word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+}
+
 /** Unique first-tags from courses, for chip filters. */
 function buildChipTags(courses: Course[]): string[] {
   const seen = new Set<string>();
@@ -127,7 +135,7 @@ export function CoursesListing({ courses }: CoursesListingProps) {
                     : "bg-muted text-muted-foreground hover:bg-brand/10 hover:text-brand"
                 )}
               >
-                {option}
+                {formatChipLabel(option)}
               </button>
             ))}
           </div>
