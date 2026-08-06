@@ -5,7 +5,7 @@ export const scholarshipBenefits: ScholarshipBenefit[] = [
     id: "1",
     title: "Up to 100% Fee Waiver",
     description:
-      "Merit-based scholarships covering full or partial tuition for deserving candidates.",
+      "Merit-based scholarships for 100 students covering full tuition for deserving candidates.",
   },
   {
     id: "2",

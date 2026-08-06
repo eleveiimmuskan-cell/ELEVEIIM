@@ -45,7 +45,7 @@ function fallbackPage(): ApiScholarshipPage {
     id: "fallback-page",
     heroEyebrow: "Scholarship Program",
     heroDescription:
-      "Merit-based scholarships make premium education accessible. Limited seats — apply today.",
+      "Merit-based scholarships for 100 students seats — apply today.",
     benefits: scholarshipBenefits.map((b, index) => ({
       id: b.id,
       title: b.title,
@@ -53,10 +53,11 @@ function fallbackPage(): ApiScholarshipPage {
       displayOrder: index + 1,
     })),
     eligibility: [
-      "Strong academic record or exceptional talent in tech/design",
+      "Strong academic record or exceptional talent in tech",
       "Financial need documentation (if applicable)",
-      "Minimum age 18 years",
+      "Minimum age 16 years",
       "Commitment to complete the full program",
+      "Must have a laptop",
     ].map((text, index) => ({
       id: `elig-${index + 1}`,
       text,
@@ -65,21 +66,27 @@ function fallbackPage(): ApiScholarshipPage {
     examSteps: [
       {
         id: "exam-1",
-        title: "Aptitude Test",
-        description: "Logical reasoning, quantitative ability, and verbal skills.",
+        title: "Registration",
+        description: "Register for the exam by filling the form.",
         displayOrder: 1,
       },
       {
         id: "exam-2",
-        title: "Domain Assessment",
-        description: "Basic knowledge in your chosen course area.",
+        title: "Aptitude Test",
+        description: "Logical reasoning, quantitative ability, and verbal skills.",
         displayOrder: 2,
       },
       {
         id: "exam-3",
+        title: "Domain Assessment",
+        description: "Basic knowledge in your chosen course area.",
+        displayOrder: 3,
+      },
+      {
+        id: "exam-4",
         title: "Personal Interview",
         description: "Short interview to understand your goals and motivation.",
-        displayOrder: 3,
+        displayOrder: 4,
       },
     ],
     faqs: faqItems.map((faq, index) => ({
