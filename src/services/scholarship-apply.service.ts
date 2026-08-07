@@ -16,6 +16,10 @@ export interface ScholarshipApplyResult {
   message: string;
 }
 
+/** User-facing copy after a successful scholarship application. */
+export const SCHOLARSHIP_APPLY_SUCCESS_MESSAGE =
+  "Thank you! Your scholarship application was received. Our team will contact you within 24 hours.";
+
 /**
  * Submits via same-origin `/api/scholarships/apply` so the browser never
  * hits the Nest API directly (avoids CORS on eleveiim.com → api.eleveiim.com).
@@ -56,9 +60,7 @@ export async function submitScholarshipApplication(
   }
 
   return {
-    message:
-      payload?.message ||
-      "Thank you! Your scholarship application was received. Our team will contact you within 48 hours",
+    message: SCHOLARSHIP_APPLY_SUCCESS_MESSAGE,
   };
 }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { apiFetch, ApiError } from "@/lib/api/client";
+import { SCHOLARSHIP_APPLY_SUCCESS_MESSAGE } from "@/services/scholarship-apply.service";
 
 interface ScholarshipApplyProxyBody {
   name?: string;
@@ -19,27 +20,22 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as ScholarshipApplyProxyBody;
 
-    const { data } = await apiFetch<ScholarshipApplyResult>(
-      "/scholarships/apply",
-      {
-        method: "POST",
-        body: {
-          name: body.name?.trim() || "",
-          email: body.email?.trim() || "",
-          phone: body.phone?.trim() || "",
-          courseId: body.courseId?.trim() || "",
-          message: body.message?.trim() || "",
-          hp: body.hp?.trim() || "",
-          formLoadedAt: body.formLoadedAt ?? Date.now(),
-        },
-        cache: "no-store",
-      }
-    );
+    await apiFetch<ScholarshipApplyResult>("/scholarships/apply", {
+      method: "POST",
+      body: {
+        name: body.name?.trim() || "",
+        email: body.email?.trim() || "",
+        phone: body.phone?.trim() || "",
+        courseId: body.courseId?.trim() || "",
+        message: body.message?.trim() || "",
+        hp: body.hp?.trim() || "",
+        formLoadedAt: body.formLoadedAt ?? Date.now(),
+      },
+      cache: "no-store",
+    });
 
     return NextResponse.json({
-      message:
-        data?.message ||
-        "Thank you! Your scholarship application was received. Our team will contact you within 48 hours",
+      message: SCHOLARSHIP_APPLY_SUCCESS_MESSAGE,
     });
   } catch (error) {
     if (error instanceof ApiError) {

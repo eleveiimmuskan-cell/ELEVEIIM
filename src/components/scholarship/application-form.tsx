@@ -8,6 +8,7 @@ import { CONTACT_PHONE } from "@/data/site";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { GlassCard } from "@/components/common/glass-card";
+import { ScholarshipDeadlineBanner } from "@/components/scholarship/deadline-banner";
 import { SCHOLARSHIP_APPLY_SECTION_ID } from "@/data/scholarship";
 import { SCHOLARSHIP_TERMS_PATH } from "@/data/scholarship-terms";
 import {
@@ -40,7 +41,11 @@ function isScholarshipEligibleDuration(
   return durationWeeks === SCHOLARSHIP_ELIGIBLE_DURATION_WEEKS;
 }
 
-export function ScholarshipApplicationForm() {
+export function ScholarshipApplicationForm({
+  showDeadlineBanner = false,
+}: {
+  showDeadlineBanner?: boolean;
+} = {}) {
   const applicationsOpen = useScholarshipApplicationsOpen();
   const settings = useScholarshipSettings();
 
@@ -237,10 +242,11 @@ export function ScholarshipApplicationForm() {
       hover={false}
       className="scroll-mt-28 bg-white"
     >
+      {showDeadlineBanner ? <ScholarshipDeadlineBanner /> : null}
       <h3 className="text-xl font-bold text-foreground">Apply for Scholarship</h3>
       <p className="mt-2 text-sm text-muted-foreground">
         {applicationsOpen
-          ? "Fill out the form below. Our team will contact you within 48 hours."
+          ? "Fill out the form below. Our team will contact you within 24 hours."
           : settings.closedMessage}
       </p>
       <form className="relative mt-6 space-y-4" onSubmit={onSubmit} noValidate>
@@ -319,7 +325,7 @@ export function ScholarshipApplicationForm() {
               >
                 Preferred Course
               </label>
-              <input type="hidden" name="courseId" value={courseId} required />
+              <input type="hidden" name="courseId" value={courseId} required/>
               <button
                 id="course-trigger"
                 type="button"
@@ -468,7 +474,7 @@ export function ScholarshipApplicationForm() {
           </Button>
         </fieldset>
       </form>
-
+{/* 
       <p className="mt-5 text-center text-sm">
         <Link
           href={SCHOLARSHIP_TERMS_PATH}
@@ -476,7 +482,7 @@ export function ScholarshipApplicationForm() {
         >
           T & C
         </Link>
-      </p>
+      </p> */}
     </GlassCard>
   );
 }
