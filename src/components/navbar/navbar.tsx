@@ -57,8 +57,20 @@ export function Navbar() {
         aria-label="Main navigation"
       >
         <div className="flex items-center justify-self-start">
-          <BrandImage href="/" size="sm" variant="elevated" priority className="sm:hidden" />
-          <BrandImage href="/" size="md" variant="elevated" priority className="hidden sm:inline-flex" />
+          <BrandImage
+            href="/"
+            size="sm"
+            variant={onBrand ? "onDark" : "plain"}
+            priority
+            className="sm:hidden"
+          />
+          <BrandImage
+            href="/"
+            size="md"
+            variant={onBrand ? "onDark" : "plain"}
+            priority
+            className="hidden sm:inline-flex"
+          />
         </div>
 
         <ul className="hidden items-center justify-center gap-0.5 lg:flex">

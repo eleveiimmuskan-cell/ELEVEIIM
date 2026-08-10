@@ -1,20 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BRAND_IMAGE } from "@/lib/brand";
 import { cn } from "@/lib/utils";
+import { BRAND_IMAGE, BRAND_IMAGE_WHITE } from "@/lib/brand";
 
 type BrandSize = "sm" | "md" | "lg";
-type BrandVariant = "elevated" | "plain";
+/** `onDark` = white logo only (for brand/blue banners). Default uses the color logo. */
+type BrandVariant = "elevated" | "plain" | "onDark";
 
 const imageHeights: Record<BrandSize, string> = {
   sm: "h-6 w-auto max-w-[120px] sm:max-w-[140px]",
   md: "h-7 w-auto max-w-[140px] sm:max-w-[165px]",
   lg: "h-8 w-auto max-w-[170px] sm:max-w-[200px]",
-};
-
-const containerStyles: Record<BrandVariant, string> = {
-  elevated: "rounded-md bg-white px-1.5 py-1",
-  plain: "rounded-md bg-white px-1.5 py-1",
 };
 
 interface BrandImageProps {
@@ -32,19 +28,22 @@ export function BrandImage({
   priority = false,
   href,
 }: BrandImageProps) {
+  const isOnDark = variant === "onDark";
+  const brand = isOnDark ? BRAND_IMAGE_WHITE : BRAND_IMAGE;
+
   const content = (
     <span
       className={cn(
         "inline-flex shrink-0 items-center overflow-hidden",
-        containerStyles[variant],
+        // Image only — no white container plate
         className
       )}
     >
       <Image
-        src={BRAND_IMAGE.src}
-        alt={BRAND_IMAGE.alt}
-        width={BRAND_IMAGE.width}
-        height={BRAND_IMAGE.height}
+        src={brand.src}
+        alt={brand.alt}
+        width={brand.width}
+        height={brand.height}
         priority={priority}
         className={cn("block object-contain object-left", imageHeights[size])}
       />
@@ -62,19 +61,6 @@ export function BrandImage({
       </Link>
     );
   }
-  if("http" in BRAND_IMAGE) {
-    return (
-      <a
-        href={BRAND_IMAGE.src}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center self-center"
-        aria-label="Eleveiim home"
-      >
-        {content}
-      </a>
-    );
-  } 
 
   return content;
 }

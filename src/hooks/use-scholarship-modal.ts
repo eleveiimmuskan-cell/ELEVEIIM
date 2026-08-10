@@ -8,7 +8,7 @@ import { useScholarshipCms } from "@/components/common/scholarship-cms-provider"
 export const SCHOLARSHIP_MODAL_LAST_SHOWN_KEY = "eleveiim_scholarship_last_shown";
 
 /** Paths where the promotional modal should not appear */
-const SKIP_PATHS = ["/scholarship"];
+const SKIP_PATHS = ["/scholarship", "/future-leaders-scholarship"];
 
 function getLastShown(): number {
   if (typeof window === "undefined") return 0;
