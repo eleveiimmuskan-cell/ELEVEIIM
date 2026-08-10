@@ -13,6 +13,7 @@ import { ScholarshipModalHost } from "@/components/common/scholarship-modal-prov
 import { SmoothScrollProvider } from "@/components/common/smooth-scroll";
 import { MetaPixel } from "@/components/analytics/MetaPixel";
 import { FacebookPixelEvents } from "@/components/analytics/FacebookPixelEvents";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { getSiteFooter } from "@/services/footer.service";
 import { getFeaturedCourses } from "@/services/courses.service";
 import {
@@ -32,7 +33,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = defaultMetadata;
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  verification: {
+    ...defaultMetadata.verification,
+    google: "-GsJh2jogY71tdLo_Frhz1DZuTRixTODLXUeIJt6ZtI",
+  },
+};
 
 /** Footer chrome ISR — matches other public API sections. */
 export const revalidate = 60;
@@ -54,6 +61,9 @@ export default async function RootLayout({
         <MetaPixel />
         <Suspense fallback={null}>
           <FacebookPixelEvents />
+        </Suspense>
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
         </Suspense>
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <SmoothScrollProvider>
