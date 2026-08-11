@@ -8,8 +8,8 @@ export function organizationSchema() {
     name: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/images/eleveiim-logo.jpg`,
-    description: "Premium training institute — Elevate to Educate",
-    slogan: "Elevate to Educate",
+    description: "Premium training institute — Educate to Elevate",
+    slogan: "Educate to Elevate",
   };
 }
 

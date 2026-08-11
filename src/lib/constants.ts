@@ -2,7 +2,7 @@ import type { NavLink } from "@/types";
 import { CONTACT_PHONE } from "@/data/site";
 
 export const SITE_NAME = "ELEVEIIM";
-export const SITE_TAGLINE = "Elevate to Educate";
+export const SITE_TAGLINE = "Educate to Elevate";
 export const SITE_URL = "https://eleveiim.com";
 export const SITE_DESCRIPTION =
   "ELEVEIIM is a premium training institute offering industry-ready courses, expert trainers, placement support, and scholarship programs to elevate your career.";

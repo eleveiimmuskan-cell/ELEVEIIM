@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { apiFetch } from "@/lib/api/client";
+import { SITE_TAGLINE } from "@/lib/constants";
 import { resolveMediaUrl } from "@/lib/media-url";
 import type { ApiWhoCanJoinSection } from "@/types/api-who-can-join";
 import type { ApiFooterCtaSection } from "@/types/api-footer-cta";
@@ -13,6 +14,18 @@ import type {
 } from "@/types/api-hero-banner";
 
 const DEFAULT_REVALIDATE_SECONDS = 60;
+
+/** Correct known CMS typos / reversed brand tagline. */
+function normalizeMainHeading(value: string): string {
+  const heading = value.trim();
+  if (
+    /^elevate\s+to\s+educate$/i.test(heading) ||
+    /^educate\s+to\s+elevtae$/i.test(heading)
+  ) {
+    return SITE_TAGLINE;
+  }
+  return heading;
+}
 
 /**
  * Active Who Can Join homepage section (active cards only from the public API).
@@ -162,7 +175,7 @@ export const getHeroBannerSection = cache(
 
       return {
         scholarshipText: banner.scholarshipText?.trim() || "",
-        mainHeading: banner.mainHeading.trim(),
+        mainHeading: normalizeMainHeading(banner.mainHeading),
         subHeading: banner.subHeading?.trim() || "",
         description: banner.description.trim(),
         buttonText: banner.buttonText.trim(),

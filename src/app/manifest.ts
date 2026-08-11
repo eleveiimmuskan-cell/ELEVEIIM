@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "ELEVEIIM - Elevate to Educate",
+    name: "ELEVEIIM - Educate to Elevate",
     short_name: "ELEVEIIM",
     description:
       "Premium training institute offering industry-ready courses and placement support.",
