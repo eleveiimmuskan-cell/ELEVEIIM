@@ -8,10 +8,7 @@ export { CompanyLogos } from "./company-logos";
 export { Testimonials } from "./testimonials";
 export { PlacementProcess } from "./placement-process";
 export { CertificatesSection } from "./certificates-section";
-// export { ComparisonTable } from "./comparison-table";
+export { ComparisonTable } from "./comparison-table";
 export { MentorsSection } from "./mentors-section";
 export { FaqSection } from "./faq-section";
 export { FinalCTA } from "./final-cta";
-
-
-// return null;
