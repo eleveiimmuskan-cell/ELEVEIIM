@@ -57,7 +57,7 @@ export function ScholarshipSection() {
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 Limited seats available for the upcoming batch. Submit your
-                application and our team will reach out within 5–7 business days.
+                application and our team will reach out within 48 hours.
               </p>
               <Button
                 asChild

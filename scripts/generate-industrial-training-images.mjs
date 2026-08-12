@@ -30,7 +30,7 @@ async function createImage(filePath, label, subtitle, colors) {
 await mkdir(peopleDir, { recursive: true });
 
 await createImage(
-  "public/images/industrial-training-hero.webp",
+  "public/images/industrial-training-hero.png",
   "Industrial Training",
   "Learn · Build · Get Hired",
   ["#ffffff", "#eef4ff", "#0B63CE"]

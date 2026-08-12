@@ -40,7 +40,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       "Everything you need to know about eligibility, the exam process, and applying.",
     content:
-      "ELEVEIIM offers merit-based scholarships covering up to 100% of tuition fees. Eligibility is based on academic performance, financial need, or exceptional talent in technology and design.\n\nThe scholarship exam assesses aptitude, logical reasoning, and basic domain knowledge. Preparation materials are provided after registration.\n\nApplications are reviewed within 5–7 business days. Approved candidates receive a formal offer letter with batch allocation and fee details.",
+      "ELEVEIIM offers merit-based scholarships covering up to 100% of tuition fees. Eligibility is based on academic performance, financial need, or exceptional talent in technology and design.\n\nThe scholarship exam assesses aptitude, logical reasoning, and basic domain knowledge. Preparation materials are provided after registration.\n\nApplications are reviewed within 48 hours. Approved candidates receive a formal offer letter with batch allocation and fee details.",
     category: "Education",
     tags: ["scholarship", "education", "fees"],
     author: "ELEVEIIM Admissions",

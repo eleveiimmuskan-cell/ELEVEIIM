@@ -45,7 +45,7 @@ function fallbackPage(): ApiScholarshipPage {
     id: "fallback-page",
     heroEyebrow: "Scholarship Program",
     heroDescription:
-      "Merit-based scholarships for 100 students seats — apply today.",
+      "Future Leaders Scholarship Program make premium education accessible. Limited seats — apply today.",
     benefits: scholarshipBenefits.map((b, index) => ({
       id: b.id,
       title: b.title,
@@ -53,9 +53,9 @@ function fallbackPage(): ApiScholarshipPage {
       displayOrder: index + 1,
     })),
     eligibility: [
-      "Strong academic record or exceptional talent in tech",
+      "Strong academic record or exceptional talent in tech/design",
       "Financial need documentation (if applicable)",
-      "Minimum age 16 years",
+      "Minimum age 16  years",
       "Commitment to complete the full program",
       "Must have a laptop",
     ].map((text, index) => ({
@@ -67,23 +67,23 @@ function fallbackPage(): ApiScholarshipPage {
       {
         id: "exam-1",
         title: "Registration",
-        description: "Register for the exam by filling the form.",
+        description: "Register for the exam by filling the form. ",
         displayOrder: 1,
       },
       {
-        id: "exam-2",
+        id: "exam-1",
         title: "Aptitude Test",
         description: "Logical reasoning, quantitative ability, and verbal skills.",
         displayOrder: 2,
       },
       {
-        id: "exam-3",
+        id: "exam-2",
         title: "Domain Assessment",
         description: "Basic knowledge in your chosen course area.",
         displayOrder: 3,
       },
       {
-        id: "exam-4",
+        id: "exam-3",
         title: "Personal Interview",
         description: "Short interview to understand your goals and motivation.",
         displayOrder: 4,

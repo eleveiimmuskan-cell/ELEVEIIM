@@ -18,7 +18,7 @@ interface PageCtaProps {
 
 export function PageCta({
   title = "Ready to Elevate Your Career?",
-  description = "Join thousands of successful graduates. Enroll today or apply for our scholarship program.",
+  description = "Join to become industry ready",
   primaryHref = "/courses",
   primaryLabel = "Browse Courses",
   secondaryHref = "/scholarship",

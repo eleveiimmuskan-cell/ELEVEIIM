@@ -20,7 +20,7 @@ export function HeroSection() {
             Policy
           </p>
           <h1 className="text-3xl font-bold tracking-tight text-[#0F172A] sm:text-4xl lg:text-5xl dark:text-white">
-            T &amp; C
+            Scholarship Terms &amp; Conditions
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg dark:text-slate-300">
             Empowering talented students through merit-based and merit-cum-need

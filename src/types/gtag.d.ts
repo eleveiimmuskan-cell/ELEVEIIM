@@ -29,6 +29,8 @@ declare global {
   interface Window {
     dataLayer: unknown[];
     gtag: GtagFunction;
+    /** Guards against duplicate gtag bootstrap (GA4 + Google Ads share one loader). */
+    __ELEVEIIM_GTAG_INITIALIZED__?: boolean;
   }
 }
 

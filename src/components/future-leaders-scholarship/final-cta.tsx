@@ -50,10 +50,10 @@ export function FutureLeadersScholarshipFinalCta() {
           </Link>
         </Button>
 
-        {/* <AnimatedScholarshipDeadline
+        <AnimatedScholarshipDeadline
           className="mt-5 justify-center"
           label="Last Date to Apply:"
-        /> */}
+        />
       </div>
     </SectionReveal>
   );

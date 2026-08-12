@@ -20,8 +20,7 @@ export function CtaSection() {
               Ready to Elevate Your Career?
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/85 sm:text-lg">
-              Join thousands of successful graduates. Enroll today or apply for
-              our scholarship program — your future starts here.
+            Join to become industry ready.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Button
