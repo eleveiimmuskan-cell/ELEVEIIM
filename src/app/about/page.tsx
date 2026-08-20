@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { PAGE_SEO } from "@/data/page-seo";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
 import { PageHero } from "@/components/common/page-header";
@@ -13,10 +14,11 @@ import { getAboutPage } from "@/services/about.service";
 import { getFeaturedTrainers } from "@/services/trainers.service";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "About Us",
-  description: `Learn about ELEVEIIM — ${aboutContent.experience} years of excellence in premium training, placements, and career development.`,
+  title: PAGE_SEO.about.title,
+  description: PAGE_SEO.about.description,
   path: "/about",
   keywords: ["about", "training institute", "mission", "vision", "ELEVEIIM"],
+  absoluteTitle: true,
 });
 
 /** About page ISR — CMS aggregate + trainers. */

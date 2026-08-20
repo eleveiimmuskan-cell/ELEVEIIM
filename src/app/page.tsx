@@ -19,6 +19,16 @@ import {
   getBenefitsSection,
   getHeroBannerSection,
 } from "@/services/homepage.service";
+import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/seo/metadata";
+import { PAGE_SEO } from "@/data/page-seo";
+
+export const metadata: Metadata = createPageMetadata({
+  title: PAGE_SEO.home.title,
+  description: PAGE_SEO.home.description,
+  path: "/",
+  absoluteTitle: true,
+});
 
 /** Homepage ISR — extend Promise.all below as more sections go dynamic. */
 export const revalidate = 60;

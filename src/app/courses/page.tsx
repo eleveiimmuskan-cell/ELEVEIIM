@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { PAGE_SEO } from "@/data/page-seo";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
 import { PageHero } from "@/components/common/page-header";
@@ -11,11 +12,11 @@ import { CoursesListing } from "@/components/courses/courses-listing";
 import { getPublishedCourses } from "@/services/courses.service";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Courses",
-  description:
-    "Browse industry-ready courses at ELEVEIIM — Full Stack, Data Science, Digital Marketing, UI/UX, Cloud, and Cybersecurity programs.",
+  title: PAGE_SEO.courses.title,
+  description: PAGE_SEO.courses.description,
   path: "/courses",
   keywords: ["courses", "training programs", "certification", "ELEVEIIM"],
+  absoluteTitle: true,
 });
 
 /** Courses listing ISR. */

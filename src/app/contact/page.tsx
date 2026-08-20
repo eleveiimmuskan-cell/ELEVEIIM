@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { PAGE_SEO } from "@/data/page-seo";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
 import { PageHero } from "@/components/common/page-header";
@@ -14,11 +15,11 @@ import { phoneTelHref, siteContact } from "@/data/site";
 export const revalidate = 60;
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Contact Us",
-  description:
-    "Get in touch with ELEVEIIM for course inquiries, scholarship applications, and placement support.",
+  title: PAGE_SEO.contact.title,
+  description: PAGE_SEO.contact.description,
   path: "/contact",
   keywords: ["contact", "inquiry", "ELEVEIIM", "support"],
+  absoluteTitle: true,
 });
 
 function toTelHref(phone: string): string {

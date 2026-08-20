@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { PAGE_SEO } from "@/data/page-seo";
 import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
 import { PageCta } from "@/components/common/page-cta";
@@ -11,11 +12,11 @@ import { getScholarshipPageView } from "@/services/scholarship-cms.service";
 export const revalidate = 60;
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Scholarship Program",
-  description:
-    "Apply for ELEVEIIM scholarships — up to 100% fee waiver. Learn about eligibility, the exam process, and benefits.",
+  title: PAGE_SEO.scholarship.title,
+  description: PAGE_SEO.scholarship.description,
   path: "/scholarship",
   keywords: ["scholarship", "fee waiver", "financial aid", "ELEVEIIM"],
+  absoluteTitle: true,
 });
 
 export default async function ScholarshipPage() {

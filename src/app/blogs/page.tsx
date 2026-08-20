@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { PAGE_SEO } from "@/data/page-seo";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
 import { PageHero, Breadcrumb } from "@/components/common/page-header";
@@ -9,11 +10,11 @@ import { BlogsListing } from "@/components/blogs/blogs-listing";
 import { getPublishedBlogPosts } from "@/services/blogs.service";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Blog",
-  description:
-    "Career tips, technology insights, and educational resources from the ELEVEIIM team.",
+  title: PAGE_SEO.blogs.title,
+  description: PAGE_SEO.blogs.description,
   path: "/blogs",
   keywords: ["blog", "career tips", "education", "technology"],
+  absoluteTitle: true,
 });
 
 /** Blogs listing ISR. */

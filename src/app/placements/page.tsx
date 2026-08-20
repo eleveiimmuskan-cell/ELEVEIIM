@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { PAGE_SEO } from "@/data/page-seo";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
 import { PageHero } from "@/components/common/page-header";
@@ -11,11 +12,11 @@ import { getActivePlacements } from "@/services/placements.service";
 import { getActiveTestimonials } from "@/services/testimonials.service";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Placements",
-  description:
-    "Explore ELEVEIIM placement success stories, hiring partners, salary packages, and career outcomes.",
+  title: PAGE_SEO.placements.title,
+  description: PAGE_SEO.placements.description,
   path: "/placements",
   keywords: ["placements", "jobs", "salary", "career", "ELEVEIIM"],
+  absoluteTitle: true,
 });
 
 /** Placements page ISR — extend Promise.all below as more sections go dynamic. */

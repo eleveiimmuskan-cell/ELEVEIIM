@@ -63,12 +63,12 @@ export const defaultMetadata: Metadata = {
 
   title: {
     default:
-      "ELEVEIIM | Tech, Non-Tech Professional and Business Training Institute in Mohali",
+      "Professional Training Institute in Mohali & Chandigarh | Eleveiim",
     template: "%s | ELEVEIIM",
   },
 
   description:
-    "ELEVEIIM is a leading career training institute in Mohali offering Data Science & AI, Computer Vision and Robotics AI,  Gen AI & Prompt Engineering, Software Development, Full Stack Development, PHP, Laravel, Next.js, Node.js, Flutter, Digital Marketing, Graphic Designing, Real Estate, Personality Development, Soft Skills, Leadership Training, and placement-oriented professional courses.",
+    "Explore AI, Data Science, Digital Marketing, Full Stack Development and professional certification courses at Eleveiim in Mohali & Chandigarh. Join industry-focused training today.",
 
     
   keywords: [
@@ -146,9 +146,9 @@ export const defaultMetadata: Metadata = {
     url: SITE_URL,
     siteName: "ELEVEIIM",
     title:
-      "ELEVEIIM | Tech, Non-Tech Professional and Business Training Institute in Mohali",
+      "Professional Training Institute in Mohali & Chandigarh | Eleveiim",
     description:
-      "Learn Data Science & AI, Computer Vision and Robotics AI,  Gen AI & Prompt Engineering, Full Stack Development, PHP, Laravel, Next.js, Node.js, Flutter, Digital Marketing, Graphic Designing, Real Estate, Personality Development, and Soft Skills with industry-focused training.",
+      "Explore AI, Data Science, Digital Marketing, Full Stack Development and professional certification courses at Eleveiim in Mohali & Chandigarh. Join industry-focused training today.",
     images: [
       {
         url: "/og-image.jpg",
@@ -162,9 +162,9 @@ export const defaultMetadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "ELEVEIIM | Tech, Non-Tech Professional and Business Training Institute in Mohali",
+      "Professional Training Institute in Mohali & Chandigarh | Eleveiim",
     description:
-      "Industry-focused training for Data Science & AI, Computer Vision and Robotics AI,  Gen AI & Prompt Engineering, Software Development, Marketing, Design, Real Estate, Leadership and Career Growth.",
+      "Explore AI, Data Science, Digital Marketing, Full Stack Development and professional certification courses at Eleveiim in Mohali & Chandigarh. Join industry-focused training today.",
     images: ["/og-image.jpg"],
   },
 
@@ -182,6 +182,12 @@ interface PageMetadataOptions {
   path?: string;
   ogType?: "website" | "article";
   keywords?: string[];
+  /**
+   * When true, use the title exactly (no root `%s | ELEVEIIM` template and no
+   * extra `| ELEVEIIM` on Open Graph / Twitter titles). Use for SEO titles that
+   * already include the brand.
+   */
+  absoluteTitle?: boolean;
 }
 
 export function createPageMetadata({
@@ -190,11 +196,13 @@ export function createPageMetadata({
   path = "",
   ogType = "website",
   keywords = [],
+  absoluteTitle = false,
 }: PageMetadataOptions): Metadata {
   const url = `${SITE_URL}${path}`;
+  const socialTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
 
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     keywords,
     openGraph: {
@@ -202,13 +210,13 @@ export function createPageMetadata({
       locale: "en_IN",
       url,
       siteName: SITE_NAME,
-      title: `${title} | ${SITE_NAME}`,
+      title: socialTitle,
       description,
       images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | ${SITE_NAME}`,
+      title: socialTitle,
       description,
       images: ["/og-image.jpg"],
     },

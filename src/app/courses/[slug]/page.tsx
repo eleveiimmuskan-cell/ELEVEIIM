@@ -22,6 +22,7 @@ import {
   getPublishedCourseSlugs,
   getRelatedCourses,
 } from "@/services/courses.service";
+import { getCourseSeo } from "@/data/course-seo";
 
 /** Flip to `true` when Student Reviews / FAQ are ready to show again. */
 const SHOW_COURSE_REVIEWS = false;
@@ -43,11 +44,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const course = await getCourseBySlug(slug);
   if (!course) return { title: "Course Not Found" };
 
+  const seo = getCourseSeo(slug);
+
   return createPageMetadata({
-    title: course.title,
-    description: course.seoDescription || course.description,
+    title: seo?.title ?? course.title,
+    description:
+      seo?.description ?? course.seoDescription ?? course.description,
     path: `/courses/${slug}`,
     keywords: [course.category, course.title, "course", "ELEVEIIM"],
+    absoluteTitle: Boolean(seo),
   });
 }
 
