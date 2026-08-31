@@ -14,6 +14,10 @@ import { motion } from "framer-motion";
 import { CountdownTimer } from "@/components/scholarship/countdown-timer";
 import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
 import { ScholarshipHighlightStats } from "@/components/scholarship/scholarship-stats-card";
+import {
+  LearningModesAvailable,
+  RegistrationOpenBadge,
+} from "@/components/scholarship/scholarship-apply-callouts";
 import { useScholarshipApplicationsOpen } from "@/hooks/use-scholarship-deadline";
 import { useScholarshipCms } from "@/components/common/scholarship-cms-provider";
 import { SCHOLARSHIP_APPLY_SECTION_ID } from "@/data/scholarship";
@@ -137,6 +141,10 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
               <X className="size-4" />
             </button>
 
+            {applicationsOpen ? (
+              <RegistrationOpenBadge className="absolute right-14 top-4 z-[30] sm:right-16" />
+            ) : null}
+
             <HeroDecorations />
 
             <div
@@ -168,10 +176,12 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
                 "md:w-[58%] md:justify-center md:pl-10 md:pr-8"
               )}
             >
-              <div className="mb-3 inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-brand/12 bg-white/75 px-3 py-1.5 text-[11px] font-semibold text-brand shadow-[0_2px_12px_rgba(24,119,242,0.06)] sm:mb-5 sm:px-3.5 sm:text-xs">
+              <div className="mb-3 inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-brand/12 bg-white/75 px-3 py-1.5 text-[11px] font-semibold text-brand shadow-[0_2px_12px_rgba(24,119,242,0.06)] sm:mb-4 sm:px-3.5 sm:text-xs">
                 <GraduationCap className="size-3.5 shrink-0" aria-hidden />
                 <span className="truncate">{modal.eyebrow}</span>
               </div>
+
+              <LearningModesAvailable className="mb-3 sm:mb-4" />
 
               <DialogTitle className="max-w-lg text-left text-xl font-bold leading-[1.2] tracking-tight text-foreground sm:text-[1.65rem] md:text-[2rem]">
                 Unlock {highlightStats.discountPrefix}{" "}

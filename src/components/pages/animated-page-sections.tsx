@@ -8,6 +8,7 @@ import { GlassCard } from "@/components/common/glass-card";
 import { ScholarshipApplicationForm } from "@/components/scholarship/application-form";
 import { CountdownTimer } from "@/components/scholarship/countdown-timer";
 import { ScholarshipStatsCard } from "@/components/scholarship/scholarship-stats-card";
+import { ScholarshipApplyCallouts } from "@/components/scholarship/scholarship-apply-callouts";
 import {
   AnimatedHeading,
   PageContentSection,
@@ -187,6 +188,7 @@ export function ScholarshipPageContent({ page }: { page: ApiScholarshipPage }) {
             <ScholarshipStatsCard className="mb-8" />
           </StaggerItem>
           <StaggerItem>
+            <ScholarshipApplyCallouts />
             <ScholarshipApplicationForm />
           </StaggerItem>
         </StaggerContainer>
