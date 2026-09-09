@@ -22,23 +22,9 @@ import {
   submitScholarshipApplication,
 } from "@/services/scholarship-apply.service";
 
-/** ~45-day programs are stored as 6 weeks in the courses API. */
-const SCHOLARSHIP_ELIGIBLE_DURATION_WEEKS = 6;
-
-const NOT_APPLICABLE_MESSAGE =
-  "This course is not applicable for the scholarship.";
-
 interface CourseOption {
   id: string;
   title: string;
-  /** True when duration is the scholarship-eligible ~45-day band. */
-  eligible: boolean;
-}
-
-function isScholarshipEligibleDuration(
-  durationWeeks: number | null | undefined
-): boolean {
-  return durationWeeks === SCHOLARSHIP_ELIGIBLE_DURATION_WEEKS;
 }
 
 export function ScholarshipApplicationForm({
@@ -59,17 +45,11 @@ export function ScholarshipApplicationForm({
   const [courses, setCourses] = useState<CourseOption[]>([]);
   const [coursesLoading, setCoursesLoading] = useState(true);
   const [coursesError, setCoursesError] = useState<string | null>(null);
-  const [courseNotice, setCourseNotice] = useState<string | null>(null);
   const [courseMenuOpen, setCourseMenuOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const coursePickerRef = useRef<HTMLDivElement>(null);
-
-  const eligibleCourses = useMemo(
-    () => courses.filter((course) => course.eligible),
-    [courses]
-  );
 
   const selectedCourse = useMemo(
     () => courses.find((course) => course.id === courseId) ?? null,
@@ -106,12 +86,8 @@ export function ScholarshipApplicationForm({
           .map((c) => ({
             id: c.id,
             title: c.title,
-            eligible: isScholarshipEligibleDuration(c.durationWeeks),
           }))
-          .sort((a, b) => {
-            if (a.eligible !== b.eligible) return a.eligible ? -1 : 1;
-            return a.title.localeCompare(b.title);
-          });
+          .sort((a, b) => a.title.localeCompare(b.title));
         setCourses(options);
       } catch {
         if (!cancelled) {
@@ -152,14 +128,8 @@ export function ScholarshipApplicationForm({
     };
   }, [courseMenuOpen]);
 
-  const selectEligibleCourse = (course: CourseOption) => {
+  const selectCourse = (course: CourseOption) => {
     setCourseId(course.id);
-    setCourseNotice(null);
-    setCourseMenuOpen(false);
-  };
-
-  const onIneligibleCourseClick = () => {
-    setCourseNotice(NOT_APPLICABLE_MESSAGE);
     setCourseMenuOpen(false);
   };
 
@@ -188,10 +158,8 @@ export function ScholarshipApplicationForm({
       }
 
       const chosen = courses.find((course) => course.id === courseId);
-      if (!chosen?.eligible) {
-        setCourseNotice(NOT_APPLICABLE_MESSAGE);
-        setCourseId("");
-        throw new Error(NOT_APPLICABLE_MESSAGE);
+      if (!chosen) {
+        throw new Error("Please select a preferred course.");
       }
 
       const result = await submitScholarshipApplication({
@@ -210,7 +178,6 @@ export function ScholarshipApplicationForm({
       setCourseId("");
       setMessage("");
       setHp("");
-      setCourseNotice(null);
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -232,9 +199,7 @@ export function ScholarshipApplicationForm({
     ? "Loading courses…"
     : courses.length === 0
       ? "No courses available"
-      : eligibleCourses.length === 0
-        ? "No 45-day courses available"
-        : "Select a course";
+      : "Select a course";
 
   return (
     <GlassCard
@@ -369,38 +334,19 @@ export function ScholarshipApplicationForm({
                 >
                   {courses.map((course) => {
                     const isSelected = course.id === courseId;
-                    if (course.eligible) {
-                      return (
-                        <li
-                          key={course.id}
-                          role="option"
-                          aria-selected={isSelected}
-                        >
-                          <button
-                            type="button"
-                            className={cn(
-                              "w-full px-2.5 py-2 text-left text-sm transition-colors hover:bg-brand/10 hover:text-brand",
-                              isSelected && "bg-brand/5 font-medium text-brand"
-                            )}
-                            onClick={() => selectEligibleCourse(course)}
-                          >
-                            {course.title}
-                          </button>
-                        </li>
-                      );
-                    }
-
                     return (
                       <li
                         key={course.id}
                         role="option"
-                        aria-selected={false}
-                        aria-disabled
+                        aria-selected={isSelected}
                       >
                         <button
                           type="button"
-                          className="w-full cursor-not-allowed px-2.5 py-2 text-left text-sm text-muted-foreground opacity-50"
-                          onClick={onIneligibleCourseClick}
+                          className={cn(
+                            "w-full px-2.5 py-2 text-left text-sm transition-colors hover:bg-brand/10 hover:text-brand",
+                            isSelected && "bg-brand/5 font-medium text-brand"
+                          )}
+                          onClick={() => selectCourse(course)}
                         >
                           {course.title}
                         </button>
@@ -410,15 +356,6 @@ export function ScholarshipApplicationForm({
                 </ul>
               ) : null}
 
-              {courseNotice ? (
-                <p className="mt-1.5 text-xs text-red-600" role="alert">
-                  {courseNotice}
-                </p>
-              ) : !coursesError && courses.length > 0 ? (
-                <p className="mt-1.5 text-xs text-muted-foreground">
-                  Only 45-day courses can be selected for the scholarship.
-                </p>
-              ) : null}
               {coursesError && (
                 <p className="mt-1.5 text-xs text-red-600">{coursesError}</p>
               )}
@@ -462,7 +399,7 @@ export function ScholarshipApplicationForm({
               !applicationsOpen ||
               submitting ||
               coursesLoading ||
-              eligibleCourses.length === 0
+              courses.length === 0
             }
             className="w-full bg-brand-accent hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
