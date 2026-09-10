@@ -1,26 +1,17 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { Check, GraduationCap, X } from "lucide-react";
 import { Dialog as DialogPrimitive } from "radix-ui";
-import {
-  ArrowRight,
-  Check,
-  GraduationCap,
-  X,
-} from "lucide-react";
 import { motion } from "framer-motion";
 import { CountdownTimer } from "@/components/scholarship/countdown-timer";
 import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
-import { ScholarshipHighlightStats } from "@/components/scholarship/scholarship-stats-card";
 import {
   LearningModesAvailable,
   RegistrationOpenBadge,
 } from "@/components/scholarship/scholarship-apply-callouts";
+import { ContactQueryForm } from "@/components/contact/contact-query-form";
 import { useScholarshipApplicationsOpen } from "@/hooks/use-scholarship-deadline";
 import { useScholarshipCms } from "@/components/common/scholarship-cms-provider";
-import { SCHOLARSHIP_APPLY_SECTION_ID } from "@/data/scholarship";
 import {
   Dialog,
   DialogDescription,
@@ -36,73 +27,14 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const MODAL_GRADIENT =
   "linear-gradient(135deg, #f8fbff 0%, #f4f8ff 50%, #eef5ff 100%)";
 
-function HeroDecorations() {
-  return <ScholarshipBannerDecorations variant="modal" />;
-}
-
-function FloatingScholarshipBadge({ className }: { className?: string }) {
-  const { highlightStats } = useScholarshipCms();
-  return (
-    <div
-      className={cn(
-        "pointer-events-none rounded-2xl border border-white/65 bg-white/85 px-3.5 py-2 shadow-[0_8px_32px_rgba(24,119,242,0.12)] backdrop-blur-xl sm:px-4 sm:py-2.5",
-        className
-      )}
-    >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand">
-        Scholarship
-      </p>
-      <p className="text-xs font-bold text-brand-accent sm:text-[13px]">
-        {highlightStats.discountPrefix} {highlightStats.discountValue} Waiver
-      </p>
-    </div>
-  );
-}
-
-function ScholarshipHighlightCard({
-  onApplyClick,
-}: {
-  onApplyClick: () => void;
-}) {
-  const applicationsOpen = useScholarshipApplicationsOpen();
-
-  return (
-    <ScholarshipHighlightStats
-      variant="modal"
-      animated
-      className="mt-3 sm:mt-5"
-      onApplyClick={applicationsOpen ? onApplyClick : undefined}
-      scrollToApply={false}
-    />
-  );
-}
-
 interface ScholarshipModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) {
-  const router = useRouter();
-  const pathname = usePathname();
   const applicationsOpen = useScholarshipApplicationsOpen();
-  const { modal, highlightStats, studentsImage, studentsImageAlt } =
-    useScholarshipCms();
-
-  const handleStatsCardClick = () => {
-    onOpenChange(false);
-
-    if (pathname === "/scholarship") {
-      window.setTimeout(() => {
-        document
-          .getElementById(SCHOLARSHIP_APPLY_SECTION_ID)
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 150);
-      return;
-    }
-
-    router.push(`/scholarship#${SCHOLARSHIP_APPLY_SECTION_ID}`);
-  };
+  const { modal, highlightStats } = useScholarshipCms();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -116,7 +48,7 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
         />
         <DialogPrimitive.Content
           className={cn(
-            "fixed top-1/2 left-1/2 z-[70] w-full max-w-[calc(100%-1rem)] -translate-x-1/2 -translate-y-1/2 outline-none sm:max-w-[960px]",
+            "fixed top-1/2 left-1/2 z-[70] w-full max-w-[calc(100%-1rem)] -translate-x-1/2 -translate-y-1/2 outline-none sm:max-w-[920px]",
             "max-h-[92dvh] overflow-y-auto overscroll-contain sm:max-h-[95dvh]",
             "rounded-2xl border border-border/50 p-0 sm:rounded-[28px]",
             "shadow-[0_32px_80px_rgba(15,23,42,0.14)] ring-1 ring-black/[0.03]",
@@ -130,7 +62,7 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, ease: EASE }}
-            className="relative md:min-h-[560px] lg:min-h-[580px]"
+            className="relative"
           >
             <button
               type="button"
@@ -145,124 +77,82 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
               <RegistrationOpenBadge className="absolute right-14 top-4 z-[30] sm:right-16" />
             ) : null}
 
-            <HeroDecorations />
+            <ScholarshipBannerDecorations variant="modal" />
 
-            <div
-              className="pointer-events-none absolute bottom-0 right-[8%] z-[2] h-3 w-[34%] rounded-[100%] bg-foreground/8 blur-lg max-md:right-[4%] max-md:w-[48%]"
-              aria-hidden
-            />
+            <div className="relative z-[5] grid gap-6 px-4 py-5 sm:gap-8 sm:px-8 sm:py-10 md:grid-cols-2 md:items-start md:gap-10 md:px-10">
+              <div className="flex min-w-0 flex-col">
+                <div className="mb-3 inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-brand/12 bg-white/75 px-3 py-1.5 text-[11px] font-semibold text-brand shadow-[0_2px_12px_rgba(24,119,242,0.06)] sm:mb-4 sm:px-3.5 sm:text-xs">
+                  <GraduationCap className="size-3.5 shrink-0" aria-hidden />
+                  <span className="truncate">{modal.eyebrow}</span>
+                </div>
 
-            <Image
-              src={studentsImage}
-              alt=""
-              width={1024}
-              height={682}
-              priority
-              className={cn(
-                "hero-students pointer-events-none absolute bottom-0 z-[3] hidden h-auto object-contain object-bottom md:block",
-                "drop-shadow-[0_16px_32px_rgba(24,119,242,0.14)]",
-                "md:right-[-20px] md:w-[55%]",
-                "lg:right-[-24px] lg:w-[60%]"
-              )}
-              sizes="(max-width: 865px) 65vw, 500px"
-            />
+                <LearningModesAvailable className="mb-3 sm:mb-4" />
 
-            <FloatingScholarshipBadge className="absolute right-[6%] top-[11%] z-[6] hidden md:block" />
+                <DialogTitle className="max-w-lg text-left text-xl font-bold leading-[1.2] tracking-tight text-foreground sm:text-[1.65rem] md:text-[1.85rem]">
+                  Unlock {highlightStats.discountPrefix}{" "}
+                  {highlightStats.discountValue} Scholarship
+                </DialogTitle>
 
-            <div
-              className={cn(
-                "relative z-[5] flex flex-col",
-                "px-4 py-5 sm:px-8 sm:py-10",
-                "md:w-[58%] md:justify-center md:pl-10 md:pr-8"
-              )}
-            >
-              <div className="mb-3 inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-brand/12 bg-white/75 px-3 py-1.5 text-[11px] font-semibold text-brand shadow-[0_2px_12px_rgba(24,119,242,0.06)] sm:mb-4 sm:px-3.5 sm:text-xs">
-                <GraduationCap className="size-3.5 shrink-0" aria-hidden />
-                <span className="truncate">{modal.eyebrow}</span>
+                <DialogDescription
+                  id="scholarship-modal-description"
+                  className="mt-2 max-w-md text-left text-[13px] leading-relaxed text-muted-foreground sm:mt-3 sm:text-sm"
+                >
+                  {modal.description}
+                </DialogDescription>
+
+                <CountdownTimer variant="modal" className="mt-3 sm:mt-4" />
+
+                <ul
+                  className="mt-4 grid grid-cols-1 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-x-5 sm:gap-y-2.5"
+                  aria-label="Program highlights"
+                >
+                  {modal.trustItems.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex items-center gap-1.5 text-[13px] font-medium text-foreground/85 sm:text-sm"
+                    >
+                      <Check
+                        className="size-4 shrink-0 text-emerald-500"
+                        aria-hidden
+                      />
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="mt-5 hidden text-[11px] text-muted-foreground/80 sm:mt-6 sm:block sm:text-xs md:mt-auto md:pt-8">
+                  {modal.footerNote}
+                </p>
               </div>
 
-              <LearningModesAvailable className="mb-3 sm:mb-4" />
+              <div className="relative z-[6] rounded-2xl border border-brand/10 bg-white p-4 shadow-[0_8px_40px_rgba(11,99,206,0.08)] sm:p-5 md:p-6">
+                <h3 className="text-base font-bold text-foreground sm:text-lg">
+                  Send a Quick Query
+                </h3>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                  Ask about scholarships, courses, or eligibility — our
+                  counselors will get back to you shortly.
+                </p>
 
-              <DialogTitle className="max-w-lg text-left text-xl font-bold leading-[1.2] tracking-tight text-foreground sm:text-[1.65rem] md:text-[2rem]">
-                Unlock {highlightStats.discountPrefix}{" "}
-                {highlightStats.discountValue} Scholarship
-              </DialogTitle>
+                <ContactQueryForm
+                  className="mt-4"
+                  compact
+                  defaultSubject="Scholarship Inquiry"
+                  submitLabel="Submit Query"
+                  honeypotId="scholarship_modal_hp"
+                />
 
-              <DialogDescription
-                id="scholarship-modal-description"
-                className="mt-2 max-w-md text-left text-[13px] leading-relaxed text-muted-foreground sm:mt-3 sm:text-sm md:text-[15px]"
-              >
-                {modal.description}
-              </DialogDescription>
-
-              <CountdownTimer variant="modal" className="mt-3 sm:mt-4" />
-
-              <ScholarshipHighlightCard onApplyClick={handleStatsCardClick} />
-
-              <ul
-                className="mt-4 grid grid-cols-1 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-x-5 sm:gap-y-2.5"
-                aria-label="Program highlights"
-              >
-                {modal.trustItems.map((item) => (
-                  <li
-                    key={item.id}
-                    className="flex items-center gap-1.5 text-[13px] font-medium text-foreground/85 sm:text-sm"
-                  >
-                    <Check
-                      className="size-4 shrink-0 text-emerald-500"
-                      aria-hidden
-                    />
-                    {item.text}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-5 flex w-full flex-col gap-2.5 sm:mt-7 sm:max-w-md sm:flex-row sm:items-center sm:gap-3">
-                <motion.div
-                  className="w-full sm:flex-1"
-                  whileHover={applicationsOpen ? { y: -2 } : undefined}
-                  whileTap={applicationsOpen ? { scale: 0.99 } : undefined}
-                  transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                >
-                  {applicationsOpen ? (
-                    <Button
-                      asChild
-                      className="h-12 w-full rounded-2xl bg-brand text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(24,119,242,0.3)] transition-all hover:bg-brand/90 hover:shadow-[0_8px_28px_rgba(24,119,242,0.35)]"
-                    >
-                      <Link
-                        href={`/scholarship#${SCHOLARSHIP_APPLY_SECTION_ID}`}
-                        onClick={() => onOpenChange(false)}
-                      >
-                        {modal.primaryButtonText}
-                        <ArrowRight className="size-4" aria-hidden />
-                      </Link>
-                    </Button>
-                  ) : (
-                    <Button
-                      disabled
-                      className="h-12 w-full rounded-2xl bg-muted text-[15px] font-semibold text-muted-foreground"
-                    >
-                      Applications Closed
-                    </Button>
-                  )}
-                </motion.div>
                 <Button
                   type="button"
                   variant="ghost"
-                  className="h-10 w-full rounded-2xl text-sm font-medium text-muted-foreground hover:bg-white/50 hover:text-foreground sm:w-auto sm:px-5"
+                  className="mt-2 h-10 w-full rounded-2xl text-sm font-medium text-muted-foreground hover:bg-slate-50 hover:text-foreground"
                   onClick={() => onOpenChange(false)}
                 >
                   {modal.secondaryButtonText}
                 </Button>
               </div>
-
-              <p className="mt-4 pb-1 text-center text-[11px] text-muted-foreground/80 sm:mt-5 sm:text-left sm:text-xs">
-                {modal.footerNote}
-              </p>
             </div>
           </motion.div>
-
-          <span className="sr-only">{studentsImageAlt}</span>
         </DialogPrimitive.Content>
       </DialogPortal>
     </Dialog>

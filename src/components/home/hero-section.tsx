@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
@@ -9,7 +8,7 @@ import { isRemoteMediaUrl } from "@/lib/media-url";
 import { AnimatedCounter } from "@/components/shared/motion-wrapper";
 import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
 import { GlassButton } from "@/components/shared/glass-card";
-import { ScholarshipButton } from "@/components/shared/scholarship-button";
+import { HeroPromoCarousel } from "@/components/home/hero-promo-carousel";
 import type { HeroBannerData } from "@/types/api-hero-banner";
 
 interface HeroSectionProps {
@@ -127,7 +126,6 @@ export function HeroSection({ banner }: HeroSectionProps) {
                 {data.buttonText}
                 <ArrowRight className="size-4" />
               </GlassButton>
-              <ScholarshipButton href="/scholarship" />
             </div>
 
             <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-white/15 pt-5 sm:gap-x-10">
@@ -148,72 +146,14 @@ export function HeroSection({ banner }: HeroSectionProps) {
             </div>
           </motion.div>
 
-          {/* Right — scholarship headline (static for now) */}
+          {/* Right — promo carousel */}
           <motion.div
             initial={{ opacity: 0, x: 32 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 hidden min-w-0 flex-col items-center justify-center overflow-hidden text-center lg:flex lg:items-end lg:text-right"
+            className="relative z-10 min-w-0"
           >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-white/70">
-              Limited Time Offer
-            </p>
-
-            <div className="space-y-1">
-              <motion.p
-                animate={{ opacity: [0.85, 1, 0.85] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="text-4xl font-black uppercase leading-none tracking-tight text-white xl:text-5xl"
-              >
-                Get upto
-              </motion.p>
-
-              <p className="text-6xl font-black leading-none tracking-tighter xl:text-7xl">
-                <span className="bg-gradient-to-r from-brand-accent via-[#ff8533] to-brand-accent bg-clip-text text-transparent">
-                  100%
-                </span>
-              </p>
-
-              <p className="text-4xl font-black uppercase leading-none tracking-tight text-white xl:text-5xl">
-                Scholarship
-              </p>
-            </div>
-
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/70 lg:ml-auto">
-              Unlock premium training at a fraction of the cost. Apply before
-              seats fill up.
-            </p>
-
-            <Link
-              href="/scholarship"
-              className="relative z-20 mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-brand-accent hover:underline"
-            >
-              Learn more about eligibility
-              <ArrowRight className="size-4" />
-            </Link>
-          </motion.div>
-
-          {/* Mobile scholarship headline */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="relative z-20 rounded-2xl border border-white/20 bg-white/10 p-6 text-center backdrop-blur-md lg:hidden"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
-              Limited Time Offer
-            </p>
-            <p className="mt-2 text-3xl font-black uppercase leading-tight text-white">
-              Get Upto{" "}
-              <span className="text-brand-accent">100%</span> Scholarship
-            </p>
-            <Link
-              href="/scholarship"
-              className="relative z-20 mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-brand-accent hover:underline"
-            >
-              Learn more about eligibility
-              <ArrowRight className="size-4" />
-            </Link>
+            <HeroPromoCarousel />
           </motion.div>
         </div>
       </div>
