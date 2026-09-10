@@ -88,7 +88,7 @@ export const HERO_PROMO_SLIDES: HeroPromoSlide[] = [
     icon: BadgePercent,
     title: [
       { text: "Get Up to " },
-      { text: "100% Scholarship", highlight: true },
+      { text: "75% Scholarship", highlight: true },
     ],
     description:
       "Unlock career-focused training through our scholarship selection process. Eligibility and terms apply.",
