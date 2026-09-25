@@ -4,7 +4,7 @@ function getApiOrigin(): string {
   return (
     process.env.API_URL?.trim() ||
     process.env.NEXT_PUBLIC_API_URL?.trim() ||
-    "http://localhost:3001/api/v1"
+    "https://api.eleveiim.com/api/v1"
   ).replace(/\/api\/v\d+\/?$/, "");
 }
 
@@ -65,11 +65,22 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   images: {
+    // Serve `/images/*` from `public/` (and the postbuild copy in `.next/static`)
+    // instead of `/_next/image`. Hostinger does not run the optimizer reliably.
+    unoptimized: true,
     remotePatterns: buildUploadRemotePatterns(),
   },
   async rewrites() {
     const apiOrigin = getApiOrigin();
     return [
+      {
+        source: "/images/:path*",
+        destination: "/_next/static/images/:path*",
+      },
+      {
+        source: "/og-image.jpg",
+        destination: "/_next/static/og-image.jpg",
+      },
       {
         source: "/uploads/:path*",
         destination: `${apiOrigin}/uploads/:path*`,

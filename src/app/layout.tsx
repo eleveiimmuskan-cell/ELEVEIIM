@@ -56,8 +56,15 @@ export default async function RootLayout({
     ]);
 
   return (
-    <html lang="en" className={`${jakarta.variable} ${geistMono.variable}`}>
-      <body className="min-h-screen bg-white font-sans text-foreground antialiased">
+    <html
+      lang="en"
+      className={`${jakarta.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body
+        className="min-h-screen bg-white font-sans text-foreground antialiased"
+        suppressHydrationWarning
+      >
         <MetaPixel />
         <Suspense fallback={null}>
           <FacebookPixelEvents />

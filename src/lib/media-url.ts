@@ -3,13 +3,16 @@ export function getApiOrigin(): string {
   const base =
     process.env.API_URL?.trim() ||
     process.env.NEXT_PUBLIC_API_URL?.trim() ||
-    "http://localhost:3001/api/v1";
+    "https://api.eleveiim.com/api/v1";
   return base.replace(/\/api\/v\d+\/?$/, "");
 }
 
 /**
  * Resolves a stored media path into a browser-loadable URL.
- * Relative `/uploads/*` paths stay relative so Next.js can proxy them.
+ *
+ * Local `/uploads/*` stays relative so Next.js can proxy to the local API.
+ * On Live, Hostinger does not proxy `/uploads` on eleveiim.com, so those
+ * paths are loaded from the API origin instead.
  */
 export function resolveMediaUrl(path: string | null | undefined): string {
   if (!path) return "";
@@ -19,6 +22,18 @@ export function resolveMediaUrl(path: string | null | undefined): string {
     path.startsWith("blob:") ||
     path.startsWith("data:")
   ) {
+    return path;
+  }
+  if (path.startsWith("/uploads/")) {
+    const origin = getApiOrigin();
+    try {
+      const host = new URL(origin).hostname;
+      if (host !== "localhost" && host !== "127.0.0.1" && host !== "[::1]") {
+        return `${origin}${path}`;
+      }
+    } catch {
+      return path;
+    }
     return path;
   }
   if (path.startsWith("/")) return path;
