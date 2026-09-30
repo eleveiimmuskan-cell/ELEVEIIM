@@ -32,6 +32,8 @@ export class ApiError extends Error {
 
 import { getConfiguredApiBase } from "@/lib/configured-api";
 
+const GET_TIMEOUT_MS = 8000;
+
 function getApiBase(): string {
   return getConfiguredApiBase();
 }
@@ -74,12 +76,16 @@ export async function apiFetch<T>(
     );
   }
 
-  const { query, next, body, headers, ...rest } = options;
+  const { query, next, body, headers, signal, ...rest } = options;
   const qs = query ? buildQueryString(query) : "";
   const url = `${base}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}${qs}`;
+  const isRead = !rest.method || rest.method.toUpperCase() === "GET";
 
+  // Next.js aborts a static page after 60s; a slow API must not stall the build.
   const res = await fetch(url, {
     ...rest,
+    signal:
+      signal ?? (isRead ? AbortSignal.timeout(GET_TIMEOUT_MS) : undefined),
     headers: {
       Accept: "application/json",
       ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
