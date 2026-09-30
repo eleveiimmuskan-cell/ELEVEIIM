@@ -295,9 +295,9 @@ export function AdmissionApplicationForm() {
       </header>
 
       <p className="border-b border-slate-200 bg-slate-50 px-4 py-2 text-[11px] leading-relaxed text-slate-600 sm:px-6 sm:text-xs">
-        Instructions: Fill the form in CAPITAL LETTERS. Attach one passport-size
-        photograph, a copy of Aadhaar and the last qualification marksheet.
-        Fields marked * are mandatory. Incomplete forms will not be processed.
+        Instructions: Fill the form in CAPITAL LETTERS. Fields marked * are
+        mandatory. A passport-size photograph, Aadhaar copy and the last
+        qualification marksheet are optional here and can be submitted later.
       </p>
 
       <div className="grid gap-4 px-4 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_160px]">
@@ -818,7 +818,7 @@ export function AdmissionApplicationForm() {
         </fieldset>
       </div>
 
-      <SectionBar id="section-f" title="Section F — Documents Submitted" />
+      <SectionBar id="section-f" title="Section F — Documents Submitted (optional)" />
       <div className="px-4 py-4 sm:px-6">
         <div className="grid gap-2 sm:grid-cols-2">
           {DOCUMENTS.map((item) => {

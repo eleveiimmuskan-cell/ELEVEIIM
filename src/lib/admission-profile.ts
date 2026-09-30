@@ -566,21 +566,12 @@ export function admissionProfileErrors(
   }
 ): AdmissionFieldError {
   const errors: AdmissionFieldError = {};
-  const uploaded = new Set(
-    [...(options?.uploadedDocuments ?? [])].map((item) => item.trim())
-  );
-  const hasPhoto =
-    options?.hasPhoto ||
-    Boolean(profile.photoUrl) ||
-    uploaded.has(STUDENT_PHOTO_DOC) ||
-    uploaded.has("2 Passport-size Photographs");
 
   if (options?.requireCatalogCourse !== false && blank(profile.courseId)) {
     errors.programAppliedFor = "Select a course from the catalog.";
   } else if (blank(profile.programAppliedFor) && blank(profile.courseId)) {
     errors.programAppliedFor = "Select the program applied for.";
   }
-  if (!hasPhoto) errors.photo = "Upload the student photograph.";
   if (blank(profile.fullName)) errors.fullName = "Full name is required.";
   if (blank(profile.dob)) errors.dob = "Date of birth is required.";
   if (blank(profile.gender)) errors.gender = "Select gender.";
@@ -655,12 +646,6 @@ export function admissionProfileErrors(
   }
   if (!isAdmissionBatchTiming(profile.batchTimings[0])) {
     errors.batchTimings = "Select one batch schedule.";
-  }
-  if (!uploaded.has(AADHAAR_DOC)) {
-    errors.documents = "Upload Aadhaar Card Copy.";
-  } else if (!hasRequiredMarksheet(profile.highestQualification, uploaded)) {
-    errors.documents =
-      "Upload the last qualification marksheet (10th, 12th/Diploma, or Graduation).";
   }
   if (!profile.applicantDeclaration) {
     errors.applicantDeclaration = "Applicant declaration is required.";
