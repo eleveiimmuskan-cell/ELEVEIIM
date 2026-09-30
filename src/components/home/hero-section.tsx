@@ -24,7 +24,7 @@ const FALLBACK_BANNER: HeroBannerData = {
   buttonText: "Explore Courses",
   buttonUrl: "/courses",
   backgroundImage: "",
-  liveCourseCount: 120,
+  liveCourseCount: 25,
   studentRating: 4.9,
   successRate: 98,
 };

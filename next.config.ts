@@ -1,11 +1,26 @@
 import type { NextConfig } from "next";
 
 function getApiOrigin(): string {
-  return (
+  const fromEnv = (
     process.env.API_URL?.trim() ||
     process.env.NEXT_PUBLIC_API_URL?.trim() ||
-    "https://api.eleveiim.com/api/v1"
-  ).replace(/\/api\/v\d+\/?$/, "");
+    ""
+  ).replace(/\/+$/, "");
+  const isProd = process.env.NODE_ENV === "production";
+  const fallback = isProd
+    ? "https://api.eleveiim.com/api/v1"
+    : "http://127.0.0.1:3001/api/v1";
+  let base = fromEnv || fallback;
+  if (!isProd) {
+    try {
+      if (new URL(base).hostname === "api.eleveiim.com") {
+        base = "http://127.0.0.1:3001/api/v1";
+      }
+    } catch {
+      // relative or invalid — keep as-is
+    }
+  }
+  return base.replace(/\/api\/v\d+\/?$/, "");
 }
 
 function buildUploadRemotePatterns() {

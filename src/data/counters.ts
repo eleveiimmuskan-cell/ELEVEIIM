@@ -8,7 +8,7 @@ export const counterStats: CounterStat[] = [
 ];
 
 export const heroStats: CounterStat[] = [
-  { id: "1", value: 120, suffix: "+", label: "Live Courses" },
+  { id: "1", value: 25, suffix: "+", label: "Live Courses" },
   { id: "2", value: 4.9, suffix: "", label: "Student Rating" },
   { id: "3", value: 98, suffix: "%", label: "Success Rate" },
 ];

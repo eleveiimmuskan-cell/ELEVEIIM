@@ -15,6 +15,20 @@ import type {
 
 const DEFAULT_REVALIDATE_SECONDS = 60;
 
+const DEFAULT_LIVE_COURSE_COUNT = 25;
+const LEGACY_LIVE_COURSE_COUNTS = new Set([120, 125]);
+
+function publicLiveCourseCount(value: unknown): number {
+  if (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    !LEGACY_LIVE_COURSE_COUNTS.has(value)
+  ) {
+    return value;
+  }
+  return DEFAULT_LIVE_COURSE_COUNT;
+}
+
 /** Correct known CMS typos / reversed brand tagline. */
 function normalizeMainHeading(value: string): string {
   const heading = value.trim();
@@ -181,8 +195,7 @@ export const getHeroBannerSection = cache(
         buttonText: banner.buttonText.trim(),
         buttonUrl: banner.buttonUrl.trim(),
         backgroundImage,
-        liveCourseCount:
-          typeof banner.liveCourseCount === "number" ? banner.liveCourseCount : 120,
+        liveCourseCount: publicLiveCourseCount(banner.liveCourseCount),
         studentRating:
           typeof banner.studentRating === "number" ? banner.studentRating : 4.9,
         successRate:

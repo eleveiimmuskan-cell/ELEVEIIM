@@ -12,7 +12,7 @@ export function FloatingCallButton() {
       aria-label={`Call ELEVEIIM now at ${siteContact.phone}`}
       title={`Call Now — ${siteContact.phone}`}
       className={cn(
-        "group fixed right-8 z-50 flex size-14 items-center justify-center rounded-full",
+        "floating-cta group fixed right-8 z-40 flex size-14 items-center justify-center rounded-full",
         "bg-brand text-white shadow-lg shadow-brand/25",
         "ring-1 ring-white/20 transition-shadow duration-300",
         "hover:shadow-xl hover:shadow-brand/35",

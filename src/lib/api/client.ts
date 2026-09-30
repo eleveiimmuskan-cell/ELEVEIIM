@@ -30,12 +30,10 @@ export class ApiError extends Error {
   }
 }
 
+import { getConfiguredApiBase } from "@/lib/configured-api";
+
 function getApiBase(): string {
-  return (
-    process.env.API_URL?.trim() ||
-    process.env.NEXT_PUBLIC_API_URL?.trim() ||
-    "https://api.eleveiim.com/api/v1"
-  );
+  return getConfiguredApiBase();
 }
 
 /** Serializes a flat query object into a URL search string, skipping empties. */

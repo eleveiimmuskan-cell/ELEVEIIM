@@ -4,12 +4,9 @@ import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { defaultMetadata } from "@/lib/seo/metadata";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/common/json-ld";
-import { Navbar } from "@/components/navbar/navbar";
 import { Footer } from "@/components/footer/footer";
-import { WhatsAppButton } from "@/components/common/whatsapp-button";
-import { FloatingCallButton } from "@/components/common/floating-call-button";
 import { ScholarshipCmsProvider } from "@/components/common/scholarship-cms-provider";
-import { ScholarshipModalHost } from "@/components/common/scholarship-modal-provider";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { SmoothScrollProvider } from "@/components/common/smooth-scroll";
 import { MetaPixel } from "@/components/analytics/MetaPixel";
 import { FacebookPixelEvents } from "@/components/analytics/FacebookPixelEvents";
@@ -78,12 +75,13 @@ export default async function RootLayout({
             settings={scholarshipSettings}
             modal={scholarshipModal}
           >
-            <Navbar />
-            <main>{children}</main>
-            <Footer data={footer} featuredCourses={featuredCourses} />
-            <FloatingCallButton />
-            <WhatsAppButton />
-            <ScholarshipModalHost />
+            <SiteChrome
+              footer={
+                <Footer data={footer} featuredCourses={featuredCourses} />
+              }
+            >
+              {children}
+            </SiteChrome>
           </ScholarshipCmsProvider>
         </SmoothScrollProvider>
       </body>

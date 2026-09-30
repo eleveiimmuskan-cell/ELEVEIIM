@@ -1,10 +1,8 @@
+import { getConfiguredApiOrigin } from "@/lib/configured-api";
+
 /** API server origin without the `/api/v1` suffix — used for upload proxying. */
 export function getApiOrigin(): string {
-  const base =
-    process.env.API_URL?.trim() ||
-    process.env.NEXT_PUBLIC_API_URL?.trim() ||
-    "https://api.eleveiim.com/api/v1";
-  return base.replace(/\/api\/v\d+\/?$/, "");
+  return getConfiguredApiOrigin();
 }
 
 /**

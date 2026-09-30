@@ -43,4 +43,9 @@ export const PAGE_SEO = {
     description:
       "Explore industry-ready courses in AI, Data Science, Digital Marketing, SEO, Full Stack Development, Graphic Design and more at Eleveiim in Mohali & Chandigarh",
   },
+  admissionApplication: {
+    title: "Admission Application Form 2026–27 | Eleveiim Mohali",
+    description:
+      "Fill the ELEVEIIM admission application form for classroom programs in Mohali. Submit personal, academic, course and fee details for Academic Session 2026–27.",
+  },
 } as const satisfies Record<string, PageSeoMeta>;

@@ -10,6 +10,11 @@ export const SCHOLARSHIP_MODAL_LAST_SHOWN_KEY = "eleveiim_scholarship_last_shown
 /** Paths where the promotional modal should not appear */
 const SKIP_PATHS = ["/scholarship", "/future-leaders-scholarship"];
 
+/** Matches admin CMS validation — never treat 0/invalid as “reopen immediately”. */
+const MIN_INTERVAL_MS = 10_000;
+const DEFAULT_INTERVAL_MS = 120_000;
+const DEFAULT_DELAY_MS = 900;
+
 function getLastShown(): number {
   if (typeof window === "undefined") return 0;
   const raw = localStorage.getItem(SCHOLARSHIP_MODAL_LAST_SHOWN_KEY);
@@ -21,6 +26,20 @@ function markLastShown() {
   localStorage.setItem(SCHOLARSHIP_MODAL_LAST_SHOWN_KEY, String(Date.now()));
 }
 
+function resolveIntervalMs(raw: number | undefined): number {
+  if (!Number.isFinite(raw) || raw === undefined || raw <= 0) {
+    return DEFAULT_INTERVAL_MS;
+  }
+  return Math.max(raw, MIN_INTERVAL_MS);
+}
+
+function resolveDelayMs(raw: number | undefined): number {
+  if (!Number.isFinite(raw) || raw === undefined || raw < 0) {
+    return DEFAULT_DELAY_MS;
+  }
+  return raw;
+}
+
 /**
  * Coordinates scholarship modal timing using CMS interval/delay settings.
  */
@@ -30,8 +49,8 @@ export function useScholarshipModal() {
   const shouldSkip =
     !modal.enabled || SKIP_PATHS.some((path) => pathname.startsWith(path));
 
-  const initialDelayMs = modal.initialDelayMs ?? 900;
-  const intervalMs = modal.intervalMs ?? 120000;
+  const initialDelayMs = resolveDelayMs(modal.initialDelayMs);
+  const intervalMs = resolveIntervalMs(modal.intervalMs);
 
   const [isOpen, setIsOpen] = useState(false);
   const isOpenRef = useRef(false);
@@ -72,7 +91,7 @@ export function useScholarshipModal() {
 
     initialTimerRef.current = window.setTimeout(() => {
       initialTimerRef.current = null;
-      if (!isOpenRef.current) openModal();
+      if (!isOpenRef.current && canShowAgain()) openModal();
     }, initialDelayMs);
 
     intervalRef.current = setInterval(() => {

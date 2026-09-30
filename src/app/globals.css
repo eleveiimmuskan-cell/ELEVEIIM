@@ -129,6 +129,25 @@
   }
 }
 
+/* Keep floating widgets below Radix dialogs so they cannot steal clicks
+   or sit on top of a scroll-locked overlay (live freeze). */
+body:has([data-slot="dialog-overlay"][data-state="open"]) .floating-cta,
+body:has([data-slot="dialog-overlay"][data-state="open"]) .floating-whatsapp,
+body:has([role="dialog"][data-state="open"]) .floating-cta,
+body:has([role="dialog"][data-state="open"]) .floating-whatsapp {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.floating-whatsapp-button {
+  z-index: 40 !important;
+}
+
+.floating-whatsapp-chatbox {
+  z-index: 45 !important;
+}
+
 @layer utilities {
   .glass {
     @apply border border-white/60 bg-white/70 backdrop-blur-xl;

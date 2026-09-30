@@ -2,7 +2,6 @@
 
 import { Check, GraduationCap, X } from "lucide-react";
 import { Dialog as DialogPrimitive } from "radix-ui";
-import { motion } from "framer-motion";
 import { CountdownTimer } from "@/components/scholarship/countdown-timer";
 import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
 import {
@@ -22,8 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
-
 const MODAL_GRADIENT =
   "linear-gradient(135deg, #f8fbff 0%, #f4f8ff 50%, #eef5ff 100%)";
 
@@ -41,15 +38,17 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
       <DialogPortal>
         <DialogOverlay
           className={cn(
-            "z-[60] bg-slate-950/50 backdrop-blur-sm",
+            "z-[10040] bg-slate-950/50 backdrop-blur-sm",
             "data-open:animate-in data-open:fade-in-0 data-open:duration-300",
             "data-closed:animate-out data-closed:fade-out-0 data-closed:duration-200"
           )}
         />
         <DialogPrimitive.Content
+          data-slot="dialog-content"
+          data-lenis-prevent
           className={cn(
-            "fixed top-1/2 left-1/2 z-[70] w-full max-w-[calc(100%-1rem)] -translate-x-1/2 -translate-y-1/2 outline-none sm:max-w-[920px]",
-            "max-h-[92dvh] overflow-y-auto overscroll-contain sm:max-h-[95dvh]",
+            "fixed top-1/2 left-1/2 z-[10050] flex w-full max-w-[calc(100%-1rem)] -translate-x-1/2 -translate-y-1/2 flex-col outline-none sm:max-w-[920px]",
+            "max-h-[min(92dvh,100svh)] pointer-events-auto",
             "rounded-2xl border border-border/50 p-0 sm:rounded-[28px]",
             "shadow-[0_32px_80px_rgba(15,23,42,0.14)] ring-1 ring-black/[0.03]",
             "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-[0.97] data-open:duration-300",
@@ -58,28 +57,24 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
           style={{ background: MODAL_GRADIENT }}
           aria-describedby="scholarship-modal-description"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: EASE }}
-            className="relative"
-          >
+          <div className="sticky top-0 z-40 flex shrink-0 items-center justify-end gap-2 px-3 py-3 sm:px-4">
+            {applicationsOpen ? (
+              <RegistrationOpenBadge className="mr-auto max-w-[calc(100%-3.25rem)]" />
+            ) : null}
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="absolute right-4 top-4 z-[30] inline-flex size-9 items-center justify-center rounded-xl border border-border/60 bg-white/90 text-muted-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30"
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-white/95 text-muted-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30"
               aria-label="Close scholarship dialog"
             >
               <X className="size-4" />
             </button>
+          </div>
 
-            {applicationsOpen ? (
-              <RegistrationOpenBadge className="absolute right-14 top-4 z-[30] sm:right-16" />
-            ) : null}
-
+          <div className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain">
             <ScholarshipBannerDecorations variant="modal" />
 
-            <div className="relative z-[5] grid gap-6 px-4 py-5 sm:gap-8 sm:px-8 sm:py-10 md:grid-cols-2 md:items-start md:gap-10 md:px-10">
+            <div className="relative z-[5] grid gap-6 px-4 pb-5 sm:gap-8 sm:px-8 sm:pb-10 md:grid-cols-2 md:items-start md:gap-10 md:px-10">
               <div className="flex min-w-0 flex-col">
                 <div className="mb-3 inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-brand/12 bg-white/75 px-3 py-1.5 text-[11px] font-semibold text-brand shadow-[0_2px_12px_rgba(24,119,242,0.06)] sm:mb-4 sm:px-3.5 sm:text-xs">
                   <GraduationCap className="size-3.5 shrink-0" aria-hidden />
@@ -152,7 +147,7 @@ export function ScholarshipModal({ open, onOpenChange }: ScholarshipModalProps) 
                 </Button>
               </div>
             </div>
-          </motion.div>
+          </div>
         </DialogPrimitive.Content>
       </DialogPortal>
     </Dialog>

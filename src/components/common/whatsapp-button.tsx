@@ -21,6 +21,10 @@ export function WhatsAppButton() {
         backgroundColor: "#25D366",
         width: 56,
         height: 56,
+        zIndex: 40,
+      }}
+      chatboxStyle={{
+        zIndex: 45,
       }}
     />
   );
