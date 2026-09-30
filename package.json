@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3002",
     "prebuild": "node -e \"const fs=require('fs'); for (const d of ['.next','out']) { try { fs.rmSync(d,{recursive:true,force:true}); } catch {} }\"",
-    "build": "next build",
+    "build": "next build --webpack",
     "postbuild": "node scripts/copy-public-into-next.mjs",
     "start": "next start",
     "lint": "eslint"
