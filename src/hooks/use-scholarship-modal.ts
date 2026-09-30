@@ -26,6 +26,38 @@ function markLastShown() {
   localStorage.setItem(SCHOLARSHIP_MODAL_LAST_SHOWN_KEY, String(Date.now()));
 }
 
+/**
+ * Runs `callback` once the page has loaded and the main thread is idle.
+ * Opening the Radix dialog marks the rest of the page `aria-hidden`; doing that
+ * before React finishes hydrating those sections causes a hydration mismatch.
+ */
+function afterPageSettles(callback: () => void): () => void {
+  let cancelled = false;
+  let idleId: number | null = null;
+  let fallbackId: number | null = null;
+
+  const runWhenIdle = () => {
+    if (cancelled) return;
+    if (typeof window.requestIdleCallback === "function") {
+      idleId = window.requestIdleCallback(() => !cancelled && callback(), {
+        timeout: 3000,
+      });
+    } else {
+      fallbackId = window.setTimeout(() => !cancelled && callback(), 300);
+    }
+  };
+
+  if (document.readyState === "complete") runWhenIdle();
+  else window.addEventListener("load", runWhenIdle, { once: true });
+
+  return () => {
+    cancelled = true;
+    window.removeEventListener("load", runWhenIdle);
+    if (idleId !== null) window.cancelIdleCallback(idleId);
+    if (fallbackId !== null) window.clearTimeout(fallbackId);
+  };
+}
+
 function resolveIntervalMs(raw: number | undefined): number {
   if (!Number.isFinite(raw) || raw === undefined || raw <= 0) {
     return DEFAULT_INTERVAL_MS;
@@ -89,18 +121,21 @@ export function useScholarshipModal() {
       return;
     }
 
-    initialTimerRef.current = window.setTimeout(() => {
-      initialTimerRef.current = null;
-      if (!isOpenRef.current && canShowAgain()) openModal();
-    }, initialDelayMs);
+    const cancelSettle = afterPageSettles(() => {
+      initialTimerRef.current = window.setTimeout(() => {
+        initialTimerRef.current = null;
+        if (!isOpenRef.current && canShowAgain()) openModal();
+      }, initialDelayMs);
 
-    intervalRef.current = setInterval(() => {
-      if (!isOpenRef.current && canShowAgain()) {
-        openModal();
-      }
-    }, intervalMs);
+      intervalRef.current = setInterval(() => {
+        if (!isOpenRef.current && canShowAgain()) {
+          openModal();
+        }
+      }, intervalMs);
+    });
 
     return () => {
+      cancelSettle();
       if (initialTimerRef.current !== null) {
         window.clearTimeout(initialTimerRef.current);
         initialTimerRef.current = null;
