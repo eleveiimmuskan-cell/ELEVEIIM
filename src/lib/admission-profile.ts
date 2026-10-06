@@ -326,6 +326,7 @@ export interface AdmissionFilePayload {
 
 export interface AdmissionSaveInput {
   profile: AdmissionProfile;
+  leadId?: string | null;
   counsellorId?: string | null;
   courseId?: string | null;
   photo?: AdmissionFilePayload | null;
@@ -583,38 +584,15 @@ export function admissionProfileErrors(
   if (blank(profile.email) || !profile.email.includes("@")) {
     errors.email = "Enter a valid email.";
   }
-  if (blank(profile.permanentStreet)) {
-    errors.permanentStreet = "Permanent address is required.";
+  if (profile.permanentPin && digits(profile.permanentPin).length !== 6) {
+    errors.permanentPin = "Enter a 6-digit PIN code, or leave blank.";
   }
-  if (blank(profile.permanentCity)) errors.permanentCity = "City is required.";
-  if (blank(profile.permanentDistrict)) {
-    errors.permanentDistrict = "District is required.";
-  }
-  if (blank(profile.permanentState)) errors.permanentState = "State is required.";
-  if (digits(profile.permanentPin).length !== 6) {
-    errors.permanentPin = "Enter a 6-digit PIN code.";
-  }
-  if (profile.sameAddress === "No") {
-    if (blank(profile.correspondenceStreet)) {
-      errors.correspondenceStreet = "Correspondence address is required.";
-    }
-    if (blank(profile.correspondenceCity)) {
-      errors.correspondenceCity = "City is required.";
-    }
-    if (blank(profile.correspondenceState)) {
-      errors.correspondenceState = "State is required.";
-    }
-    if (digits(profile.correspondencePin).length !== 6) {
-      errors.correspondencePin = "Enter a 6-digit PIN code.";
-    }
-  }
-  if (blank(profile.fatherName)) errors.fatherName = "Father’s name is required.";
-  if (blank(profile.fatherMobile)) {
-    errors.fatherMobile = "Father’s mobile is required.";
-  }
-  if (blank(profile.motherName)) errors.motherName = "Mother’s name is required.";
-  if (blank(profile.motherMobile)) {
-    errors.motherMobile = "Mother’s mobile is required.";
+  if (
+    profile.sameAddress === "No" &&
+    profile.correspondencePin &&
+    digits(profile.correspondencePin).length !== 6
+  ) {
+    errors.correspondencePin = "Enter a 6-digit PIN code, or leave blank.";
   }
   if (
     !ADMISSION_QUALIFICATION_ROWS.includes(
@@ -637,15 +615,6 @@ export function admissionProfileErrors(
   }
   if (!isValidPercentageOrCgpa(profile.percentageOrCGPA)) {
     errors.percentageOrCGPA = "Enter a valid percentage or CGPA.";
-  }
-  if (blank(profile.presentStatus)) {
-    errors.presentStatus = "Select present status.";
-  }
-  if (!profile.careerObjectives.length) {
-    errors.careerObjectives = "Select up to two career objectives.";
-  }
-  if (!isAdmissionBatchTiming(profile.batchTimings[0])) {
-    errors.batchTimings = "Select one batch schedule.";
   }
   if (!profile.applicantDeclaration) {
     errors.applicantDeclaration = "Applicant declaration is required.";

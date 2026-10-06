@@ -1,16 +1,14 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BrandImage } from "@/components/common/brand-image";
 import {
   ADMISSION_BRANCH,
-  ADMISSION_COUNSELLOR,
   ADMISSION_SESSION,
   CAREER_OBJECTIVES,
   COURSE_GROUPS,
   DOCUMENTS,
   HEAR_ABOUT,
-  PIN_LOCATION_OPTIONS,
   PRESENT_STATUS,
   TERMS,
 } from "@/data/admission-application";
@@ -35,6 +33,9 @@ import {
   type AdmissionFilePayload,
 } from "@/lib/admission-profile";
 import { submitAdmissionApplication } from "@/services/admission-apply.service";
+import type { LocationSuggestion } from "@/lib/location/india-post";
+import type { PublicAdmissionSummary, PublicLeadPrefill } from "@/lib/admission-lead";
+import { AdmissionAlreadyCreated } from "@/components/admission-application/admission-lead-states";
 
 type LocalFile = {
   name: string;
@@ -112,32 +113,96 @@ function FileAction({
   );
 }
 
-export function AdmissionApplicationForm() {
+export function AdmissionApplicationForm({
+  leadId = null,
+  prefill,
+}: {
+  leadId?: string | null;
+  prefill?: PublicLeadPrefill;
+}) {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photo, setPhoto] = useState<LocalFile | null>(null);
   const [docFiles, setDocFiles] = useState<Partial<Record<string, LocalFile>>>(
     {}
   );
   const [preview, setPreview] = useState<LocalFile | null>(null);
-  const [dob, setDob] = useState("");
+  const [dob, setDob] = useState(prefill?.dob ?? "");
   const [sameAddress, setSameAddress] = useState<"Yes" | "No" | "">("");
   const [highestQualification, setHighestQualification] = useState("");
   const [presentStatus, setPresentStatus] = useState("");
   const [careerGoals, setCareerGoals] = useState<string[]>([]);
   const [hearAbout, setHearAbout] = useState<string[]>([]);
   const [timing, setTiming] = useState("");
-  const [pinSearch, setPinSearch] = useState("");
-  const [radios, setRadios] = useState<Record<string, string>>({});
+  const [locationQuery, setLocationQuery] = useState("");
+  const [locationItems, setLocationItems] = useState<LocationSuggestion[]>([]);
+  const [locationOpen, setLocationOpen] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationEmpty, setLocationEmpty] = useState(false);
+  const [permCity, setPermCity] = useState(prefill?.permanentCity ?? "");
+  const [permDistrict, setPermDistrict] = useState(prefill?.permanentDistrict ?? "");
+  const [permState, setPermState] = useState(prefill?.permanentState ?? "");
+  const [permPin, setPermPin] = useState(prefill?.permanentPin ?? "");
+  const [radios, setRadios] = useState<Record<string, string>>(
+    prefill?.gender ? { gender: prefill.gender } : {}
+  );
+  const [alreadyCreated, setAlreadyCreated] = useState<PublicAdmissionSummary | null>(
+    null
+  );
   const [applicantDeclaration, setApplicantDeclaration] = useState(false);
   const [parentDeclaration, setParentDeclaration] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitOk, setSubmitOk] = useState<string | null>(null);
   const [formLoadedAt] = useState(() => Date.now());
-  const pinReady = pinSearch.replace(/\D/g, "").length === 6;
+  const counsellorName = prefill?.counsellorName || "Super Admin";
   const age = useMemo(() => ageFromDob(dob), [dob]);
   const setRadio = (name: string, value: string) =>
     setRadios((prev) => ({ ...prev, [name]: value }));
+
+  const applyLocation = (item: LocationSuggestion) => {
+    setPermCity(item.city);
+    setPermDistrict(item.district);
+    setPermState(item.state);
+    setPermPin(item.pin);
+    setLocationQuery(item.label);
+    setLocationOpen(false);
+  };
+
+  useEffect(() => {
+    const q = locationQuery.trim();
+    if (q.length < 3) {
+      setLocationItems([]);
+      setLocationEmpty(false);
+      setLocationLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLocationLoading(true);
+    const timer = window.setTimeout(() => {
+      void fetch(`/api/locations?q=${encodeURIComponent(q)}`)
+        .then((res) => res.json())
+        .then((payload: { items?: LocationSuggestion[] }) => {
+          if (cancelled) return;
+          const items = payload.items ?? [];
+          setLocationItems(items);
+          setLocationEmpty(items.length === 0);
+          setLocationOpen(true);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setLocationItems([]);
+          setLocationEmpty(true);
+          setLocationOpen(true);
+        })
+        .finally(() => {
+          if (!cancelled) setLocationLoading(false);
+        });
+    }, 300);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [locationQuery]);
 
   const replacePhoto = (file?: File) => {
     setPhoto((current) => {
@@ -180,7 +245,8 @@ export function AdmissionApplicationForm() {
     const profile = sanitizeAdmissionProfile(
       emptyAdmissionProfile({
         programAppliedFor: get("programAppliedFor"),
-        counsellorName: ADMISSION_COUNSELLOR,
+        counsellorName,
+        counsellorId: prefill?.counsellorId || null,
         fullName: get("fullName"),
         dob,
         age,
@@ -194,11 +260,11 @@ export function AdmissionApplicationForm() {
         alternate: get("alternate"),
         email: get("email"),
         permanentStreet: get("permanentStreet"),
-        permanentCity: get("permanentCity"),
-        permanentDistrict: get("permanentDistrict"),
-        permanentState: get("permanentState"),
-        permanentPin: get("permanentPin"),
-        pinLocation: get("pinLocation"),
+        permanentCity: permCity,
+        permanentDistrict: permDistrict,
+        permanentState: permState,
+        permanentPin: permPin,
+        pinLocation: locationQuery,
         sameAddress,
         correspondenceStreet: get("correspondenceStreet"),
         correspondenceCity: get("correspondenceCity"),
@@ -258,11 +324,16 @@ export function AdmissionApplicationForm() {
       }
       const result = await submitAdmissionApplication({
         profile,
+        leadId: leadId || null,
         photo: photo ? await fileToPayload(photo, STUDENT_PHOTO_DOC) : null,
         documents,
         hp: get("website"),
         formLoadedAt,
       });
+      if ("alreadyCreated" in result && result.alreadyCreated) {
+        setAlreadyCreated(result.admission);
+        return;
+      }
       setSubmitOk(result.message);
     } catch (error) {
       setSubmitError(
@@ -273,6 +344,10 @@ export function AdmissionApplicationForm() {
     }
   };
 
+  if (alreadyCreated) {
+    return <AdmissionAlreadyCreated admission={alreadyCreated} />;
+  }
+
   return (
     <form
       className="mx-auto w-full max-w-[1100px] overflow-hidden rounded-sm border border-slate-300 bg-white shadow-sm"
@@ -280,6 +355,7 @@ export function AdmissionApplicationForm() {
       noValidate
     >
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" />
+      {leadId ? <input type="hidden" name="leadId" value={leadId} /> : null}
       <header className="grid gap-4 border-b border-slate-300 px-4 py-5 sm:px-6 md:grid-cols-[1fr_auto] md:items-start">
         <div>
           <BrandImage size="lg" href="/" />
@@ -299,11 +375,24 @@ export function AdmissionApplicationForm() {
         mandatory. A passport-size photograph, Aadhaar copy and the last
         qualification marksheet are optional here and can be submitted later.
       </p>
+      {leadId ? (
+        <p className="border-b border-emerald-200 bg-emerald-50 px-4 py-2 text-[11px] text-emerald-800 sm:px-6 sm:text-xs">
+          Linked to lead {prefill?.leadCode || leadId}. Counsellor: {counsellorName}.
+        </p>
+      ) : (
+        <p className="border-b border-slate-200 bg-slate-50 px-4 py-2 text-[11px] text-slate-600 sm:px-6 sm:text-xs">
+          This application will be assigned to Super Admin.
+        </p>
+      )}
 
       <div className="grid gap-4 px-4 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_160px]">
         <div className="grid gap-3">
           <Field label="Program Applied For" htmlFor="program" required>
-            <BoxSelect id="program" name="programAppliedFor" defaultValue="">
+            <BoxSelect
+              id="program"
+              name="programAppliedFor"
+              defaultValue={prefill?.programAppliedFor || ""}
+            >
               <option value="">Select course</option>
               {COURSE_GROUPS.map((group) => (
                 <optgroup key={group.title} label={group.title}>
@@ -324,7 +413,7 @@ export function AdmissionApplicationForm() {
               <BoxInput
                 id="counsellor"
                 name="counsellorName"
-                value={ADMISSION_COUNSELLOR}
+                value={counsellorName}
                 readOnly
                 className="normal-case"
               />
@@ -387,7 +476,12 @@ export function AdmissionApplicationForm() {
       <SectionBar id="section-a" title="Section A — Student’s Personal Details" />
       <div className="grid gap-3 px-4 py-4 sm:px-6">
         <Field label="Full Name of Applicant (as per Aadhaar / Certificate)" htmlFor="fullName" required>
-          <BoxInput id="fullName" name="fullName" className="uppercase" />
+          <BoxInput
+            id="fullName"
+            name="fullName"
+            className="uppercase"
+            defaultValue={prefill?.fullName || ""}
+          />
         </Field>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Date of Birth" htmlFor="dob" required>
@@ -427,7 +521,13 @@ export function AdmissionApplicationForm() {
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
           <Field label="Aadhaar Number" htmlFor="aadhaar" required>
-            <BoxInput id="aadhaar" name="aadhaar" inputMode="numeric" className="normal-case" />
+            <BoxInput
+              id="aadhaar"
+              name="aadhaar"
+              inputMode="numeric"
+              className="normal-case"
+              defaultValue={prefill?.aadhaar || ""}
+            />
           </Field>
           <Field label="Nationality">
             <BoxInput name="nationality" defaultValue="Indian" className="uppercase" />
@@ -438,67 +538,141 @@ export function AdmissionApplicationForm() {
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
           <Field label="Mobile Number" htmlFor="mobile" required>
-            <BoxInput id="mobile" name="mobile" inputMode="tel" placeholder="+91" className="normal-case" />
+            <BoxInput
+              id="mobile"
+              name="mobile"
+              inputMode="tel"
+              placeholder="+91"
+              className="normal-case"
+              defaultValue={prefill?.mobile || ""}
+            />
           </Field>
           <Field label="WhatsApp Number" htmlFor="whatsapp" required>
-            <BoxInput id="whatsapp" name="whatsapp" inputMode="tel" placeholder="+91" className="normal-case" />
+            <BoxInput
+              id="whatsapp"
+              name="whatsapp"
+              inputMode="tel"
+              placeholder="+91"
+              className="normal-case"
+              defaultValue={prefill?.whatsapp || ""}
+            />
           </Field>
           <Field label="Alternate Number" htmlFor="alternate">
-            <BoxInput id="alternate" name="alternate" inputMode="tel" placeholder="+91" className="normal-case" />
+            <BoxInput
+              id="alternate"
+              name="alternate"
+              inputMode="tel"
+              placeholder="+91"
+              className="normal-case"
+              defaultValue={prefill?.alternate || ""}
+            />
           </Field>
         </div>
         <Field label="Email ID" htmlFor="email" required>
-          <BoxInput id="email" name="email" type="email" className="normal-case lowercase" />
+          <BoxInput
+            id="email"
+            name="email"
+            type="email"
+            className="normal-case lowercase"
+            defaultValue={prefill?.email || ""}
+          />
         </Field>
       </div>
 
       <SectionBar id="section-b" title="Section B — Address Details" />
       <div className="space-y-4 px-4 py-4 sm:px-6">
         <p className="text-[11px] font-bold uppercase tracking-wide text-[#c2410c]">
-          Permanent Address
+          Permanent Address (optional)
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="House / Flat No., Street, Locality" htmlFor="permStreet" required>
-            <BoxInput id="permStreet" name="permanentStreet" className="uppercase" />
+          <Field label="House / Flat No., Street, Locality" htmlFor="permStreet">
+            <BoxInput
+              id="permStreet"
+              name="permanentStreet"
+              className="uppercase"
+              defaultValue={prefill?.permanentStreet || ""}
+            />
           </Field>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Pincode Search" htmlFor="pinSearch">
+          <Field label="Search location" htmlFor="locationSearch">
+            <div className="relative">
               <BoxInput
-                id="pinSearch"
-                name="pincodeSearch"
-                inputMode="numeric"
-                maxLength={6}
-                value={pinSearch}
-                onChange={(event) =>
-                  setPinSearch(event.target.value.replace(/\D/g, "").slice(0, 6))
-                }
+                id="locationSearch"
+                name="locationSearch"
+                value={locationQuery}
+                autoComplete="off"
+                placeholder="City, area, or 6-digit PIN"
+                onChange={(event) => {
+                  setLocationQuery(event.target.value);
+                  setLocationOpen(true);
+                }}
+                onFocus={() => {
+                  if (locationItems.length || locationEmpty) setLocationOpen(true);
+                }}
                 className="normal-case"
               />
-            </Field>
-            <Field label="Select Location" htmlFor="pinLocation">
-              <BoxSelect id="pinLocation" name="pinLocation" disabled={!pinReady} defaultValue="">
-                <option value="">{pinReady ? "Select location" : "Enter 6-digit PIN"}</option>
-                {PIN_LOCATION_OPTIONS.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </BoxSelect>
-            </Field>
-          </div>
+              {locationOpen && (locationLoading || locationItems.length > 0 || locationEmpty) ? (
+                <ul className="absolute z-20 mt-1 max-h-48 w-full overflow-auto border border-slate-300 bg-white text-sm shadow">
+                  {locationLoading ? (
+                    <li className="px-3 py-2 text-slate-500">Searching…</li>
+                  ) : locationEmpty ? (
+                    <li className="px-3 py-2 text-slate-500">
+                      No match. Enter city, district, state, and PIN below.
+                    </li>
+                  ) : (
+                    locationItems.map((item) => (
+                      <li key={item.id}>
+                        <button
+                          type="button"
+                          className="w-full px-3 py-2 text-left hover:bg-slate-50"
+                          onClick={() => applyLocation(item)}
+                        >
+                          {item.label}
+                        </button>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              ) : null}
+            </div>
+          </Field>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Field label="City / Town / Village" htmlFor="permCity" required>
-            <BoxInput id="permCity" name="permanentCity" className="uppercase" />
+          <Field label="City / Town / Village" htmlFor="permCity">
+            <BoxInput
+              id="permCity"
+              name="permanentCity"
+              className="uppercase"
+              value={permCity}
+              onChange={(event) => setPermCity(event.target.value)}
+            />
           </Field>
-          <Field label="District" htmlFor="permDistrict" required>
-            <BoxInput id="permDistrict" name="permanentDistrict" className="uppercase" />
+          <Field label="District" htmlFor="permDistrict">
+            <BoxInput
+              id="permDistrict"
+              name="permanentDistrict"
+              className="uppercase"
+              value={permDistrict}
+              onChange={(event) => setPermDistrict(event.target.value)}
+            />
           </Field>
-          <Field label="State" htmlFor="permState" required>
-            <BoxInput id="permState" name="permanentState" className="uppercase" />
+          <Field label="State" htmlFor="permState">
+            <BoxInput
+              id="permState"
+              name="permanentState"
+              className="uppercase"
+              value={permState}
+              onChange={(event) => setPermState(event.target.value)}
+            />
           </Field>
-          <Field label="PIN Code" htmlFor="permPin" required>
-            <BoxInput id="permPin" name="permanentPin" inputMode="numeric" className="normal-case" />
+          <Field label="PIN Code" htmlFor="permPin">
+            <BoxInput
+              id="permPin"
+              name="permanentPin"
+              inputMode="numeric"
+              className="normal-case"
+              value={permPin}
+              onChange={(event) => setPermPin(event.target.value)}
+            />
           </Field>
         </div>
 
@@ -588,10 +762,10 @@ export function AdmissionApplicationForm() {
           Father’s Details
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Father’s Full Name" htmlFor="fatherName" required>
+          <Field label="Father’s Full Name" htmlFor="fatherName">
             <BoxInput id="fatherName" name="fatherName" className="uppercase" />
           </Field>
-          <Field label="Mobile Number" htmlFor="fatherMobile" required>
+          <Field label="Mobile Number" htmlFor="fatherMobile">
             <BoxInput id="fatherMobile" name="fatherMobile" inputMode="tel" placeholder="+91" className="normal-case" />
           </Field>
         </div>
@@ -599,10 +773,10 @@ export function AdmissionApplicationForm() {
           Mother’s Details
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Mother’s Full Name" htmlFor="motherName" required>
+          <Field label="Mother’s Full Name" htmlFor="motherName">
             <BoxInput id="motherName" name="motherName" className="uppercase" />
           </Field>
-          <Field label="Mobile Number" htmlFor="motherMobile" required>
+          <Field label="Mobile Number" htmlFor="motherMobile">
             <BoxInput id="motherMobile" name="motherMobile" inputMode="tel" placeholder="+91" className="normal-case" />
           </Field>
         </div>
@@ -710,7 +884,7 @@ export function AdmissionApplicationForm() {
       <div className="space-y-4 px-4 py-4 sm:px-6">
         <fieldset>
           <legend className="mb-2 text-[11px] font-semibold text-slate-700 sm:text-xs">
-            Present Status <span className="text-red-600">*</span>
+            Present Status
           </legend>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             {PRESENT_STATUS.map((item) => (
@@ -799,7 +973,7 @@ export function AdmissionApplicationForm() {
         </div>
         <fieldset>
           <legend className="mb-2 text-[11px] font-semibold text-slate-700 sm:text-xs">
-            Primary Career Objective (tick up to two) <span className="text-red-600">*</span>
+            Primary Career Objective (optional, up to two)
           </legend>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             {CAREER_OBJECTIVES.map((item) => (
@@ -909,7 +1083,7 @@ export function AdmissionApplicationForm() {
 
       <SectionBar id="section-h" title="Section H — Preferred Batch Timing" />
       <div className="px-4 py-4 sm:px-6">
-        <Field label="Batch Schedule" htmlFor="batchSchedule" required>
+        <Field label="Batch Schedule" htmlFor="batchSchedule">
           <BoxSelect
             id="batchSchedule"
             name="batchSchedule"

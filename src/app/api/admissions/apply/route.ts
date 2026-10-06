@@ -17,6 +17,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       message: data?.message || ADMISSION_APPLY_SUCCESS_MESSAGE,
+      leadId: (data as { leadId?: string } | null)?.leadId,
+      leadCode: (data as { leadCode?: string } | null)?.leadCode,
     });
   } catch (error) {
     if (error instanceof ApiError) {
