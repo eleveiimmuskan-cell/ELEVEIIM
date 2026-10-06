@@ -21,7 +21,7 @@ export async function fetchAdmissionLead(leadId: string) {
 export async function submitAdmissionApplication(
   input: AdmissionSaveInput & { hp?: string; formLoadedAt: number }
 ) {
-  const res = await fetch("/api/admissions/apply", {
+  const res = await fetch("/admission-application/submit", {
     method: "POST",
     headers: {
       Accept: "application/json",
