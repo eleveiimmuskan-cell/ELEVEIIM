@@ -37,6 +37,7 @@ export function Field({
   label,
   htmlFor,
   required,
+  error,
   tone = "default",
   className,
   children,
@@ -44,6 +45,7 @@ export function Field({
   label: string;
   htmlFor?: string;
   required?: boolean;
+  error?: string;
   tone?: "default" | "accent";
   className?: string;
   children: ReactNode;
@@ -56,28 +58,36 @@ export function Field({
       <span
         className={cn(
           "text-[11px] font-semibold leading-tight sm:text-xs",
-          tone === "accent" ? "text-[#c2410c]" : "text-slate-700"
+          error ? "text-red-700" : tone === "accent" ? "text-[#c2410c]" : "text-slate-700"
         )}
       >
         {label}
         {required ? <span className="text-red-600"> *</span> : null}
       </span>
       {children}
+      {error ? (
+        <p role="alert" className="text-[11px] font-medium text-red-600">
+          {error}
+        </p>
+      ) : null}
     </label>
   );
 }
 
 export function BoxInput({
   className,
+  invalid,
   ...props
-}: ComponentProps<"input">) {
+}: ComponentProps<"input"> & { invalid?: boolean }) {
   return (
     <input
       {...props}
+      aria-invalid={invalid || undefined}
       className={cn(
         "h-9 w-full min-w-0 rounded-sm border border-slate-400 bg-white px-2.5 text-sm text-slate-900 outline-none",
         "placeholder:text-slate-400 focus:border-[#1e4ba8] focus:ring-2 focus:ring-[#1e4ba8]/20",
         "uppercase",
+        invalid && "border-red-500 focus:border-red-600 focus:ring-red-500/20",
         readOnlyFieldClass,
         disabledFieldClass,
         className
@@ -88,15 +98,18 @@ export function BoxInput({
 
 export function BoxSelect({
   className,
+  invalid,
   children,
   ...props
-}: ComponentProps<"select">) {
+}: ComponentProps<"select"> & { invalid?: boolean }) {
   return (
     <select
       {...props}
+      aria-invalid={invalid || undefined}
       className={cn(
         "h-9 w-full min-w-0 rounded-sm border border-slate-400 bg-white px-2 text-sm text-slate-900 outline-none",
         "focus:border-[#1e4ba8] focus:ring-2 focus:ring-[#1e4ba8]/20",
+        invalid && "border-red-500 focus:border-red-600 focus:ring-red-500/20",
         disabledFieldClass,
         className
       )}

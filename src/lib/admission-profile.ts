@@ -1,3 +1,13 @@
+export const ADMISSION_QUALIFICATION_ROWS = [
+  "10th / Matric",
+  "12th / Diploma",
+  "Graduation",
+  "Post Graduation",
+  "Other Certification",
+] as const;
+
+export type AdmissionFieldError = Partial<Record<string, string>>;
+
 export const ADMISSION_DOCUMENTS = [
   "2 Passport-size Photographs",
   "Aadhaar Card Copy",
@@ -8,14 +18,6 @@ export const ADMISSION_DOCUMENTS = [
   "Address Proof",
   "College ID Copy",
   "Experience Letter (if working)",
-] as const;
-
-export const ADMISSION_QUALIFICATION_ROWS = [
-  "10th / Matric",
-  "12th / Diploma",
-  "Graduation",
-  "Post Graduation",
-  "Other Certification",
 ] as const;
 
 export const ADMISSION_PRESENT_STATUS = [
@@ -228,29 +230,6 @@ export function singleQualificationRecord(profile: {
   ];
 }
 
-export function streamRequiredForQualification(highest: string) {
-  const text = highest.toLowerCase();
-  return !text.includes("10") && !text.includes("matric");
-}
-
-export function isValidPassingYear(value: string) {
-  const year = Number(digits(value).slice(0, 4));
-  const max = new Date().getFullYear() + 1;
-  return year >= 1970 && year <= max;
-}
-
-export function isValidPercentageOrCgpa(value: string) {
-  const raw = String(value ?? "")
-    .trim()
-    .replace(/%/g, "")
-    .replace(/,/g, "");
-  if (!raw) return false;
-  const amount = Number(raw);
-  if (!Number.isFinite(amount)) return false;
-  if (amount <= 10) return amount >= 0;
-  return amount >= 0 && amount <= 100;
-}
-
 export interface AdmissionProfile {
   programAppliedFor: string;
   courseId: string | null;
@@ -315,6 +294,7 @@ export interface AdmissionProfile {
   applicantDeclaration: boolean;
   parentDeclaration: boolean;
   origin: "CRM" | "PUBLIC";
+  submittedAt?: string | null;
 }
 
 export interface AdmissionFilePayload {
@@ -333,14 +313,119 @@ export interface AdmissionSaveInput {
   documents?: AdmissionFilePayload[];
 }
 
-export type AdmissionFieldError = Partial<Record<string, string>>;
+function digits(value: unknown) {
+  return String(value ?? "").replace(/\D/g, "");
+}
 
 function blank(value: unknown) {
   return String(value ?? "").trim() === "";
 }
 
-function digits(value: unknown) {
-  return String(value ?? "").replace(/\D/g, "");
+export function streamRequiredForQualification(highest: string) {
+  const text = highest.toLowerCase();
+  return !text.includes("10") && !text.includes("matric");
+}
+
+export function isValidPassingYear(value: string) {
+  const year = Number(digits(value).slice(0, 4));
+  const max = new Date().getFullYear() + 1;
+  return year >= 1970 && year <= max;
+}
+
+export function isValidPercentageOrCgpa(value: string) {
+  const raw = String(value ?? "")
+    .trim()
+    .replace(/%/g, "")
+    .replace(/,/g, "");
+  if (!raw) return false;
+  const amount = Number(raw);
+  if (!Number.isFinite(amount)) return false;
+  if (amount <= 10) return amount >= 0;
+  return amount >= 0 && amount <= 100;
+}
+
+export function admissionProfileErrors(
+  profile: AdmissionProfile,
+  options?: {
+    requireCatalogCourse?: boolean;
+    uploadedDocuments?: Iterable<string>;
+    hasPhoto?: boolean;
+  }
+): AdmissionFieldError {
+  const errors: AdmissionFieldError = {};
+
+  if (options?.requireCatalogCourse !== false && blank(profile.courseId)) {
+    errors.programAppliedFor = "Select a course from the catalog.";
+  } else if (blank(profile.programAppliedFor) && blank(profile.courseId)) {
+    errors.programAppliedFor = "Select the program applied for.";
+  }
+  if (blank(profile.fullName)) errors.fullName = "Full name is required.";
+  if (blank(profile.dob)) errors.dob = "Date of birth is required.";
+  if (blank(profile.gender)) errors.gender = "Select gender.";
+  if (digits(profile.mobile).length !== 10) {
+    errors.mobile = "Enter a 10-digit phone number.";
+  }
+  if (profile.whatsapp && digits(profile.whatsapp).length !== 10) {
+    errors.whatsapp = "Enter a 10-digit number, or leave blank.";
+  }
+  if (profile.alternate && digits(profile.alternate).length !== 10) {
+    errors.alternate = "Enter a 10-digit number, or leave blank.";
+  }
+  if (blank(profile.email) || !String(profile.email).includes("@")) {
+    errors.email = "Enter a valid email.";
+  }
+  if (blank(profile.fatherName)) errors.fatherName = "Father’s name is required.";
+  if (digits(profile.fatherMobile).length !== 10) {
+    errors.fatherMobile = "Enter father’s 10-digit phone number.";
+  }
+  if (profile.motherMobile && digits(profile.motherMobile).length !== 10) {
+    errors.motherMobile = "Enter a 10-digit number, or leave blank.";
+  }
+  if (profile.permanentPin && digits(profile.permanentPin).length !== 6) {
+    errors.permanentPin = "Enter a 6-digit PIN code, or leave blank.";
+  }
+  if (
+    profile.sameAddress === "No" &&
+    profile.correspondencePin &&
+    digits(profile.correspondencePin).length !== 6
+  ) {
+    errors.correspondencePin = "Enter a 6-digit PIN code, or leave blank.";
+  }
+  if (
+    !ADMISSION_QUALIFICATION_ROWS.includes(
+      profile.highestQualification as (typeof ADMISSION_QUALIFICATION_ROWS)[number]
+    )
+  ) {
+    errors.highestQualification = "Select the highest qualification.";
+  }
+  if (blank(profile.schoolCollegeName)) {
+    errors.schoolCollegeName = "School / college name is required.";
+  }
+  if (
+    streamRequiredForQualification(String(profile.highestQualification ?? "")) &&
+    blank(profile.stream)
+  ) {
+    errors.stream = "Stream / specialization is required.";
+  }
+  if (!isValidPassingYear(String(profile.yearOfPassing ?? ""))) {
+    errors.yearOfPassing = "Enter a valid year of passing.";
+  }
+  if (!isValidPercentageOrCgpa(String(profile.percentageOrCGPA ?? ""))) {
+    errors.percentageOrCGPA = "Enter a valid percentage or CGPA.";
+  }
+  if (!profile.applicantDeclaration) {
+    errors.applicantDeclaration = "Applicant declaration is required.";
+  }
+  if (!profile.parentDeclaration) {
+    errors.parentDeclaration = "Parent / guardian declaration is required.";
+  }
+  delete errors.aadhaar;
+  return errors;
+}
+
+export function firstAdmissionErrorMessage(errors: AdmissionFieldError) {
+  const values = Object.values(errors).filter(Boolean);
+  return values[0] || null;
 }
 
 export function emptyAdmissionProfile(
@@ -410,6 +495,7 @@ export function emptyAdmissionProfile(
     applicantDeclaration: false,
     parentDeclaration: false,
     origin: "CRM",
+    submittedAt: null,
     ...seed,
   };
 }
@@ -441,6 +527,7 @@ export function parseAdmissionProfile(value: unknown): AdmissionProfile | null {
     applicantDeclaration: Boolean(row.applicantDeclaration),
     parentDeclaration: Boolean(row.parentDeclaration),
     origin: row.origin === "PUBLIC" ? "PUBLIC" : "CRM",
+    submittedAt: row.submittedAt ? String(row.submittedAt) : null,
   });
 }
 
@@ -537,6 +624,13 @@ export function sanitizeAdmissionProfile(
   }
   profile.email = profile.email.toLowerCase();
   profile.aadhaar = digits(profile.aadhaar).slice(0, 12);
+  profile.mobile = digits(profile.mobile).replace(/^91/, "").slice(0, 10);
+  profile.whatsapp = digits(profile.whatsapp).replace(/^91/, "").slice(0, 10);
+  profile.alternate = digits(profile.alternate).replace(/^91/, "").slice(0, 10);
+  profile.fatherMobile = digits(profile.fatherMobile).replace(/^91/, "").slice(0, 10);
+  profile.motherMobile = digits(profile.motherMobile).replace(/^91/, "").slice(0, 10);
+  profile.guardianMobile = digits(profile.guardianMobile).replace(/^91/, "").slice(0, 10);
+  profile.emergencyMobile = digits(profile.emergencyMobile).replace(/^91/, "").slice(0, 10);
   profile.permanentPin = digits(profile.permanentPin).slice(0, 6);
   profile.correspondencePin = digits(profile.correspondencePin).slice(0, 6);
   if (profile.sameAddress === "Yes") {
@@ -558,76 +652,12 @@ export function sanitizeAdmissionProfile(
   return profile;
 }
 
-export function admissionProfileErrors(
-  profile: AdmissionProfile,
-  options?: {
-    requireCatalogCourse?: boolean;
-    uploadedDocuments?: Iterable<string>;
-    hasPhoto?: boolean;
-  }
-): AdmissionFieldError {
-  const errors: AdmissionFieldError = {};
-
-  if (options?.requireCatalogCourse !== false && blank(profile.courseId)) {
-    errors.programAppliedFor = "Select a course from the catalog.";
-  } else if (blank(profile.programAppliedFor) && blank(profile.courseId)) {
-    errors.programAppliedFor = "Select the program applied for.";
-  }
-  if (blank(profile.fullName)) errors.fullName = "Full name is required.";
-  if (blank(profile.dob)) errors.dob = "Date of birth is required.";
-  if (blank(profile.gender)) errors.gender = "Select gender.";
-  if (digits(profile.aadhaar).length !== 12) {
-    errors.aadhaar = "Enter a 12-digit Aadhaar number.";
-  }
-  if (blank(profile.mobile)) errors.mobile = "Mobile number is required.";
-  if (blank(profile.whatsapp)) errors.whatsapp = "WhatsApp number is required.";
-  if (blank(profile.email) || !profile.email.includes("@")) {
-    errors.email = "Enter a valid email.";
-  }
-  if (profile.permanentPin && digits(profile.permanentPin).length !== 6) {
-    errors.permanentPin = "Enter a 6-digit PIN code, or leave blank.";
-  }
-  if (
-    profile.sameAddress === "No" &&
-    profile.correspondencePin &&
-    digits(profile.correspondencePin).length !== 6
-  ) {
-    errors.correspondencePin = "Enter a 6-digit PIN code, or leave blank.";
-  }
-  if (
-    !ADMISSION_QUALIFICATION_ROWS.includes(
-      profile.highestQualification as (typeof ADMISSION_QUALIFICATION_ROWS)[number]
-    )
-  ) {
-    errors.highestQualification = "Select the highest qualification.";
-  }
-  if (blank(profile.schoolCollegeName)) {
-    errors.schoolCollegeName = "School / college name is required.";
-  }
-  if (
-    streamRequiredForQualification(profile.highestQualification) &&
-    blank(profile.stream)
-  ) {
-    errors.stream = "Stream / specialization is required.";
-  }
-  if (!isValidPassingYear(profile.yearOfPassing)) {
-    errors.yearOfPassing = "Enter a valid year of passing.";
-  }
-  if (!isValidPercentageOrCgpa(profile.percentageOrCGPA)) {
-    errors.percentageOrCGPA = "Enter a valid percentage or CGPA.";
-  }
-  if (!profile.applicantDeclaration) {
-    errors.applicantDeclaration = "Applicant declaration is required.";
-  }
-  if (!profile.parentDeclaration) {
-    errors.parentDeclaration = "Parent / guardian declaration is required.";
-  }
-  return errors;
-}
-
-export function firstAdmissionErrorMessage(errors: AdmissionFieldError) {
-  const values = Object.values(errors).filter(Boolean);
-  return values[0] || null;
+export function isAdmissionApplicationSubmitted(
+  status?: string | null,
+  profile?: AdmissionProfile | null
+) {
+  if (status === "ADMISSION_DONE" || status === "CONVERTED") return true;
+  return Boolean(profile?.submittedAt);
 }
 
 export function ageFromDob(value: string) {

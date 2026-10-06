@@ -56,13 +56,27 @@ export function AdmissionLeadNotFound() {
   );
 }
 
+export function AdmissionThankYou({
+  title = "Thank You",
+  message = "Your admission application was received. Our team will contact you shortly.",
+}: {
+  title?: string;
+  message?: string;
+}) {
+  return (
+    <Card title={title}>
+      <p className="text-sm leading-relaxed text-slate-600">{message}</p>
+    </Card>
+  );
+}
+
 export function AdmissionAlreadyCreated({
   admission,
 }: {
   admission: PublicAdmissionSummary;
 }) {
   return (
-    <Card title="Admission Already Created">
+    <Card title="Thank You — Already Submitted">
       <p className="text-sm leading-relaxed text-slate-600">
         An admission application is already on file for this lead. A second
         student record will not be created.

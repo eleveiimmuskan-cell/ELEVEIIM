@@ -32,10 +32,16 @@ import {
   STUDENT_PHOTO_DOC,
   type AdmissionFilePayload,
 } from "@/lib/admission-profile";
-import { submitAdmissionApplication } from "@/services/admission-apply.service";
+import {
+  fetchAdmissionLead,
+  submitAdmissionApplication,
+} from "@/services/admission-apply.service";
 import type { LocationSuggestion } from "@/lib/location/india-post";
 import type { PublicAdmissionSummary, PublicLeadPrefill } from "@/lib/admission-lead";
-import { AdmissionAlreadyCreated } from "@/components/admission-application/admission-lead-states";
+import {
+  AdmissionAlreadyCreated,
+  AdmissionThankYou,
+} from "@/components/admission-application/admission-lead-states";
 
 type LocalFile = {
   name: string;
@@ -87,6 +93,10 @@ function toLocalFile(file: File): LocalFile {
 
 function revokeFile(file?: LocalFile | null) {
   if (file?.url) URL.revokeObjectURL(file.url);
+}
+
+function restrictPhone(event: React.FormEvent<HTMLInputElement>) {
+  event.currentTarget.value = event.currentTarget.value.replace(/\D/g, "").slice(0, 10);
 }
 
 function FileAction({
@@ -153,6 +163,7 @@ export function AdmissionApplicationForm({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitOk, setSubmitOk] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formLoadedAt] = useState(() => Date.now());
   const counsellorName = prefill?.counsellorName || "Super Admin";
   const age = useMemo(() => ageFromDob(dob), [dob]);
@@ -312,8 +323,14 @@ export function AdmissionApplicationForm({
       hasPhoto: Boolean(photo),
     });
     const first = firstAdmissionErrorMessage(errors);
+    setFieldErrors(errors as Record<string, string>);
     if (first) {
       setSubmitError(first);
+      requestAnimationFrame(() => {
+        formEl
+          .querySelector("[aria-invalid='true'], .border-red-500")
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
       return;
     }
     setSubmitting(true);
@@ -334,6 +351,17 @@ export function AdmissionApplicationForm({
         setAlreadyCreated(result.admission);
         return;
       }
+      if (leadId) {
+        try {
+          const preview = await fetchAdmissionLead(leadId);
+          if (preview.status === "already_created") {
+            setAlreadyCreated(preview.admission);
+            return;
+          }
+        } catch {
+          // still show thank you
+        }
+      }
       setSubmitOk(result.message);
     } catch (error) {
       setSubmitError(
@@ -346,6 +374,9 @@ export function AdmissionApplicationForm({
 
   if (alreadyCreated) {
     return <AdmissionAlreadyCreated admission={alreadyCreated} />;
+  }
+  if (submitOk) {
+    return <AdmissionThankYou message={submitOk} />;
   }
 
   return (
@@ -387,10 +418,16 @@ export function AdmissionApplicationForm({
 
       <div className="grid gap-4 px-4 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_160px]">
         <div className="grid gap-3">
-          <Field label="Program Applied For" htmlFor="program" required>
+          <Field
+            label="Program Applied For"
+            htmlFor="program"
+            required
+            error={fieldErrors.programAppliedFor}
+          >
             <BoxSelect
               id="program"
               name="programAppliedFor"
+              invalid={Boolean(fieldErrors.programAppliedFor)}
               defaultValue={prefill?.programAppliedFor || ""}
             >
               <option value="">Select course</option>
@@ -475,22 +512,29 @@ export function AdmissionApplicationForm({
 
       <SectionBar id="section-a" title="Section A — Student’s Personal Details" />
       <div className="grid gap-3 px-4 py-4 sm:px-6">
-        <Field label="Full Name of Applicant (as per Aadhaar / Certificate)" htmlFor="fullName" required>
+        <Field
+          label="Full Name of Applicant (as per Aadhaar / Certificate)"
+          htmlFor="fullName"
+          required
+          error={fieldErrors.fullName}
+        >
           <BoxInput
             id="fullName"
             name="fullName"
             className="uppercase"
+            invalid={Boolean(fieldErrors.fullName)}
             defaultValue={prefill?.fullName || ""}
           />
         </Field>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Field label="Date of Birth" htmlFor="dob" required>
+          <Field label="Date of Birth" htmlFor="dob" required error={fieldErrors.dob}>
             <BoxInput
               id="dob"
               type="date"
               value={dob}
               onChange={(event) => setDob(event.target.value)}
               className="normal-case"
+              invalid={Boolean(fieldErrors.dob)}
             />
           </Field>
           <Field label="Age" htmlFor="age">
@@ -500,6 +544,11 @@ export function AdmissionApplicationForm({
             <legend className="mb-1 text-[11px] font-semibold text-slate-700 sm:text-xs">
               Gender <span className="text-red-600">*</span>
             </legend>
+            {fieldErrors.gender ? (
+              <p role="alert" className="mb-1 text-[11px] font-medium text-red-600">
+                {fieldErrors.gender}
+              </p>
+            ) : null}
             <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1">
               {["Male", "Female", "Other"].map((item) => (
                 <Choice
@@ -520,12 +569,15 @@ export function AdmissionApplicationForm({
           </Field>
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
-          <Field label="Aadhaar Number" htmlFor="aadhaar" required>
+          <Field label="Aadhaar Number" htmlFor="aadhaar" error={fieldErrors.aadhaar}>
             <BoxInput
               id="aadhaar"
               name="aadhaar"
               inputMode="numeric"
+              maxLength={12}
+              placeholder="Optional — 12 digits"
               className="normal-case"
+              invalid={Boolean(fieldErrors.aadhaar)}
               defaultValue={prefill?.aadhaar || ""}
             />
           </Field>
@@ -537,43 +589,53 @@ export function AdmissionApplicationForm({
           </Field>
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
-          <Field label="Mobile Number" htmlFor="mobile" required>
+          <Field label="Mobile Number" htmlFor="mobile" required error={fieldErrors.mobile}>
             <BoxInput
               id="mobile"
               name="mobile"
-              inputMode="tel"
-              placeholder="+91"
+              inputMode="numeric"
+              maxLength={10}
+              placeholder="10 digits"
               className="normal-case"
+              invalid={Boolean(fieldErrors.mobile)}
               defaultValue={prefill?.mobile || ""}
+              onInput={restrictPhone}
             />
           </Field>
-          <Field label="WhatsApp Number" htmlFor="whatsapp" required>
+          <Field label="WhatsApp Number" htmlFor="whatsapp" error={fieldErrors.whatsapp}>
             <BoxInput
               id="whatsapp"
               name="whatsapp"
-              inputMode="tel"
-              placeholder="+91"
+              inputMode="numeric"
+              maxLength={10}
+              placeholder="Optional"
               className="normal-case"
+              invalid={Boolean(fieldErrors.whatsapp)}
               defaultValue={prefill?.whatsapp || ""}
+              onInput={restrictPhone}
             />
           </Field>
-          <Field label="Alternate Number" htmlFor="alternate">
+          <Field label="Alternate Number" htmlFor="alternate" error={fieldErrors.alternate}>
             <BoxInput
               id="alternate"
               name="alternate"
-              inputMode="tel"
-              placeholder="+91"
+              inputMode="numeric"
+              maxLength={10}
+              placeholder="Optional"
               className="normal-case"
+              invalid={Boolean(fieldErrors.alternate)}
               defaultValue={prefill?.alternate || ""}
+              onInput={restrictPhone}
             />
           </Field>
         </div>
-        <Field label="Email ID" htmlFor="email" required>
+        <Field label="Email ID" htmlFor="email" required error={fieldErrors.email}>
           <BoxInput
             id="email"
             name="email"
             type="email"
             className="normal-case lowercase"
+            invalid={Boolean(fieldErrors.email)}
             defaultValue={prefill?.email || ""}
           />
         </Field>
@@ -664,7 +726,7 @@ export function AdmissionApplicationForm({
               onChange={(event) => setPermState(event.target.value)}
             />
           </Field>
-          <Field label="PIN Code" htmlFor="permPin">
+          <Field label="PIN Code" htmlFor="permPin" error={fieldErrors.permanentPin}>
             <BoxInput
               id="permPin"
               name="permanentPin"
@@ -672,6 +734,7 @@ export function AdmissionApplicationForm({
               className="normal-case"
               value={permPin}
               onChange={(event) => setPermPin(event.target.value)}
+              invalid={Boolean(fieldErrors.permanentPin)}
             />
           </Field>
         </div>
@@ -723,13 +786,14 @@ export function AdmissionApplicationForm({
                 disabled={sameAddress === "Yes"}
               />
             </Field>
-            <Field label="PIN Code" htmlFor="corrPin">
+            <Field label="PIN Code" htmlFor="corrPin" error={fieldErrors.correspondencePin}>
               <BoxInput
                 id="corrPin"
                 name="correspondencePin"
                 inputMode="numeric"
                 className="normal-case"
                 disabled={sameAddress === "Yes"}
+                invalid={Boolean(fieldErrors.correspondencePin)}
               />
             </Field>
           </div>
@@ -762,11 +826,35 @@ export function AdmissionApplicationForm({
           Father’s Details
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Father’s Full Name" htmlFor="fatherName">
-            <BoxInput id="fatherName" name="fatherName" className="uppercase" />
+          <Field
+            label="Father’s Full Name"
+            htmlFor="fatherName"
+            required
+            error={fieldErrors.fatherName}
+          >
+            <BoxInput
+              id="fatherName"
+              name="fatherName"
+              className="uppercase"
+              invalid={Boolean(fieldErrors.fatherName)}
+            />
           </Field>
-          <Field label="Mobile Number" htmlFor="fatherMobile">
-            <BoxInput id="fatherMobile" name="fatherMobile" inputMode="tel" placeholder="+91" className="normal-case" />
+          <Field
+            label="Father’s Phone Number"
+            htmlFor="fatherMobile"
+            required
+            error={fieldErrors.fatherMobile}
+          >
+            <BoxInput
+              id="fatherMobile"
+              name="fatherMobile"
+              inputMode="numeric"
+              maxLength={10}
+              placeholder="10 digits"
+              className="normal-case"
+              invalid={Boolean(fieldErrors.fatherMobile)}
+              onInput={restrictPhone}
+            />
           </Field>
         </div>
         <p className="text-[11px] font-bold uppercase tracking-wide text-[#c2410c]">
@@ -776,8 +864,17 @@ export function AdmissionApplicationForm({
           <Field label="Mother’s Full Name" htmlFor="motherName">
             <BoxInput id="motherName" name="motherName" className="uppercase" />
           </Field>
-          <Field label="Mobile Number" htmlFor="motherMobile">
-            <BoxInput id="motherMobile" name="motherMobile" inputMode="tel" placeholder="+91" className="normal-case" />
+          <Field label="Mobile Number" htmlFor="motherMobile" error={fieldErrors.motherMobile}>
+            <BoxInput
+              id="motherMobile"
+              name="motherMobile"
+              inputMode="numeric"
+              maxLength={10}
+              placeholder="Optional"
+              className="normal-case"
+              invalid={Boolean(fieldErrors.motherMobile)}
+              onInput={restrictPhone}
+            />
           </Field>
         </div>
         <p className="text-[11px] font-bold uppercase tracking-wide text-[#c2410c]">
@@ -812,10 +909,16 @@ export function AdmissionApplicationForm({
       />
       <div className="space-y-4 px-4 py-4 sm:px-6">
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Highest Qualification" htmlFor="highestQual" required>
+          <Field
+            label="Highest Qualification"
+            htmlFor="highestQual"
+            required
+            error={fieldErrors.highestQualification}
+          >
             <BoxSelect
               id="highestQual"
               name="highestQualification"
+              invalid={Boolean(fieldErrors.highestQualification)}
               value={highestQualification}
               onChange={(event) => setHighestQualification(event.target.value)}
             >
@@ -827,8 +930,18 @@ export function AdmissionApplicationForm({
               ))}
             </BoxSelect>
           </Field>
-          <Field label="School / College Name" htmlFor="schoolCollegeName" required>
-            <BoxInput id="schoolCollegeName" name="schoolCollegeName" className="uppercase" />
+          <Field
+            label="School / College Name"
+            htmlFor="schoolCollegeName"
+            required
+            error={fieldErrors.schoolCollegeName}
+          >
+            <BoxInput
+              id="schoolCollegeName"
+              name="schoolCollegeName"
+              className="uppercase"
+              invalid={Boolean(fieldErrors.schoolCollegeName)}
+            />
           </Field>
           <Field
             label="Stream / Specialization"
@@ -837,11 +950,13 @@ export function AdmissionApplicationForm({
               Boolean(highestQualification) &&
               streamRequiredForQualification(highestQualification)
             }
+            error={fieldErrors.stream}
           >
             <BoxInput
               id="qualStream"
               name="stream"
               className="uppercase"
+              invalid={Boolean(fieldErrors.stream)}
               placeholder={
                 !highestQualification ||
                 streamRequiredForQualification(highestQualification)
@@ -850,7 +965,12 @@ export function AdmissionApplicationForm({
               }
             />
           </Field>
-          <Field label="Year of Passing" htmlFor="yearOfPassing" required>
+          <Field
+            label="Year of Passing"
+            htmlFor="yearOfPassing"
+            required
+            error={fieldErrors.yearOfPassing}
+          >
             <BoxInput
               id="yearOfPassing"
               name="yearOfPassing"
@@ -858,15 +978,22 @@ export function AdmissionApplicationForm({
               maxLength={4}
               placeholder="YYYY"
               className="normal-case"
+              invalid={Boolean(fieldErrors.yearOfPassing)}
             />
           </Field>
-          <Field label="Percentage / CGPA" htmlFor="percentageOrCGPA" required>
+          <Field
+            label="Percentage / CGPA"
+            htmlFor="percentageOrCGPA"
+            required
+            error={fieldErrors.percentageOrCGPA}
+          >
             <BoxInput
               id="percentageOrCGPA"
               name="percentageOrCGPA"
               inputMode="decimal"
               placeholder="e.g. 78.5 or 8.2"
               className="normal-case"
+              invalid={Boolean(fieldErrors.percentageOrCGPA)}
             />
           </Field>
         </div>
@@ -1087,7 +1214,6 @@ export function AdmissionApplicationForm({
           <BoxSelect
             id="batchSchedule"
             name="batchSchedule"
-            required
             value={timing}
             onChange={(event) => setTiming(event.target.value)}
           >
@@ -1139,6 +1265,11 @@ export function AdmissionApplicationForm({
 
       <SectionBar id="section-l" title="Section L — Declaration" />
       <div className="space-y-4 px-4 py-4 sm:px-6">
+        {fieldErrors.applicantDeclaration ? (
+          <p role="alert" className="text-[11px] font-medium text-red-600">
+            {fieldErrors.applicantDeclaration}
+          </p>
+        ) : null}
         <label className="flex items-start gap-2 text-[12px] leading-relaxed text-slate-700 sm:text-[13px]">
           <input
             type="checkbox"
@@ -1153,6 +1284,11 @@ export function AdmissionApplicationForm({
             policy of ELEVEIIM.
           </span>
         </label>
+        {fieldErrors.parentDeclaration ? (
+          <p role="alert" className="text-[11px] font-medium text-red-600">
+            {fieldErrors.parentDeclaration}
+          </p>
+        ) : null}
         <label className="flex items-start gap-2 text-[12px] leading-relaxed text-slate-700 sm:text-[13px]">
           <input
             type="checkbox"
@@ -1169,21 +1305,15 @@ export function AdmissionApplicationForm({
         {submitError ? (
           <p className="text-sm font-medium text-red-700">{submitError}</p>
         ) : null}
-        {submitOk ? (
-          <p className="rounded-sm border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-            {submitOk}
-          </p>
-        ) : (
-          <div className="flex justify-end pt-2">
-            <button
-              type="submit"
-              disabled={submitting}
-              className="h-10 rounded-sm bg-[#1e4ba8] px-6 text-sm font-semibold text-white hover:bg-[#173f91] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {submitting ? "Submitting..." : "Submit application"}
-            </button>
-          </div>
-        )}
+        <div className="flex justify-end pt-2">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="h-10 rounded-sm bg-[#1e4ba8] px-6 text-sm font-semibold text-white hover:bg-[#173f91] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {submitting ? "Submitting..." : "Submit application"}
+          </button>
+        </div>
       </div>
 
       <footer className="border-t border-slate-300 bg-slate-50 px-4 py-3 text-center text-[10px] leading-relaxed text-slate-600 sm:px-6 sm:text-[11px]">
