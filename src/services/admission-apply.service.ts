@@ -1,8 +1,13 @@
 import { ApiError } from "@/lib/api/client";
+import { getConfiguredApiBase } from "@/lib/configured-api";
 import type { AdmissionSaveInput } from "@/lib/admission-profile";
 
 export const ADMISSION_APPLY_SUCCESS_MESSAGE =
   "Thank you! Your admission application was received. Our team will contact you shortly.";
+
+export function admissionApplicationSubmitUrl() {
+  return `${getConfiguredApiBase()}/admission-application/submit`;
+}
 
 export async function fetchAdmissionLead(leadId: string) {
   const res = await fetch(
@@ -21,7 +26,7 @@ export async function fetchAdmissionLead(leadId: string) {
 export async function submitAdmissionApplication(
   input: AdmissionSaveInput & { hp?: string; formLoadedAt: number }
 ) {
-  const res = await fetch("/api/v1/admission-application/submit", {
+  const res = await fetch(admissionApplicationSubmitUrl(), {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -31,12 +36,24 @@ export async function submitAdmissionApplication(
     cache: "no-store",
   });
 
-  let payload: { message?: string } | null = null;
+  let payload: {
+    success?: boolean;
+    message?: string | string[];
+    data?: { message?: string };
+  } | null = null;
   try {
-    payload = (await res.json()) as { message?: string };
+    payload = (await res.json()) as {
+      success?: boolean;
+      message?: string | string[];
+      data?: { message?: string };
+    };
   } catch {
     // non-JSON
   }
+
+  const envelopeMessage = Array.isArray(payload?.message)
+    ? payload.message[0]
+    : payload?.message;
 
   if (res.status === 409 && input.leadId) {
     const preview = await fetchAdmissionLead(String(input.leadId));
@@ -45,14 +62,17 @@ export async function submitAdmissionApplication(
     }
   }
 
-  if (!res.ok) {
+  if (!res.ok || payload?.success === false) {
     throw new ApiError(
-      payload?.message || `API Error: ${res.status} ${res.statusText}`,
+      envelopeMessage || `API Error: ${res.status} ${res.statusText}`,
       res.status
     );
   }
 
-  return { message: payload?.message || ADMISSION_APPLY_SUCCESS_MESSAGE };
+  return {
+    message:
+      payload?.data?.message || envelopeMessage || ADMISSION_APPLY_SUCCESS_MESSAGE,
+  };
 }
 
 export { ApiError };
