@@ -7,7 +7,7 @@ import { WhatsAppButton } from "@/components/common/whatsapp-button";
 import { FloatingCallButton } from "@/components/common/floating-call-button";
 import { ScholarshipModalHost } from "@/components/common/scholarship-modal-provider";
 
-const BARE_PATHS = ["/admission-application"];
+const BARE_PATHS = ["/admission-application", "/college-register"];
 
 export function isBarePublicPath(pathname: string | null) {
   if (!pathname) return false;

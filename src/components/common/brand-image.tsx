@@ -3,14 +3,27 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { BRAND_IMAGE, BRAND_IMAGE_WHITE } from "@/lib/brand";
 
-type BrandSize = "sm" | "md" | "lg";
+type BrandSize = "sm" | "md" | "lg" | "form";
 /** `onDark` = white logo only (for brand/blue banners). Default uses the color logo. */
 type BrandVariant = "elevated" | "plain" | "onDark";
 
-const imageHeights: Record<BrandSize, string> = {
-  sm: "h-6 w-auto max-w-[120px] sm:max-w-[140px]",
-  md: "h-7 w-auto max-w-[140px] sm:max-w-[165px]",
-  lg: "h-8 w-auto max-w-[170px] sm:max-w-[200px]",
+/**
+ * Size by width + height:auto so the 1024×192 artwork (wordmark + tagline)
+ * keeps its aspect ratio. Do not use overflow-hidden or a shorter fixed height —
+ * that clips the mark and the “Educate to Elevate” line.
+ */
+const imageWidths: Record<BrandSize, string> = {
+  sm: "h-auto w-[120px] max-w-full sm:w-[140px]",
+  md: "h-auto w-[140px] max-w-full sm:w-[165px]",
+  lg: "h-auto w-[170px] max-w-full sm:w-[200px]",
+  form: "h-auto w-[220px] max-w-full sm:w-[248px] md:w-[280px]",
+};
+
+const imageSizes: Record<BrandSize, string> = {
+  sm: "(min-width: 640px) 140px, 120px",
+  md: "(min-width: 640px) 165px, 140px",
+  lg: "(min-width: 640px) 200px, 170px",
+  form: "(min-width: 768px) 280px, (min-width: 640px) 248px, 220px",
 };
 
 interface BrandImageProps {
@@ -34,8 +47,7 @@ export function BrandImage({
   const content = (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center overflow-hidden",
-        // Image only — no white container plate
+        "inline-flex max-w-full shrink-0 items-center overflow-visible",
         className
       )}
     >
@@ -45,7 +57,8 @@ export function BrandImage({
         width={brand.width}
         height={brand.height}
         priority={priority}
-        className={cn("block object-contain object-left", imageHeights[size])}
+        sizes={imageSizes[size]}
+        className={cn("block max-w-full object-contain object-center", imageWidths[size])}
       />
     </span>
   );
@@ -54,7 +67,7 @@ export function BrandImage({
     return (
       <Link
         href={href}
-        className="inline-flex items-center self-center"
+        className="inline-flex max-w-full items-center justify-center overflow-visible"
         aria-label="Eleveiim home"
       >
         {content}
