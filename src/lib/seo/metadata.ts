@@ -63,7 +63,7 @@ export const defaultMetadata: Metadata = {
 
   title: {
     default:
-      "Professional Training Institute in Mohali & Chandigarh | Eleveiim",
+      "AI-Driven Tech and Professional Courses",
     template: "%s | ELEVEIIM",
   },
 
@@ -146,7 +146,7 @@ export const defaultMetadata: Metadata = {
     url: SITE_URL,
     siteName: "ELEVEIIM",
     title:
-      "Professional Training Institute in Mohali & Chandigarh | Eleveiim",
+      "AI-Driven Tech and Professional Courses",
     description:
       "Explore AI, Data Science, Digital Marketing, Full Stack Development and professional certification courses at Eleveiim in Mohali & Chandigarh. Join industry-focused training today.",
     images: [
@@ -162,7 +162,7 @@ export const defaultMetadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Professional Training Institute in Mohali & Chandigarh | Eleveiim",
+      "AI-Driven Tech and Professional Courses",
     description:
       "Explore AI, Data Science, Digital Marketing, Full Stack Development and professional certification courses at Eleveiim in Mohali & Chandigarh. Join industry-focused training today.",
     images: ["/og-image.jpg"],

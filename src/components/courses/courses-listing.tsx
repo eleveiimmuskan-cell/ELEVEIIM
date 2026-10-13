@@ -11,48 +11,23 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/components/common/motion-wrapper";
+import {
+  COURSE_LISTING_FILTERS,
+  courseMatchesListingFilter,
+  type CourseListingFilterId,
+} from "@/lib/courses/listing-filters";
 
 const PAGE_SIZE = 12;
-
-/** Display-only Title Case for filter chips (does not affect filter values). */
-function formatChipLabel(label: string): string {
-  if (label === "All") return "All";
-  return label.replace(/\w\S*/g, (word) => {
-    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-  });
-}
-
-/** Unique first-tags from courses, for chip filters. */
-function buildChipTags(courses: Course[]): string[] {
-  const seen = new Set<string>();
-  const chips: string[] = [];
-
-  for (const course of courses) {
-    const first = course.tags?.[0]?.trim();
-    if (!first) continue;
-    const key = first.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    chips.push(first);
-  }
-
-  return chips.sort((a, b) => a.localeCompare(b));
-}
 
 function filterCoursesClient(
   courses: Course[],
   search: string,
-  chip: string,
+  chip: CourseListingFilterId,
   page: number
 ) {
-  let result = [...courses];
-
-  if (chip !== "All") {
-    const chipKey = chip.toLowerCase();
-    result = result.filter(
-      (c) => c.tags?.[0]?.trim().toLowerCase() === chipKey
-    );
-  }
+  let result = courses.filter((course) =>
+    courseMatchesListingFilter(course, chip)
+  );
 
   if (search.trim()) {
     const q = search.trim().toLowerCase();
@@ -90,13 +65,8 @@ interface CoursesListingProps {
 
 export function CoursesListing({ courses }: CoursesListingProps) {
   const [search, setSearch] = useState("");
-  const [chip, setChip] = useState("All");
+  const [chip, setChip] = useState<CourseListingFilterId>("all");
   const [page, setPage] = useState(1);
-
-  const chipOptions = useMemo(
-    () => ["All", ...buildChipTags(courses)],
-    [courses]
-  );
 
   const { items, total, totalPages } = useMemo(
     () => filterCoursesClient(courses, search, chip, page),
@@ -105,8 +75,8 @@ export function CoursesListing({ courses }: CoursesListingProps) {
 
   return (
     <div>
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative max-w-md flex-1">
+      <div className="mb-8 space-y-4">
+        <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search courses..."
@@ -118,28 +88,32 @@ export function CoursesListing({ courses }: CoursesListingProps) {
             className="pl-9"
           />
         </div>
-        {chipOptions.length > 1 ? (
-          <div className="flex flex-wrap gap-2">
-            {chipOptions.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => {
-                  setChip(option);
-                  setPage(1);
-                }}
-                className={cn(
-                  "rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200",
-                  chip === option
-                    ? "bg-brand text-white shadow-md shadow-brand/20"
-                    : "bg-muted text-muted-foreground hover:bg-brand/10 hover:text-brand"
-                )}
-              >
-                {formatChipLabel(option)}
-              </button>
-            ))}
-          </div>
-        ) : null}
+        <div
+          className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible"
+          role="tablist"
+          aria-label="Course filters"
+        >
+          {COURSE_LISTING_FILTERS.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              role="tab"
+              aria-selected={chip === option.id}
+              onClick={() => {
+                setChip(option.id);
+                setPage(1);
+              }}
+              className={cn(
+                "shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 sm:px-4",
+                chip === option.id
+                  ? "bg-brand text-white shadow-md shadow-brand/20"
+                  : "bg-muted text-muted-foreground hover:bg-brand/10 hover:text-brand"
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {items.length === 0 ? (

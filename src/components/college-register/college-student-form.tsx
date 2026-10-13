@@ -161,9 +161,6 @@ export function CollegeStudentForm({ collegeId }: { collegeId: string }) {
             {college.collegeCode}
             {college.city ? ` · ${college.city}` : ""}
           </p>
-          <p className="mt-3 rounded-xl bg-brand/[0.06] px-3.5 py-2.5 text-sm leading-relaxed text-slate-600">
-            This form is linked to this college. You do not need to select a campus.
-          </p>
         </div>
 
         <fieldset className="mt-6 min-w-0 border-0 p-0">
@@ -278,8 +275,64 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 function BrandHeader() {
   return (
-    <div className="flex justify-center overflow-visible px-5 pb-1 pt-6 sm:px-8 sm:pt-8">
-      <BrandImage href="/" size="form" priority />
+    <div className="pt-6 sm:pt-8">
+      <div className="flex justify-center overflow-visible px-5 pb-4 sm:px-8">
+        <BrandImage href="/" size="form" priority />
+      </div>
+      <div className="pb-1">
+        <CollegeSplash />
+      </div>
+    </div>
+  );
+}
+
+function CollegeSplash() {
+  return (
+    <div className="px-5 sm:px-8">
+      <div
+        className="relative isolate overflow-hidden rounded-lg border border-slate-200/80 bg-gradient-to-br from-slate-50 via-white to-sky-50 px-3 py-2 text-center sm:px-3.5 sm:py-2.5"
+        role="presentation"
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-8 -top-12 size-36 rounded-full bg-brand/15 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-10 top-0 size-32 rounded-full bg-brand-accent/25 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute bottom-[-2rem] left-1/2 size-40 -translate-x-1/2 rounded-full bg-sky-200/40 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand/40 to-transparent"
+        />
+
+        <div className="relative flex flex-col items-center gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+          <p className="text-[11px] font-semibold uppercase leading-snug tracking-[0.16em] text-slate-600 sm:text-left sm:text-[12px]">
+            Tricity&apos;s{" "}
+            <span className="inline-block tracking-normal normal-case">
+              1
+              <sup className="relative -top-1 text-[7px] font-semibold leading-none sm:text-[8px]">
+                st
+              </sup>
+            </span>
+            <span className="mt-0.5 block bg-gradient-to-r from-brand to-[#1566d4] bg-clip-text tracking-[0.14em] text-transparent">
+              AI-Driven Institute
+            </span>
+          </p>
+          <p className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-accent min-[400px]:text-[11px] sm:text-right sm:text-[12px] sm:tracking-[0.14em]">
+            AI. Coding. Digital Skills.
+          </p>
+        </div>
+      </div>
+      <div className="mt-2 flex justify-center">
+        <p className="inline-flex justify-center rounded-full bg-gradient-to-r from-brand via-[#1566d4] to-brand-accent px-3.5 py-1.5 text-[13px] font-bold tracking-tight text-white shadow-soft sm:text-sm">
+          6-Month Industry Courses
+        </p>
+      </div>
     </div>
   );
 }

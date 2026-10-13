@@ -9,7 +9,7 @@ export interface PageSeoMeta {
 
 export const PAGE_SEO = {
   home: {
-    title: "Professional Training Institute in Mohali & Chandigarh | Eleveiim",
+    title: "AI-Driven Tech and Professional Courses",
     description:
       "Explore AI, Data Science, Digital Marketing, Full Stack Development and professional certification courses at Eleveiim in Mohali & Chandigarh. Join industry-focused training today.",
   },

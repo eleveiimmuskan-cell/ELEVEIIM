@@ -387,16 +387,33 @@ export function AdmissionApplicationForm({
     >
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" />
       {leadId ? <input type="hidden" name="leadId" value={leadId} /> : null}
-      <header className="grid gap-4 border-b border-slate-300 px-4 py-5 sm:px-6 md:grid-cols-[1fr_auto] md:items-start">
-        <div>
-          <BrandImage size="lg" href="/" />
+      <header className="border-b border-slate-300 px-4 py-5 sm:px-6">
+        <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-start">
+          <div>
+            <BrandImage size="lg" href="/" />
+          </div>
+          <div className="text-left md:text-right">
+            <p className="text-lg font-bold uppercase tracking-wide text-[#1e4ba8] sm:text-xl">
+              Admission Application Form
+            </p>
+            <p className="mt-1 text-xs font-medium text-slate-600">
+              {ADMISSION_SESSION}
+            </p>
+          </div>
         </div>
-        <div className="text-left md:text-right">
-          <p className="text-lg font-bold uppercase tracking-wide text-[#1e4ba8] sm:text-xl">
-            Admission Application Form
+        <div className="mt-2 flex items-center justify-between gap-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-700 sm:text-xs">
+            Tricity&apos;s{" "}
+            <span className="inline-block tracking-normal normal-case">
+              1
+              <sup className="relative -top-1 text-[7px] font-semibold leading-none sm:text-[8px]">
+                st
+              </sup>
+            </span>{" "}
+            AI-Driven Institute
           </p>
-          <p className="mt-1 text-xs font-medium text-slate-600">
-            {ADMISSION_SESSION}
+          <p className="whitespace-nowrap text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-accent min-[400px]:text-[11px] sm:text-xs sm:tracking-[0.14em]">
+            AI. Coding. Digital Skills.
           </p>
         </div>
       </header>

@@ -8,7 +8,14 @@ import type { ApiFooter } from "@/types/api-footer";
 import type { Course } from "@/types";
 
 const FALLBACK_DESCRIPTION =
-  "Premium training institute empowering learners with industry-ready skills, expert mentorship, and guaranteed career support.";
+  "Tricity's 1st AI-Driven Institute. AI. Coding. Digital Skills. Elite training institute empowering learners with industry-ready skills, expert mentorship, and guaranteed career support.";
+
+function normalizeFooterDescription(value: string) {
+  return value.replace(
+    /AI-Driven Tech, Non-Tech,\s*Professional & Business Training Institute\./i,
+    "Tricity's 1st AI-Driven Institute. AI. Coding. Digital Skills."
+  );
+}
 
 const FALLBACK_QUICK_LINKS = [
   { id: "ql-about", label: "About Us", url: "/about" },
@@ -69,7 +76,9 @@ interface FooterProps {
 }
 
 export function Footer({ data = null, featuredCourses = [] }: FooterProps) {
-  const description = data?.description?.trim() || FALLBACK_DESCRIPTION;
+  const description = normalizeFooterDescription(
+    data?.description?.trim() || FALLBACK_DESCRIPTION
+  );
   const quickLinks =
     data?.quickLinks?.filter((l) => l.label.trim() && l.url.trim()) ??
     FALLBACK_QUICK_LINKS;

@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, Phone, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NAV_LINKS } from "@/lib/constants";
 import { BrandImage } from "@/components/common/brand-image";
 import { ScholarshipButton } from "@/components/common/scholarship-button";
+import { phoneTelHref, siteContact } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -83,10 +84,23 @@ export function Navbar() {
           ))}
         </ul>
 
-        <div className="flex items-center justify-self-end gap-2 sm:gap-3">
+        <div className="flex items-center justify-self-end gap-1.5 sm:gap-3">
           <div className="hidden lg:block">
             <ScholarshipButton size="sm" />
           </div>
+          <a
+            href={phoneTelHref}
+            aria-label={`Call ELEVEIIM at ${siteContact.phone}`}
+            className={cn(
+              "inline-flex max-w-[min(100%,11.5rem)] items-center gap-1.5 rounded-full px-2 py-1.5 text-xs font-semibold tabular-nums sm:gap-2 sm:px-2.5 lg:hidden",
+              onBrand
+                ? "bg-white/15 text-white hover:bg-white/25"
+                : "bg-brand/10 text-brand hover:bg-brand/15"
+            )}
+          >
+            <Phone className="size-3.5 shrink-0" aria-hidden strokeWidth={2.25} />
+            <span className="truncate">{siteContact.phone}</span>
+          </a>
           <button
             type="button"
             className={cn(
