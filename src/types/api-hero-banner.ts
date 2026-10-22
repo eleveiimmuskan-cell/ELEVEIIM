@@ -8,6 +8,8 @@ export interface ApiHeroBannerItem {
   buttonText: string;
   buttonUrl: string;
   backgroundImage: string;
+  /** Absent on banners saved before alt text was added. */
+  imageAlt?: string;
   liveCourseCount: number;
   studentRating: number;
   successRate: number;
@@ -26,7 +28,7 @@ export interface ApiHeroBannerSection {
   updatedAt: string;
 }
 
-/** Public homepage hero view model (first active banner + left-column fields). */
+/** Public homepage hero view model (left-column fields). */
 export interface HeroBannerData {
   scholarshipText: string;
   mainHeading: string;
@@ -38,4 +40,22 @@ export interface HeroBannerData {
   liveCourseCount: number;
   studentRating: number;
   successRate: number;
+}
+
+/** Photographic campaign slide. The primary left-column banner is excluded. */
+export interface HeroCampaignSlide {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  subHeading: string;
+  description: string;
+  imageUrl: string;
+  imageAlt: string;
+  buttonText: string;
+  buttonUrl: string;
+}
+
+export interface HeroHomepageContent {
+  primary: HeroBannerData | null;
+  campaigns: HeroCampaignSlide[];
 }

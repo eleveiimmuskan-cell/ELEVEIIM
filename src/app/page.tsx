@@ -56,7 +56,7 @@ export default async function HomePage() {
 
   return (
     <PageTransition>
-      <HeroSection banner={heroBanner} />
+      <HeroSection banner={heroBanner.primary} campaigns={heroBanner.campaigns} />
       <TrustedPartnersSection partners={partners} />
       <FeaturedCoursesSection courses={featuredCourses} />
       <PlacementHighlightsSection stories={featuredPlacements} />

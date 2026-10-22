@@ -9,8 +9,11 @@ import type {
   BenefitsSectionData,
 } from "@/types/api-benefits";
 import type {
+  ApiHeroBannerItem,
   ApiHeroBannerSection,
   HeroBannerData,
+  HeroCampaignSlide,
+  HeroHomepageContent,
 } from "@/types/api-hero-banner";
 
 const DEFAULT_REVALIDATE_SECONDS = 60;
@@ -154,12 +157,69 @@ export const getBenefitsSection = cache(
   }
 );
 
+function isPlaceholderLogo(url: string): boolean {
+  return url.endsWith("/eleveiim-logo.png");
+}
+
+/** Real uploaded artwork. The seed logo stays a left-column decoration, not a slide. */
+function usableCampaignImage(raw: string | undefined): string {
+  const resolved = resolveMediaUrl(raw?.trim() || "");
+  if (!resolved || isPlaceholderLogo(resolved)) return "";
+  return resolved;
+}
+
+function toPrimaryBanner(banner: ApiHeroBannerItem): HeroBannerData {
+  const resolvedBackground = usableCampaignImage(banner.backgroundImage);
+  return {
+    scholarshipText: banner.scholarshipText?.trim() || "",
+    mainHeading: normalizeMainHeading(banner.mainHeading),
+    subHeading: banner.subHeading?.trim() || "",
+    description: banner.description.trim(),
+    buttonText: banner.buttonText.trim(),
+    buttonUrl: banner.buttonUrl.trim(),
+    backgroundImage: resolvedBackground,
+    liveCourseCount: publicLiveCourseCount(banner.liveCourseCount),
+    studentRating:
+      typeof banner.studentRating === "number" ? banner.studentRating : 4.9,
+    successRate:
+      typeof banner.successRate === "number" ? banner.successRate : 98,
+  };
+}
+
+function isPrimaryCandidate(banner: ApiHeroBannerItem): boolean {
+  return Boolean(
+    banner.mainHeading?.trim() &&
+      banner.description?.trim() &&
+      banner.buttonText?.trim() &&
+      banner.buttonUrl?.trim()
+  );
+}
+
+function toCampaignSlide(banner: ApiHeroBannerItem): HeroCampaignSlide | null {
+  const imageUrl = usableCampaignImage(banner.backgroundImage);
+  const heading = banner.mainHeading?.trim() || "";
+  const description = banner.description?.trim() || "";
+  if (!imageUrl || !heading || !description) return null;
+  const imageAlt = banner.imageAlt?.trim() || heading;
+  return {
+    id: banner.id,
+    eyebrow: banner.scholarshipText?.trim() || "",
+    heading: normalizeMainHeading(heading),
+    subHeading: banner.subHeading?.trim() || "",
+    description,
+    imageUrl,
+    imageAlt,
+    buttonText: banner.buttonText?.trim() || "",
+    buttonUrl: banner.buttonUrl?.trim() || "",
+  };
+}
+
 /**
- * First active Hero Banner for the public homepage left column.
- * Right-side scholarship offer stays static on the public site for now.
+ * Primary left-column banner, plus later photographic campaigns.
+ * Hardcoded promo slides stay in the carousel component.
  */
 export const getHeroBannerSection = cache(
-  async (): Promise<HeroBannerData | null> => {
+  async (): Promise<HeroHomepageContent> => {
     try {
       const { data } = await apiFetch<ApiHeroBannerSection>(
         "/homepage/hero-banner",
@@ -168,42 +228,25 @@ export const getHeroBannerSection = cache(
         }
       );
 
-      if (!data || data.isActive === false) return null;
+      if (!data || data.isActive === false) {
+        return { primary: null, campaigns: [] };
+      }
 
-      const banner = (Array.isArray(data.banners) ? data.banners : [])
+      const active = (Array.isArray(data.banners) ? data.banners : [])
         .filter((item) => item.isActive !== false)
-        .sort((a, b) => a.displayOrder - b.displayOrder)[0];
+        .sort((a, b) => a.displayOrder - b.displayOrder);
 
-      if (!banner) return null;
-      if (!banner.mainHeading?.trim() || !banner.description?.trim()) return null;
-      if (!banner.buttonText?.trim() || !banner.buttonUrl?.trim()) return null;
+      const primaryItem = active.find(isPrimaryCandidate) ?? null;
+      const primary = primaryItem ? toPrimaryBanner(primaryItem) : null;
+      const campaigns = active
+        .filter((item) => item.id !== primaryItem?.id)
+        .map(toCampaignSlide)
+        .filter((slide): slide is HeroCampaignSlide => slide !== null);
 
-      const rawBackground = banner.backgroundImage?.trim() || "";
-      const resolvedBackground = resolveMediaUrl(rawBackground);
-      // Seed/placeholder logo is not a real hero background — keep the default look.
-      const backgroundImage =
-        resolvedBackground &&
-        !resolvedBackground.endsWith("/eleveiim-logo.png")
-          ? resolvedBackground
-          : "";
-
-      return {
-        scholarshipText: banner.scholarshipText?.trim() || "",
-        mainHeading: normalizeMainHeading(banner.mainHeading),
-        subHeading: banner.subHeading?.trim() || "",
-        description: banner.description.trim(),
-        buttonText: banner.buttonText.trim(),
-        buttonUrl: banner.buttonUrl.trim(),
-        backgroundImage,
-        liveCourseCount: publicLiveCourseCount(banner.liveCourseCount),
-        studentRating:
-          typeof banner.studentRating === "number" ? banner.studentRating : 4.9,
-        successRate:
-          typeof banner.successRate === "number" ? banner.successRate : 98,
-      };
+      return { primary, campaigns };
     } catch (error) {
       console.error("[homepage] Failed to load Hero Banner section:", error);
-      return null;
+      return { primary: null, campaigns: [] };
     }
   }
 );

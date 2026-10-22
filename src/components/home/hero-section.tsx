@@ -9,10 +9,11 @@ import { AnimatedCounter } from "@/components/shared/motion-wrapper";
 import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
 import { GlassButton } from "@/components/shared/glass-card";
 import { HeroPromoCarousel } from "@/components/home/hero-promo-carousel";
-import type { HeroBannerData } from "@/types/api-hero-banner";
+import type { HeroBannerData, HeroCampaignSlide } from "@/types/api-hero-banner";
 
 interface HeroSectionProps {
   banner?: HeroBannerData | null;
+  campaigns?: HeroCampaignSlide[];
 }
 
 const FALLBACK_BANNER: HeroBannerData = {
@@ -29,7 +30,7 @@ const FALLBACK_BANNER: HeroBannerData = {
   successRate: 98,
 };
 
-export function HeroSection({ banner }: HeroSectionProps) {
+export function HeroSection({ banner, campaigns = [] }: HeroSectionProps) {
   const data = banner ?? FALLBACK_BANNER;
   const hasBackground = Boolean(data.backgroundImage?.trim());
   const stats = [
@@ -153,7 +154,10 @@ export function HeroSection({ banner }: HeroSectionProps) {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10 min-w-0"
           >
-            <HeroPromoCarousel />
+            <HeroPromoCarousel
+              campaigns={campaigns}
+              prioritizeFirstPhoto={!hasBackground && campaigns.length > 0}
+            />
           </motion.div>
         </div>
       </div>
