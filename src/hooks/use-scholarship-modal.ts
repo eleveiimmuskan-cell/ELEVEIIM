@@ -8,7 +8,11 @@ import { useScholarshipCms } from "@/components/common/scholarship-cms-provider"
 export const SCHOLARSHIP_MODAL_LAST_SHOWN_KEY = "eleveiim_scholarship_last_shown";
 
 /** Paths where the promotional modal should not appear */
-const SKIP_PATHS = ["/scholarship", "/future-leaders-scholarship"];
+const SKIP_PATHS = [
+  "/scholarship",
+  "/future-leaders-scholarship",
+  "/free-ai-foundation-course-for-1-lac-students",
+];
 
 /** Matches admin CMS validation — never treat 0/invalid as “reopen immediately”. */
 const MIN_INTERVAL_MS = 10_000;

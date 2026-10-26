@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 interface SectionHeaderProps {
   eyebrow?: string;
   title: string;
+  titleId?: string;
   description?: string;
   align?: "left" | "center";
   className?: string;
@@ -11,6 +12,7 @@ interface SectionHeaderProps {
 export function SectionHeader({
   eyebrow,
   title,
+  titleId,
   description,
   align = "center",
   className,
@@ -28,7 +30,10 @@ export function SectionHeader({
           {eyebrow}
         </p>
       )}
-      <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+      <h2
+        id={titleId}
+        className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+      >
         {title}
       </h2>
       {description && (
