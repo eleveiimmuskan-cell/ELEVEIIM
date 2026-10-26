@@ -3,11 +3,11 @@ import type { Course } from "@/types";
 export const COURSE_LISTING_FILTERS = [
   { id: "all", label: "All" },
   { id: "ai", label: "AI" },
-  { id: "tech-dev", label: "Tech Dev" },
-  { id: "digital-skills", label: "Digital Skills" },
+  { id: "tech-dev", label: "Software Development" },
+  { id: "digital-skills", label: "Marketing" },
   { id: "graphics", label: "Graphics" },
-  { id: "personality", label: "Personality" },
-  { id: "business-development", label: "Business Development" },
+  { id: "personality", label: "Personality Development" },
+  { id: "business-development", label: "Business" },
 ] as const;
 
 export type CourseListingFilterId =
