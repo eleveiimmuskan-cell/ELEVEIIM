@@ -1,7 +1,7 @@
 import {
   Building2,
+  CalendarDays,
   GraduationCap,
-  IndianRupee,
   Monitor,
   MonitorPlay,
   Users,
@@ -101,9 +101,15 @@ export const FREE_AI_FOUNDATION_STATS: {
   icon: LucideIcon;
   tone?: "accent" | "positive";
   long?: boolean;
+  detail?: string;
 }[] = [
   { value: "1 Lakh", label: "Students", icon: Users },
-  { value: "₹299", label: "Registration only", icon: IndianRupee, tone: "accent" },
+  {
+    value: "30 Days",
+    label: "Duration",
+    detail: "1 hour class · 10 AM to 5 PM",
+    icon: CalendarDays,
+  },
   { value: "Free", label: "Course access", icon: GraduationCap, tone: "positive" },
   { value: "Online / Offline", label: "Class modes", icon: MonitorPlay, long: true },
 ];

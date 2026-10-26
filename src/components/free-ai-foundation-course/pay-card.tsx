@@ -24,12 +24,9 @@ export function FreeAiFoundationPayCard() {
         </div>
       </div>
 
-      <div className="mt-4 text-sm leading-relaxed">
-        <p className="font-semibold text-foreground">{FREE_AI_FOUNDATION_SCHEDULE.duration}</p>
-        <p className="mt-1 text-muted-foreground">{FREE_AI_FOUNDATION_SCHEDULE.daily}</p>
-        <p className="text-muted-foreground">{FREE_AI_FOUNDATION_SCHEDULE.timing}</p>
-        <p className="text-muted-foreground">{FREE_AI_FOUNDATION_SCHEDULE.ends}</p>
-      </div>
+      <p className="mt-4 animate-blink text-sm font-semibold text-brand-accent">
+        {FREE_AI_FOUNDATION_SCHEDULE.ends}
+      </p>
 
       <ul className="mt-5 space-y-3">
         {FREE_AI_FOUNDATION_INCLUDES.map((item) => (
