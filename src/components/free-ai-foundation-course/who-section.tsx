@@ -68,7 +68,7 @@ export function FreeAiFoundationWhoSection() {
             How you join
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
-            Pay once, then attend the live sessions and collect your certificate.
+            Pay once, then attend online or offline and collect your certificate.
           </p>
           <ol className="mt-6 space-y-5">
             {FREE_AI_FOUNDATION_STEPS.map((step, index) => (

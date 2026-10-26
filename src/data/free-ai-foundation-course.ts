@@ -1,6 +1,8 @@
 import {
+  Building2,
   GraduationCap,
   IndianRupee,
+  Monitor,
   MonitorPlay,
   Users,
   type LucideIcon,
@@ -13,19 +15,34 @@ export const FREE_AI_FOUNDATION_PATH =
 export const FREE_AI_FOUNDATION_PAYMENT_URL = "https://rzp.io/rzp/eleve001";
 
 export const FREE_AI_FOUNDATION_TITLE =
-  "Free AI Foundation Course for 1 Lac Students";
+  "Free AI Foundation Course for 1 Lakh Students";
 
 export const FREE_AI_FOUNDATION_DESCRIPTION =
   "Master the latest AI tools, boost productivity, and build practical skills for real-world success and future career growth.";
 
-export const FREE_AI_FOUNDATION_CTA = "Pay now";
+export const FREE_AI_FOUNDATION_SCHEDULE = {
+  duration: "30 days",
+  daily: "Daily 1 hour class",
+  timing: "Batch timing 10 AM to 5 PM",
+  ends: "Batch ends 15 October",
+} as const;
+
+export const FREE_AI_FOUNDATION_CTA = "Register now";
 
 export const FREE_AI_FOUNDATION_INCLUDES = [
   "ChatGPT, Gemini, Lovable, Perplexity and NotebookLM",
-  "Live online sessions",
+  "Online and offline classes",
   "Certificate of completion",
   "No additional fees after registration",
 ] as const;
+
+export const FREE_AI_FOUNDATION_CLASS_MODES: {
+  label: string;
+  icon: LucideIcon;
+}[] = [
+  { label: "Online", icon: Monitor },
+  { label: "Offline", icon: Building2 },
+];
 
 export const FREE_AI_FOUNDATION_META = {
   title: FREE_AI_FOUNDATION_TITLE,
@@ -33,7 +50,7 @@ export const FREE_AI_FOUNDATION_META = {
   path: FREE_AI_FOUNDATION_PATH,
   keywords: [
     "free AI foundation course",
-    "AI course for 1 lac students",
+    "AI course for 1 lakh students",
     "ChatGPT course",
     "Gemini",
     "Lovable",
@@ -83,17 +100,18 @@ export const FREE_AI_FOUNDATION_STATS: {
   label: string;
   icon: LucideIcon;
   tone?: "accent" | "positive";
+  long?: boolean;
 }[] = [
-  { value: "1 Lac", label: "Student seats", icon: Users },
+  { value: "1 Lakh", label: "Students", icon: Users },
   { value: "₹299", label: "Registration only", icon: IndianRupee, tone: "accent" },
   { value: "Free", label: "Course access", icon: GraduationCap, tone: "positive" },
-  { value: "Live", label: "Online classes", icon: MonitorPlay },
+  { value: "Online / Offline", label: "Class modes", icon: MonitorPlay, long: true },
 ];
 
 export const FREE_AI_FOUNDATION_WHO = [
   "School, college, and university students",
   "Beginners who want practical AI skills",
-  "Learners with a phone or laptop and internet",
+  "Online from anywhere, or offline at ELEVEIIM Mohali",
   "Students ready to register for ₹299",
 ] as const;
 
@@ -102,7 +120,7 @@ export const FREE_AI_FOUNDATION_WHO_DESCRIPTION =
 
 export const FREE_AI_FOUNDATION_STEPS = [
   {
-    title: "Pay now",
+    title: "Register now",
     description: "Pay the one-time ₹299 registration fee on the secure payment page.",
   },
   {
@@ -112,7 +130,7 @@ export const FREE_AI_FOUNDATION_STEPS = [
   {
     title: "Learn the tools",
     description:
-      "Attend live sessions on ChatGPT, Gemini, Lovable, Perplexity, and NotebookLM.",
+      "Attend online or offline classes on ChatGPT, Gemini, Lovable, Perplexity, and NotebookLM.",
   },
   {
     title: "Receive your certificate",
@@ -144,7 +162,7 @@ export const FREE_AI_FOUNDATION_FAQS: FAQItem[] = [
   {
     question: "How will the classes be conducted?",
     answer:
-      "Sessions are live and online. You can join from anywhere in India with a phone or laptop and an internet connection.",
+      "Classes run for 30 days, with a 1 hour class every day. Batch timing is 10 AM to 5 PM. This batch ends on 15 October. Join online from anywhere in India, or attend offline at ELEVEIIM in Sector 82, Mohali.",
   },
   {
     question: "Will I receive a certificate?",

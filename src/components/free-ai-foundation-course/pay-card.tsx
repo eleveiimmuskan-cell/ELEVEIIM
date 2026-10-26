@@ -1,6 +1,9 @@
 import { Check, Lock } from "lucide-react";
 import { PayNowButton } from "@/components/free-ai-foundation-course/pay-now-button";
-import { FREE_AI_FOUNDATION_INCLUDES } from "@/data/free-ai-foundation-course";
+import {
+  FREE_AI_FOUNDATION_INCLUDES,
+  FREE_AI_FOUNDATION_SCHEDULE,
+} from "@/data/free-ai-foundation-course";
 
 export function FreeAiFoundationPayCard() {
   return (
@@ -13,11 +16,19 @@ export function FreeAiFoundationPayCard() {
         <div>
           <p className="text-sm text-muted-foreground">One-time fee</p>
           <p className="mt-1 text-4xl font-bold tracking-tight text-foreground">₹299</p>
+          <p className="mt-1 text-sm font-semibold text-brand-accent">₹9 per day</p>
         </div>
         <div className="text-right">
           <p className="text-sm text-muted-foreground">Course fee</p>
           <p className="mt-1 text-lg font-semibold text-emerald-600">Free</p>
         </div>
+      </div>
+
+      <div className="mt-4 text-sm leading-relaxed">
+        <p className="font-semibold text-foreground">{FREE_AI_FOUNDATION_SCHEDULE.duration}</p>
+        <p className="mt-1 text-muted-foreground">{FREE_AI_FOUNDATION_SCHEDULE.daily}</p>
+        <p className="text-muted-foreground">{FREE_AI_FOUNDATION_SCHEDULE.timing}</p>
+        <p className="text-muted-foreground">{FREE_AI_FOUNDATION_SCHEDULE.ends}</p>
       </div>
 
       <ul className="mt-5 space-y-3">

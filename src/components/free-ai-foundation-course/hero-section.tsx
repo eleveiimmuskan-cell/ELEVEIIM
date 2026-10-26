@@ -4,8 +4,9 @@ import { motion } from "framer-motion";
 import { FreeAiFoundationPayCard } from "@/components/free-ai-foundation-course/pay-card";
 import { AiToolLogo } from "@/components/free-ai-foundation-course/tool-logo";
 import {
+  FREE_AI_FOUNDATION_CLASS_MODES,
   FREE_AI_FOUNDATION_DESCRIPTION,
-  FREE_AI_FOUNDATION_TITLE,
+  FREE_AI_FOUNDATION_SCHEDULE,
   FREE_AI_FOUNDATION_TOOLS,
 } from "@/data/free-ai-foundation-course";
 import { PREMIUM_EASE, VIEWPORT_ONCE } from "@/components/common/motion-wrapper";
@@ -35,9 +36,10 @@ export function FreeAiFoundationHero() {
 
           <h1
             id="free-ai-foundation-heading"
-            className="mt-4 max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]"
+            className="mt-4 max-w-2xl text-3xl font-bold tracking-tight text-brand-accent sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]"
           >
-            {FREE_AI_FOUNDATION_TITLE}
+            Free AI Foundation Course for
+            <span className="mt-1 block">1 Lakh Students</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
@@ -45,6 +47,26 @@ export function FreeAiFoundationHero() {
           </p>
 
           <div className="mt-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
+              Class
+            </p>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {FREE_AI_FOUNDATION_CLASS_MODES.map(({ label, icon: Icon }) => (
+                <li key={label}>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white px-3.5 py-1.5 text-sm font-semibold text-slate-900">
+                    <Icon className="size-4 text-brand" aria-hidden />
+                    {label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/80">
+              {FREE_AI_FOUNDATION_SCHEDULE.duration}. {FREE_AI_FOUNDATION_SCHEDULE.daily}.{" "}
+              {FREE_AI_FOUNDATION_SCHEDULE.timing}. {FREE_AI_FOUNDATION_SCHEDULE.ends}.
+            </p>
+          </div>
+
+          <div className="mt-6">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
               Tools covered
             </p>

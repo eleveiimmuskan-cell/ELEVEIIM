@@ -16,7 +16,7 @@ export function FreeAiFoundationStatsBar() {
         className="mx-auto max-w-7xl"
       >
         <div className="grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-white shadow-soft-lg sm:rounded-3xl lg:grid-cols-4">
-          {FREE_AI_FOUNDATION_STATS.map(({ value, label, icon: Icon, tone }, index) => (
+          {FREE_AI_FOUNDATION_STATS.map(({ value, label, icon: Icon, tone, long }, index) => (
             <div
               key={label}
               className={cn(
@@ -31,7 +31,8 @@ export function FreeAiFoundationStatsBar() {
               </span>
               <p
                 className={cn(
-                  "text-2xl font-bold tracking-tight sm:text-3xl",
+                  "font-bold tracking-tight",
+                  long ? "text-lg leading-tight sm:text-xl" : "text-2xl sm:text-3xl",
                   tone === "accent" && "text-brand-accent",
                   tone === "positive" && "text-emerald-600",
                   !tone && "text-brand"
