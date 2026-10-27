@@ -24,7 +24,7 @@ export const FREE_AI_FOUNDATION_SCHEDULE = {
   duration: "30 days",
   daily: "Daily 1 hour class",
   timing: "Batch timing 10 AM to 5 PM",
-  ends: "Batch ends 15 October",
+  ends: "Batch ends on 15 November",
 } as const;
 
 export const FREE_AI_FOUNDATION_CTA = "Register now";
@@ -168,7 +168,7 @@ export const FREE_AI_FOUNDATION_FAQS: FAQItem[] = [
   {
     question: "How will the classes be conducted?",
     answer:
-      "Classes run for 30 days, with a 1 hour class every day. Batch timing is 10 AM to 5 PM. This batch ends on 15 October. Join online from anywhere in India, or attend offline at ELEVEIIM in Sector 82, Mohali.",
+      "Classes run for 30 days, with a 1 hour class every day. Batch timing is 10 AM to 5 PM. This batch ends on 15 November. Join online from anywhere in India, or attend offline at ELEVEIIM in Sector 82, Mohali.",
   },
   {
     question: "Will I receive a certificate?",
