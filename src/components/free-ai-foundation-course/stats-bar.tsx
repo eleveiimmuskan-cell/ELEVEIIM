@@ -16,7 +16,8 @@ export function FreeAiFoundationStatsBar() {
         className="mx-auto max-w-7xl"
       >
         <div className="grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-white shadow-soft-lg sm:rounded-3xl lg:grid-cols-4">
-          {FREE_AI_FOUNDATION_STATS.map(({ value, label, detail, icon: Icon, tone, long }, index) => (
+          {FREE_AI_FOUNDATION_STATS.map(
+            ({ value, label, detail, struck, icon: Icon, tone, long }, index) => (
             <div
               key={label}
               className={cn(
@@ -29,6 +30,15 @@ export function FreeAiFoundationStatsBar() {
               <span className="flex size-10 items-center justify-center rounded-xl bg-brand/10 text-brand sm:size-11">
                 <Icon className="size-5" aria-hidden />
               </span>
+              {struck ? (
+                <p className="relative inline-block text-sm font-semibold text-slate-400">
+                  {struck}
+                  <span
+                    className="pointer-events-none absolute top-1/2 right-0 left-0 h-0.5 -translate-y-1/2 bg-red-500"
+                    aria-hidden
+                  />
+                </p>
+              ) : null}
               <p
                 className={cn(
                   "font-bold tracking-tight",

@@ -102,6 +102,7 @@ export const FREE_AI_FOUNDATION_STATS: {
   tone?: "accent" | "positive";
   long?: boolean;
   detail?: string;
+  struck?: string;
 }[] = [
   { value: "1 Lakh", label: "Students", icon: Users },
   {
@@ -110,7 +111,13 @@ export const FREE_AI_FOUNDATION_STATS: {
     detail: "1 hour class · 10 AM to 5 PM",
     icon: CalendarDays,
   },
-  { value: "Free", label: "Course access", icon: GraduationCap, tone: "positive" },
+  {
+    value: "Free",
+    label: "Course access",
+    struck: "₹41,000",
+    icon: GraduationCap,
+    tone: "positive",
+  },
   { value: "Online / Offline", label: "Class modes", icon: MonitorPlay, long: true },
 ];
 

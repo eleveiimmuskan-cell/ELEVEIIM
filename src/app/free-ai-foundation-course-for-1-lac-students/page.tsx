@@ -9,6 +9,7 @@ import {
   FreeAiFoundationHero,
   FreeAiFoundationLearnSection,
   FreeAiFoundationStatsBar,
+  FreeAiFoundationStickyRegister,
   FreeAiFoundationWhoSection,
 } from "@/components/free-ai-foundation-course";
 import {
@@ -64,6 +65,7 @@ export default function FreeAiFoundationCoursePage() {
       <FreeAiFoundationWhoSection />
       <FreeAiFoundationFaqSection />
       <FreeAiFoundationFinalCta />
+      <FreeAiFoundationStickyRegister />
     </PageTransition>
   );
 }
