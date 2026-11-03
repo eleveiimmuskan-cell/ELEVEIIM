@@ -1,15 +1,61 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
 import { isRemoteMediaUrl } from "@/lib/media-url";
+import { cn } from "@/lib/utils";
 import { AnimatedCounter } from "@/components/shared/motion-wrapper";
-import { ScholarshipBannerDecorations } from "@/components/scholarship/scholarship-banner-decorations";
 import { GlassButton } from "@/components/shared/glass-card";
 import { HeroPromoCarousel } from "@/components/home/hero-promo-carousel";
 import type { HeroBannerData, HeroCampaignSlide } from "@/types/api-hero-banner";
+
+/** Running hero backgrounds. The first image is the lead banner. */
+const HERO_RUN_BACKGROUNDS = [
+  { src: "/images/home/hero-bg-1.jpg", position: "object-[center_center]" },
+  { src: "/images/home/hero-bg-2-group.jpg", position: "object-[center_center]" },
+] as const;
+
+const HERO_BACKGROUND_ADVANCE_MS = 6000;
+
+function HeroRunBackground() {
+  const reducedMotion = useReducedMotion();
+  const [index, setIndex] = useState(0);
+  const count = HERO_RUN_BACKGROUNDS.length;
+
+  useEffect(() => {
+    if (reducedMotion || count < 2) return;
+
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % count);
+    }, HERO_BACKGROUND_ADVANCE_MS);
+
+    return () => window.clearInterval(timer);
+  }, [reducedMotion, count]);
+
+  return (
+    <div className="pointer-events-none absolute inset-0" aria-hidden>
+      {HERO_RUN_BACKGROUNDS.map((slide, slideIndex) => (
+        <Image
+          key={slide.src}
+          src={slide.src}
+          alt=""
+          fill
+          priority={slideIndex === 0}
+          sizes="100vw"
+          className={cn(
+            "object-cover transition-opacity duration-1000",
+            slide.position,
+            slideIndex === index ? "opacity-100" : "opacity-0"
+          )}
+        />
+      ))}
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0.22)_30%,rgba(0,0,0,0.08)_52%,rgba(0,0,0,0.22)_100%)]" />
+    </div>
+  );
+}
 
 interface HeroSectionProps {
   banner?: HeroBannerData | null;
@@ -57,7 +103,10 @@ export function HeroSection({ banner, campaigns = [] }: HeroSectionProps) {
   return (
     <section
       id="home"
-      className="relative flex min-h-[40vh] items-center overflow-hidden bg-brand pt-16 pb-10 sm:pb-12"
+      className={cn(
+        "relative flex min-h-[40vh] items-center overflow-hidden pt-16 pb-10 sm:pb-12",
+        hasBackground ? "bg-brand" : "bg-[#071020]"
+      )}
       aria-label="Hero banner"
     >
       {hasBackground ? (
@@ -76,11 +125,7 @@ export function HeroSection({ banner, campaigns = [] }: HeroSectionProps) {
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,103,0,0.1),transparent_50%)]" />
         </>
       ) : (
-        <>
-          <ScholarshipBannerDecorations variant="home" />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,103,0,0.12),transparent_50%)]" />
-        </>
+        <HeroRunBackground />
       )}
 
       <div className="relative isolate z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
